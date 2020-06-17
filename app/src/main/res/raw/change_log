@@ -1,0 +1,16 @@
+
+A files is added in
+com.andriod.buggee >> SoundLists >> VideoSound_A.java and their xml file
+
+Changed files
+com.andriod.buggee >> SimpleClasses >> Variables.java
+com.andriod.buggee >> Video_Recording>> Video_Recoder_A.java
+com.andriod.buggee >> Home >> Home_F.java
+com.andriod.buggee >> WatchVideos >> WatchVideos_F.java
+com.andriod.buggee >> Video_Recording >> Video_Recoder_A.java
+
+
+item_home_layout.xml
+item_watch_layout.xml
+
+manifest.xml file.
