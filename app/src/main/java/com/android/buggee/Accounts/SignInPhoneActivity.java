@@ -1,16 +1,14 @@
 package com.android.buggee.Accounts;
 
-import android.content.Intent;
-import android.os.Bundle;
-
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -30,37 +28,42 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.hbb20.CountryCodePicker;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.TimeUnit;
 
-
-public class PhoneSignUpFragment extends Fragment {
+public class SignInPhoneActivity extends AppCompatActivity {
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private FirebaseAuth mAuth;
-    IOSDialog iosDialog;
     CountryCodePicker ccp;
     TextInputLayout phoneSignUp,otpSignUp;
     LinearLayout phoneInputLayout;
+    IOSDialog iosDialog;
+    String phoneNumber;
+    SharedPreferences sharedPreferences;
     private boolean mVerificationInProgress = false;
-    private String phoneNumber;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v= inflater.inflate(R.layout.fragment_phone_sign_up, container, false);
-        iosDialog = new IOSDialog.Builder(getContext())
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sign_in_phone);
+        initUi();
+    }
+
+    private void initUi() {
+        iosDialog = new IOSDialog.Builder(this)
                 .setCancelable(false)
                 .setSpinnerClockwise(false)
                 .setMessageContentGravity(Gravity.END)
                 .build();
-        ccp=v.findViewById(R.id.ccp);
-        phoneSignUp=v.findViewById(R.id.phoneSignUp);
-        otpSignUp=v.findViewById(R.id.otpSignUp);
-        phoneInputLayout=v.findViewById(R.id.phoneInputLayout);
+        sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
+        ccp=findViewById(R.id.ccp);
+        phoneSignUp=findViewById(R.id.phoneSignUp);
+        otpSignUp=findViewById(R.id.otpSignUp);
+        phoneInputLayout=findViewById(R.id.phoneInputLayout);
         ccp.registerCarrierNumberEditText(phoneSignUp.getEditText());
         ccp.setPhoneNumberValidityChangeListener(new CountryCodePicker.PhoneNumberValidityChangeListener() {
             @Override
@@ -76,7 +79,7 @@ public class PhoneSignUpFragment extends Fragment {
             }
         });
 
-        final ImageView nextPhoneSignUp=v.findViewById(R.id.nextPhoneSignUp);
+        final ImageView nextPhoneSignUp=findViewById(R.id.nextPhoneSignUp);
         nextPhoneSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,7 +87,7 @@ public class PhoneSignUpFragment extends Fragment {
                     phoneSignUp.setErrorEnabled(false);
                     phoneNumber="+"+ccp.getFullNumber();
                     checkPhoneExist(phoneNumber);
-
+                    startPhoneNumberVerification(phoneNumber);
                 }
                 else {
                     phoneSignUp.setErrorEnabled(true);
@@ -105,7 +108,7 @@ public class PhoneSignUpFragment extends Fragment {
                 //     detect the incoming verification SMS and perform verification without
                 //     user action.
                 // [START_EXCLUDE silent]
-                iosDialog.cancel();
+
                 mVerificationInProgress = false;
                 // [END_EXCLUDE]
 
@@ -117,12 +120,9 @@ public class PhoneSignUpFragment extends Fragment {
                 otpSignUp.getEditText().setText(code);
                 phoneInputLayout.setVisibility(View.GONE);
                 otpSignUp.setVisibility(View.VISIBLE);
-                Intent intent=new Intent(getContext(),SignUpDetailsActivity.class);
-                intent.putExtra("email",phoneNumber);
-                getContext().startActivity(intent);
-                getActivity().finish();
+                loginWithPhoneNumber(phoneNumber);
+                iosDialog.cancel();
                 // signInWithPhoneAuthCredential(credential);
-
             }
 
             @Override
@@ -133,27 +133,27 @@ public class PhoneSignUpFragment extends Fragment {
                 // [START_EXCLUDE silent]
                 mVerificationInProgress = false;
                 // [END_EXCLUDE]
-                iosDialog.cancel();
+
 
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     // Invalid request
                     // [START_EXCLUDE]
-                    Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignInPhoneActivity.this, "Invalid phone number", Toast.LENGTH_SHORT).show();
                     // [END_EXCLUDE]
                 } else if (e instanceof FirebaseTooManyRequestsException) {
                     // The SMS quota for the project has been exceeded
                     // [START_EXCLUDE]
-                    Toast.makeText(getContext(), "Quota exceeded", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignInPhoneActivity.this, "Quota exceeded", Toast.LENGTH_SHORT).show();
                     // [END_EXCLUDE]
                 }
                 else if (e instanceof FirebaseNetworkException)
                 {
-                    Toast.makeText(getContext(), "Network Error!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignInPhoneActivity.this, "Network Error!", Toast.LENGTH_SHORT).show();
                 }
 
                 // Show a message and update the UI
                 // [START_EXCLUDE]
-
+                iosDialog.cancel();
                 // [END_EXCLUDE]
             }
 
@@ -171,19 +171,20 @@ public class PhoneSignUpFragment extends Fragment {
                 phoneInputLayout.setVisibility(View.GONE);
                 otpSignUp.setVisibility(View.VISIBLE);
                 nextPhoneSignUp.setVisibility(View.GONE);
+                iosDialog.cancel();
                 // [START_EXCLUDE]
                 // Update UI
-                iosDialog.cancel();
+
                 // [END_EXCLUDE]
             }
         };
 
 
 
-        return v;
     }
 
     private void checkPhoneExist(final String phoneNumber) {
+
         iosDialog.show();
         JSONObject parameters = new JSONObject();
         try {
@@ -192,11 +193,11 @@ public class PhoneSignUpFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
             iosDialog.cancel();
-            Toast.makeText(getContext(), "Server Error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Server Error", Toast.LENGTH_SHORT).show();
         }
 
 
-        ApiRequest.Call_Api(getContext(), Variables.checkphoneExist, parameters, new Callback() {
+        ApiRequest.Call_Api(this, Variables.checkphoneExist, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
                 iosDialog.cancel();
@@ -205,36 +206,89 @@ public class PhoneSignUpFragment extends Fragment {
                     JSONObject jsonObject=new JSONObject(resp);
                     boolean exist=jsonObject.optBoolean("success");
                     if (exist) {
-                        phoneSignUp.setErrorEnabled(true);
-                        phoneSignUp.setError("Phone Number is already exist");
+                        startPhoneNumberVerification(phoneNumber);
+                        phoneSignUp.setErrorEnabled(false);
                     }
                     else {
-                        startPhoneNumberVerification(phoneNumber);
+                        phoneSignUp.setErrorEnabled(true);
+                        phoneSignUp.setError("Phone Number is not exist");
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignInPhoneActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
 
 
             }
         });
-
     }
 
-    private void startPhoneNumberVerification(String phoneNumber) {
-        // [START start_phone_auth]
+    private void loginWithPhoneNumber(String phoneNumber) {
+        JSONObject parameters = new JSONObject();
+        try {
+            parameters.put("phone", phoneNumber);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         iosDialog.show();
+        ApiRequest.Call_Api(this, Variables.loginPhone, parameters, new Callback() {
+            @Override
+            public void Responce(String resp) {
+                iosDialog.cancel();
+                Parse_signup_data(resp);
+            }
+        });
+
+
+    }
+    public void Parse_signup_data(String loginData){
+        try {
+            JSONObject jsonObject=new JSONObject(loginData);
+            String code=jsonObject.optString("code");
+            if(code.equals("200")){
+                JSONArray jsonArray=jsonObject.getJSONArray("msg");
+                JSONObject userdata = jsonArray.getJSONObject(0);
+                SharedPreferences.Editor editor=sharedPreferences.edit();
+                editor.putString(Variables.u_id,userdata.optString("fb_id"));
+                editor.putString(Variables.f_name,userdata.optString("first_name"));
+                editor.putString(Variables.l_name,userdata.optString("last_name"));
+                editor.putString(Variables.u_name,userdata.optString("first_name")+" "+userdata.optString("last_name"));
+                editor.putString(Variables.gender,userdata.optString("gender"));
+                editor.putString(Variables.u_pic,userdata.optString("profile_pic"));
+                editor.putString(Variables.api_token,userdata.optString("tokon"));
+                editor.putBoolean(Variables.islogin,true);
+                editor.commit();
+
+                Variables.sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
+                Variables.user_id=Variables.sharedPreferences.getString(Variables.u_id,"");
+
+                Toast.makeText(this, "Sign In Successful", Toast.LENGTH_SHORT).show();
+                finish();
+
+
+
+            }else {
+                Toast.makeText(this, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+    private void startPhoneNumberVerification(String phoneNumber) {
+        iosDialog.show();
+        // [START start_phone_auth]
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
                 60,                 // Timeout duration
                 TimeUnit.SECONDS,   // Unit of timeout
-                getActivity(),               // Activity (for callback binding)
+                this,               // Activity (for callback binding)
                 mCallbacks);        // OnVerificationStateChangedCallbacks
         // [END start_phone_auth]
 
         mVerificationInProgress = true;
     }
-
 }

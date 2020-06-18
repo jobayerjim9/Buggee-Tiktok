@@ -20,9 +20,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
 import android.os.Handler;
 import android.util.SparseArray;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -95,20 +97,24 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
                 }
             }
         });
+        final ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) pager.getLayoutParams();
         bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 if (menuItem.getItemId()==R.id.home)
                 {
+                    lp.bottomMargin=0;
                     pager.setCurrentItem(0);
                     return true;
                 }
                 else if (menuItem.getItemId()==R.id.discover) {
+                  //  lp.setMargins(0,0,0,200);
                     pager.setCurrentItem(1);
                     return true;
                 }
                 else if (menuItem.getItemId()==R.id.inbox) {
                     if(Variables.sharedPreferences.getBoolean(Variables.islogin,false)){
+                       // lp.setMargins(0,0,0,200);
                         pager.setCurrentItem(2);
                         return true;
 
@@ -121,10 +127,13 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
                 }
                 else if (menuItem.getItemId()==R.id.profile) {
                     if(Variables.sharedPreferences.getBoolean(Variables.islogin,false)){
+                       // lp.setMargins(0,0,0,200);
                         pager.setCurrentItem(3);
                         return true;
 
                     }else {
+
+                        //lp.setMargins(0,0,0,200);
                         Intent intent = new Intent(getActivity(), Login_A.class);
                         startActivity(intent);
                         getActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);

@@ -50,7 +50,6 @@
         </com.android.buggee.Main_Menu.Custom_ViewPager>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
-            app:itemTextAppearanceActive="@style/BottomNavigationView.Active"
             android:id="@+id/bottomNav"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,9 +61,10 @@
             android:paddingBottom="16dp"
             app:elevation="20dp"
             app:itemIconTint="@color/bottom_nav_color"
+            app:itemTextAppearanceActive="@style/BottomNavigationView.Active"
             app:itemTextColor="@color/colorAccent"
             app:labelVisibilityMode="selected"
-            app:layout_constraintBottom_toBottomOf="@+id/viewpager"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/bottom_nav" />

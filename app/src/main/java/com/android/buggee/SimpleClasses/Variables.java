@@ -121,6 +121,10 @@ public class Variables {
     public static String checkExist=domain+"userexist";
     public static String checkUsernameExist=domain+"usernameexist";
     public static String signUpEmail=domain+"signupemail";
+    public static String loginEmail=domain+"loginemail";
+    public static String loginUsername=domain+"loginusername";
+    public static String checkphoneExist=domain+"checkphoneexist";
+    public static String loginPhone=domain+"loginphone";
 
 
     public static String getNotifications=domain+"getNotifications";

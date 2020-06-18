@@ -35,7 +35,9 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:replace="allowBackup,supportsRtl">
-        <activity android:name=".Accounts.SignUpDetailsActivity"></activity>
+        <activity android:name=".Settings.SettingsPrivacyActivity"></activity>
+        <activity android:name=".Accounts.SignInPhoneActivity" />
+        <activity android:name=".Accounts.SignUpDetailsActivity" />
         <activity android:name=".Accounts.SignUpActivity" />
         <activity android:name=".Accounts.SignInActivity" />
         <activity android:name=".SoundLists.VideoSound_A" />

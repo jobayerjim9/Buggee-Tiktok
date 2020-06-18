@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.android.buggee.Settings.SettingsPrivacyActivity;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Fragment_Callback;
@@ -177,51 +178,51 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
 
 
 
-        tabLayout = (TabLayout) view.findViewById(R.id.tabs);
-        pager = view.findViewById(R.id.pager);
-        pager.setOffscreenPageLimit(2);
-
-        adapter = new ViewPagerAdapter(getResources(), getChildFragmentManager());
-        pager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(pager);
-
-        setupTabIcons();
-
-
-        tabs_main_layout=view.findViewById(R.id.tabs_main_layout);
-        top_layout=view.findViewById(R.id.top_layout);
-
-
-
-
-        ViewTreeObserver observer = top_layout.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-            @Override
-            public void onGlobalLayout() {
-
-                final int height=top_layout.getMeasuredHeight();
-
-                top_layout.getViewTreeObserver().removeGlobalOnLayoutListener(
-                        this);
-
-                ViewTreeObserver observer = tabs_main_layout.getViewTreeObserver();
-                observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-                    @Override
-                    public void onGlobalLayout() {
-
-                        RelativeLayout.LayoutParams params= (RelativeLayout.LayoutParams) tabs_main_layout.getLayoutParams();
-                        params.height= (int) (tabs_main_layout.getMeasuredHeight()+ height);
-                        tabs_main_layout.setLayoutParams(params);
-                        tabs_main_layout.getViewTreeObserver().removeGlobalOnLayoutListener(
-                                this);
-
-                    }
-                });
-
-            }
-        });
+//        tabLayout = (TabLayout) view.findViewById(R.id.tabs);
+//        pager = view.findViewById(R.id.pager);
+//        pager.setOffscreenPageLimit(2);
+//
+//        adapter = new ViewPagerAdapter(getResources(), getChildFragmentManager());
+//        pager.setAdapter(adapter);
+//        tabLayout.setupWithViewPager(pager);
+//
+//        setupTabIcons();
+//
+//
+//        tabs_main_layout=view.findViewById(R.id.tabs_main_layout);
+//        top_layout=view.findViewById(R.id.top_layout);
+//
+//
+//
+//
+//        ViewTreeObserver observer = top_layout.getViewTreeObserver();
+//        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//
+//            @Override
+//            public void onGlobalLayout() {
+//
+//                final int height=top_layout.getMeasuredHeight();
+//
+//                top_layout.getViewTreeObserver().removeGlobalOnLayoutListener(
+//                        this);
+//
+//                ViewTreeObserver observer = tabs_main_layout.getViewTreeObserver();
+//                observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//
+//                    @Override
+//                    public void onGlobalLayout() {
+//
+//                        RelativeLayout.LayoutParams params= (RelativeLayout.LayoutParams) tabs_main_layout.getLayoutParams();
+//                        params.height= (int) (tabs_main_layout.getMeasuredHeight()+ height);
+//                        tabs_main_layout.setLayoutParams(params);
+//                        tabs_main_layout.getViewTreeObserver().removeGlobalOnLayoutListener(
+//                                this);
+//
+//                    }
+//                });
+//
+//            }
+//        });
 
 
         create_popup_layout=view.findViewById(R.id.create_popup_layout);
@@ -542,6 +543,10 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
 
                     case R.id.edit_Profile_id:
                         Open_Edit_profile();
+                        break;
+
+                    case R.id.settings_privacy:
+                        startActivity(new Intent(context, SettingsPrivacyActivity.class));
                         break;
 
                     case R.id.logout_id:

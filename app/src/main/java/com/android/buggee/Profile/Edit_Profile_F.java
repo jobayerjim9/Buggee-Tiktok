@@ -109,15 +109,19 @@ public class Edit_Profile_F extends RootFragment implements View.OnClickListener
 
         firstname_edit.setText(Variables.sharedPreferences.getString(Variables.f_name,""));
         lastname_edit.setText(Variables.sharedPreferences.getString(Variables.l_name,""));
+try {
 
-        Picasso.with(context)
-                .load(Variables.sharedPreferences.getString(Variables.u_pic,""))
-                .placeholder(R.drawable.profile_image_placeholder)
-                .resize(200,200)
-                .centerCrop()
-                .into(profile_image);
+    Picasso.with(context)
+            .load(Variables.sharedPreferences.getString(Variables.u_pic, ""))
+            .placeholder(R.drawable.profile_image_placeholder)
+            .resize(200, 200)
+            .centerCrop()
+            .into(profile_image);
 
-
+}
+catch (Exception e) {
+    e.printStackTrace();
+}
         male_btn=view.findViewById(R.id.male_btn);
         female_btn=view.findViewById(R.id.female_btn);
 
