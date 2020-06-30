@@ -6,13 +6,17 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.util.Log;
 import android.view.MotionEvent;
@@ -22,7 +26,10 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.buggee.SimpleClasses.FileUtils;
+import com.android.buggee.Video_Recording.GallerySelectedVideo.GallerySelectedVideo_A;
 import com.coremedia.iso.boxes.Container;
 import com.android.buggee.R;
 import com.android.buggee.SegmentProgress.ProgressBarListener;
@@ -31,11 +38,18 @@ import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.android.buggee.SoundLists.SoundList_Main_A;
 import com.android.buggee.Video_Recording.GalleryVideos.GalleryVideos_A;
+import com.coremedia.iso.boxes.MovieHeaderBox;
+import com.daasuu.gpuv.composer.FillMode;
+import com.daasuu.gpuv.composer.GPUMp4Composer;
+import com.googlecode.mp4parser.FileDataSourceImpl;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.googlecode.mp4parser.authoring.Track;
 import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
 import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
 import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
+import com.googlecode.mp4parser.authoring.tracks.CroppedTrack;
+import com.googlecode.mp4parser.util.Matrix;
+import com.googlecode.mp4parser.util.Path;
 import com.wonderkiln.camerakit.CameraKit;
 import com.wonderkiln.camerakit.CameraKitError;
 import com.wonderkiln.camerakit.CameraKitEvent;
@@ -47,6 +61,7 @@ import com.wonderkiln.camerakit.CameraView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,17 +70,17 @@ import java.util.TimerTask;
 
 public class Video_Recoder_A extends AppCompatActivity implements View.OnClickListener {
 
-
+    TextView sec15, sec30, sec60;
     CameraView cameraView;
 
-    int number=0;
+    int number = 0;
 
-    ArrayList<String> videopaths=new ArrayList<>();
+    ArrayList<String> videopaths = new ArrayList<>();
 
     ImageButton record_image;
-    ImageButton done_btn;
-    boolean is_recording=false;
-    boolean is_flash_on=false;
+
+    boolean is_recording = false;
+    boolean is_flash_on = false;
 
     ImageButton flash_btn;
 
@@ -75,7 +90,7 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
 
     ImageButton rotate_camera;
 
-    public static int Sounds_list_Request_code=1;
+    public static int Sounds_list_Request_code = 1;
     TextView add_sound_txt;
 
 
@@ -91,13 +106,73 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_video_recoder);
 
 
-        Variables.Selected_sound_id="null";
-        Variables.recording_duration=Variables.max_recording_duration;
-
+        Variables.Selected_sound_id = "null";
+        Variables.recording_duration = Variables.max_recording_duration;
 
 
         cameraView = findViewById(R.id.camera);
-        camera_options=findViewById(R.id.camera_options);
+        sec15 = findViewById(R.id.sec15);
+        sec30 = findViewById(R.id.sec30);
+        sec60 = findViewById(R.id.sec60);
+        final Typeface regular = ResourcesCompat.getFont(this, R.font.avenir_regular);
+        final Typeface bold = ResourcesCompat.getFont(this, R.font.avenir_bold);
+        sec15.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!is_recording) {
+                    Variables.recording_duration = 15000;
+                    Variables.max_recording_duration = 15000;
+                    initlize_Video_progress();
+                    sec15.setTextColor(getResources().getColor(R.color.white));
+                    sec15.setTypeface(bold);
+                    sec30.setTypeface(regular);
+                    sec30.setTextColor(getResources().getColor(R.color.gray));
+                    sec60.setTypeface(regular);
+                    sec60.setTextColor(getResources().getColor(R.color.gray));
+                } else {
+                    Toast.makeText(Video_Recoder_A.this, "Already Recording!", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        sec30.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!is_recording) {
+                    Variables.recording_duration = 30000;
+                    Variables.max_recording_duration = 30000;
+                    initlize_Video_progress();
+                    sec30.setTextColor(getResources().getColor(R.color.white));
+                    sec30.setTypeface(bold);
+                    sec15.setTypeface(regular);
+                    sec15.setTextColor(getResources().getColor(R.color.gray));
+                    sec60.setTypeface(regular);
+                    sec60.setTextColor(getResources().getColor(R.color.gray));
+                } else {
+                    Toast.makeText(Video_Recoder_A.this, "Already Recording!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        sec60.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!is_recording) {
+                    Variables.recording_duration = 60000;
+                    Variables.max_recording_duration = 60000;
+                    initlize_Video_progress();
+                    sec60.setTextColor(getResources().getColor(R.color.white));
+                    sec60.setTypeface(bold);
+                    sec30.setTypeface(regular);
+                    sec30.setTextColor(getResources().getColor(R.color.gray));
+                    sec15.setTypeface(regular);
+                    sec15.setTextColor(getResources().getColor(R.color.gray));
+                } else {
+                    Toast.makeText(Video_Recoder_A.this, "Already Recording!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        camera_options = findViewById(R.id.camera_options);
 
         cameraView.addCameraKitListener(new CameraKitEventListener() {
             @Override
@@ -125,76 +200,78 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.upload_layout).setOnClickListener(this);
 
 
-        done_btn=findViewById(R.id.done);
-        done_btn.setEnabled(false);
-        done_btn.setOnClickListener(this);
+
 
 
         rotate_camera=findViewById(R.id.rotate_camera);
         rotate_camera.setOnClickListener(this);
-        flash_btn=findViewById(R.id.flash_camera);
+        flash_btn = findViewById(R.id.flash_camera);
         flash_btn.setOnClickListener(this);
 
         findViewById(R.id.Goback).setOnClickListener(this);
 
-        add_sound_txt=findViewById(R.id.add_sound_txt);
+        add_sound_txt = findViewById(R.id.add_sound_txt);
         add_sound_txt.setOnClickListener(this);
 
 
-        Intent intent=getIntent();
-        if(intent.hasExtra("sound_name")){
+        Intent intent = getIntent();
+        if (intent.hasExtra("sound_name")) {
             add_sound_txt.setText(intent.getStringExtra("sound_name"));
-            Variables.Selected_sound_id=intent.getStringExtra("sound_id");
+            Variables.Selected_sound_id = intent.getStringExtra("sound_id");
             PreparedAudio();
         }
 
 
+        // this is code hold to record the video
+//        final Timer[] timer = {new Timer()};
+//        final long[] press_time = {0};
 
-       // this is code hold to record the video
-        final Timer[] timer = {new Timer()};
-        final long[] press_time = {0};
-        record_image.setOnTouchListener(new View.OnTouchListener() {
+//        record_image.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//
+//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//
+//                    timer[0] =new Timer();
+//                    press_time[0] =System.currentTimeMillis();
+//
+//                    timer[0].schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    if(!is_recording) {
+//                                        press_time[0] =System.currentTimeMillis();
+//                                        Start_or_Stop_Recording();
+//                                    }
+//                                }
+//                            });
+//
+//                        }
+//                    }, 200);
+//
+//
+//                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+//                    timer[0].cancel();
+//                    if(is_recording && (press_time[0] !=0 && (System.currentTimeMillis()- press_time[0])<2000)){
+//                        Start_or_Stop_Recording();
+//                    }
+//                }
+//                return false;
+//            }
+//
+//        });
+        record_image.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
-                    timer[0] =new Timer();
-                    press_time[0] =System.currentTimeMillis();
-
-                    timer[0].schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if(!is_recording) {
-                                        press_time[0] =System.currentTimeMillis();
-                                        Start_or_Stop_Recording();
-                                    }
-                                }
-                            });
-
-                        }
-                    }, 200);
-
-
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    timer[0].cancel();
-                    if(is_recording && (press_time[0] !=0 && (System.currentTimeMillis()- press_time[0])<2000)){
-                        Start_or_Stop_Recording();
-                    }
-                }
-                return false;
+            public void onClick(View view) {
+                Start_or_Stop_Recording();
             }
-
         });
 
 
-
         initlize_Video_progress();
-
 
 
     }
@@ -207,7 +284,7 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
         video_progress.setDividerColor(Color.WHITE);
         video_progress.setDividerEnabled(true);
         video_progress.setDividerWidth(4);
-        video_progress.setShader(new int[]{Color.CYAN, Color.CYAN, Color.CYAN});
+        video_progress.setShader(new int[]{getResources().getColor(R.color.text), getResources().getColor(R.color.text), getResources().getColor(R.color.text)});
 
         video_progress.SetListener(new ProgressBarListener() {
             @Override
@@ -228,27 +305,23 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
     public void Start_or_Stop_Recording(){
 
         if (!is_recording && sec_passed<(Variables.recording_duration/1000)-1) {
-            number=number+1;
+            number = number + 1;
 
-            is_recording=true;
+            is_recording = true;
 
-            File file = new File(Variables.root + "/" + "myvideo"+(number)+".mp4");
-            videopaths.add(Variables.root + "/" + "myvideo"+(number)+".mp4");
+            File file = new File(Variables.app_folder + "myvideo" + (number) + ".mp4");
+            videopaths.add(Variables.app_folder + "myvideo" + (number) + ".mp4");
             cameraView.captureVideo(file);
 
 
-            if(audio!=null)
-            audio.start();
-
+            if (audio != null)
+                audio.start();
 
 
             video_progress.resume();
 
 
-            done_btn.setBackgroundResource(R.drawable.ic_not_done);
-            done_btn.setEnabled(false);
-
-            record_image.setImageDrawable(getResources().getDrawable(R.drawable.ic_recoding_yes));
+            record_image.setImageDrawable(getResources().getDrawable(R.drawable.camera_recording));
 
             camera_options.setVisibility(View.GONE);
             add_sound_txt.setClickable(false);
@@ -270,11 +343,11 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
 
 
             if(sec_passed>((Variables.recording_duration/1000)/3)) {
-                done_btn.setBackgroundResource(R.drawable.ic_done);
-                done_btn.setEnabled(true);
+
+                append();
             }
 
-            record_image.setImageDrawable(getResources().getDrawable(R.drawable.ic_recoding_no));
+            record_image.setImageDrawable(getResources().getDrawable(R.drawable.camera_icon));
             camera_options.setVisibility(View.VISIBLE);
 
         }
@@ -310,15 +383,18 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
 
                     File file=new File(videopaths.get(i));
                     if(file.exists()) {
+                        try {
+                            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                            retriever.setDataSource(Video_Recoder_A.this, Uri.fromFile(file));
+                            String hasVideo = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO);
+                            boolean isVideo = "yes".equals(hasVideo);
 
-                        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                        retriever.setDataSource(Video_Recoder_A.this, Uri.fromFile(file));
-                        String hasVideo = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO);
-                        boolean isVideo = "yes".equals(hasVideo);
-
-                        if (isVideo && file.length() > 3000) {
-                            Log.d("resp", videopaths.get(i));
-                            video_list.add(videopaths.get(i));
+                            if (isVideo && file.length() > 3000) {
+                                Log.d("resp", videopaths.get(i));
+                                video_list.add(videopaths.get(i));
+                            }
+                        } catch (Exception e) {
+                            Log.d(Variables.tag, e.toString());
                         }
                     }
                 }
@@ -399,15 +475,13 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
     // this will add the select audio with the video
     public void Merge_withAudio(){
 
-        String root = Environment.getExternalStorageDirectory().toString();
-        String audio_file;
-            audio_file =Variables.app_folder+Variables.SelectedAudio_AAC;
 
-        String video = root + "/"+"output.mp4";
-        String finaloutput = root + "/"+"output2.mp4";
+        String audio_file;
+        audio_file = Variables.app_folder + Variables.SelectedAudio_AAC;
+
 
         Merge_Video_Audio merge_video_audio=new Merge_Video_Audio(Video_Recoder_A.this);
-        merge_video_audio.doInBackground(audio_file,video,finaloutput);
+        merge_video_audio.doInBackground(audio_file, Variables.outputfile, Variables.outputfile2);
 
     }
 
@@ -424,15 +498,16 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.rotate_camera:
                 RotateCamera();
                 break;
 
             case R.id.upload_layout:
-                Intent upload_intent=new Intent(this, GalleryVideos_A.class);
-                startActivity(upload_intent);
-                overridePendingTransition(R.anim.in_from_bottom,R.anim.out_to_top);
+                Pick_video_from_gallery();
+//                Intent upload_intent=new Intent(this, GalleryVideos_A.class);
+//                startActivity(upload_intent);
+//                overridePendingTransition(R.anim.in_from_bottom,R.anim.out_to_top);
                 break;
 
             case R.id.done:
@@ -464,7 +539,7 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
 
             case R.id.add_sound_txt:
                 Intent intent =new Intent(this,SoundList_Main_A.class);
-                startActivityForResult(intent,Sounds_list_Request_code);
+                startActivityForResult(intent, Sounds_list_Request_code);
                 overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
                 break;
 
@@ -474,28 +549,229 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
     }
 
 
+    public void Pick_video_from_gallery() {
+        Intent intent = new Intent(
+                Intent.ACTION_PICK,
+                android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("video/*");
+        startActivityForResult(intent, Variables.Pick_video_from_gallery);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==Sounds_list_Request_code){
-            if(data!=null){
+        if (resultCode == RESULT_OK) {
 
-             if(data.getStringExtra("isSelected").equals("yes")){
-                add_sound_txt.setText(data.getStringExtra("sound_name"));
-                 Variables.Selected_sound_id=data.getStringExtra("sound_id");
-                 PreparedAudio();
-             }
+            if (requestCode == Sounds_list_Request_code) {
+                if (data != null) {
+
+                    if (data.getStringExtra("isSelected").equals("yes")) {
+                        add_sound_txt.setText(data.getStringExtra("sound_name"));
+                        Variables.Selected_sound_id = data.getStringExtra("sound_id");
+                        PreparedAudio();
+                    }
+
+                }
+
+            } else if (requestCode == Variables.Pick_video_from_gallery) {
+                Uri uri = data.getData();
+                try {
+                    File video_file = FileUtils.getFileFromUri(this, uri);
+
+                    if (getfileduration(uri) < 19500) {
+                        Chnage_Video_size(video_file.getAbsolutePath(), Variables.gallery_resize_video);
+
+                    } else {
+                        try {
+                            startTrim(video_file, new File(Variables.gallery_trimed_video), 1000, 18000);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
 
             }
-
         }
     }
 
+    public long getfileduration(Uri uri) {
+        try {
+
+            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            mmr.setDataSource(this, uri);
+            String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            final int file_duration = Integer.parseInt(durationStr);
+
+            return file_duration;
+        } catch (Exception e) {
+
+        }
+        return 0;
+    }
+
+    public void Chnage_Video_size(String src_path, String destination_path) {
+
+        Functions.Show_determinent_loader(this, false, false);
+        new GPUMp4Composer(src_path, destination_path)
+                .size(540, 960)
+                .fillMode(FillMode.PRESERVE_ASPECT_CROP)
+                .videoBitrate((int) (0.25 * 16 * 540 * 960))
+                .listener(new GPUMp4Composer.Listener() {
+                    @Override
+                    public void onProgress(double progress) {
+
+                        Log.d("resp", "" + (int) (progress * 100));
+                        Functions.Show_loading_progress((int) (progress * 100));
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Functions.cancel_determinent_loader();
+
+                                Intent intent = new Intent(Video_Recoder_A.this, GallerySelectedVideo_A.class);
+                                intent.putExtra("video_path", Variables.gallery_resize_video);
+                                startActivity(intent);
+
+                            }
+                        });
 
 
+                    }
+
+                    @Override
+                    public void onCanceled() {
+                        Log.d("resp", "onCanceled");
+                    }
+
+                    @Override
+                    public void onFailed(Exception exception) {
+
+                        Log.d("resp", exception.toString());
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+
+                                    Functions.cancel_determinent_loader();
+
+                                    Toast.makeText(Video_Recoder_A.this, "Try Again", Toast.LENGTH_SHORT).show();
+                                } catch (Exception e) {
+
+                                }
+                            }
+                        });
+
+                    }
+                })
+                .start();
+
+    }
+
+    public void startTrim(final File src, final File dst, final int startMs, final int endMs) throws IOException {
+
+        new AsyncTask<String, Void, String>() {
+            @Override
+            protected String doInBackground(String... strings) {
+                try {
+
+                    FileDataSourceImpl file = new FileDataSourceImpl(src);
+                    Movie movie = MovieCreator.build(file);
+                    List<Track> tracks = movie.getTracks();
+                    movie.setTracks(new LinkedList<Track>());
+                    double startTime = startMs / 1000;
+                    double endTime = endMs / 1000;
+                    boolean timeCorrected = false;
+
+                    for (Track track : tracks) {
+                        if (track.getSyncSamples() != null && track.getSyncSamples().length > 0) {
+                            if (timeCorrected) {
+                                throw new RuntimeException("The startTime has already been corrected by another track with SyncSample. Not Supported.");
+                            }
+                            startTime = Functions.correctTimeToSyncSample(track, startTime, false);
+                            endTime = Functions.correctTimeToSyncSample(track, endTime, true);
+                            timeCorrected = true;
+                        }
+                    }
+                    for (Track track : tracks) {
+                        long currentSample = 0;
+                        double currentTime = 0;
+                        long startSample = -1;
+                        long endSample = -1;
+
+                        for (int i = 0; i < track.getSampleDurations().length; i++) {
+                            if (currentTime <= startTime) {
+                                startSample = currentSample;
+                            }
+                            if (currentTime <= endTime) {
+                                endSample = currentSample;
+                            } else {
+                                break;
+                            }
+                            currentTime += (double) track.getSampleDurations()[i] / (double) track.getTrackMetaData().getTimescale();
+                            currentSample++;
+                        }
+                        movie.addTrack(new CroppedTrack(track, startSample, endSample));
+                    }
+
+                    Container out = new DefaultMp4Builder().build(movie);
+                    MovieHeaderBox mvhd = Path.getPath(out, "moov/mvhd");
+                    mvhd.setMatrix(Matrix.ROTATE_180);
+                    if (!dst.exists()) {
+                        dst.createNewFile();
+                    }
+                    FileOutputStream fos = new FileOutputStream(dst);
+                    WritableByteChannel fc = fos.getChannel();
+                    try {
+                        out.writeContainer(fc);
+                    } finally {
+                        fc.close();
+                        fos.close();
+                        file.close();
+                    }
+
+                    file.close();
+                    return "Ok";
+                } catch (IOException e) {
+                    Log.d(Variables.tag, e.toString());
+                    return "error";
+                }
+
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                Functions.Show_indeterminent_loader(Video_Recoder_A.this, true, true);
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                if (result.equals("error")) {
+                    Toast.makeText(Video_Recoder_A.this, "Try Again", Toast.LENGTH_SHORT).show();
+                } else {
+                    Functions.cancel_indeterminent_loader();
+                    Chnage_Video_size(Variables.gallery_trimed_video, Variables.gallery_resize_video);
+                }
+            }
+
+
+        }.execute();
+
+    }
     // this will play the sound with the video when we select the audio
     MediaPlayer audio;
     public  void PreparedAudio(){
+        Log.d("audioFile", Variables.SelectedAudio_AAC);
         File file=new File(Variables.app_folder+ Variables.SelectedAudio_AAC);
         if(file.exists()) {
             audio = new MediaPlayer();
@@ -528,7 +804,11 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
         cameraView.start();
     }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cameraView.stop();
+    }
 
     @Override
     protected void onDestroy() {
@@ -546,7 +826,6 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
 
         }
     }
-
 
 
 
@@ -578,17 +857,16 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
     }
 
 
-
-    public void Go_To_preview_Activity(){
-        Intent intent =new Intent(this,Preview_Video_A.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+    public void Go_To_preview_Activity() {
+        RecordCompleteFragment recordCompleteFragment = new RecordCompleteFragment();
+        recordCompleteFragment.show(getSupportFragmentManager(), "RecordComplete");
     }
 
 
     // this will delete all the video parts that is create during priviously created video
-    int delete_count=0;
-    public void DeleteFile(){
+    int delete_count = 0;
+
+    public void DeleteFile() {
         delete_count++;
         File output = new File(Variables.outputfile);
         File output2 = new File(Variables.outputfile2);
@@ -605,7 +883,7 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
             output_filter_file.delete();
         }
 
-        File file = new File(Variables.root + "/" + "myvideo"+(delete_count)+".mp4");
+        File file = new File(Variables.app_folder + "myvideo" + (delete_count) + ".mp4");
         if(file.exists()){
             file.delete();
             DeleteFile();

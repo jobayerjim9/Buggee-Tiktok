@@ -8,7 +8,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.android.buggee.Settings.SettingsPrivacyActivity;
+import com.android.buggee.Settings.SettingsActivity;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Fragment_Callback;
@@ -26,7 +26,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -85,7 +84,7 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
     public  static String pic_url;
 
 
-    public  LinearLayout create_popup_layout;
+    // public  LinearLayout create_popup_layout;
 
     public Profile_Tab_F() {
 
@@ -225,7 +224,7 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
 //        });
 
 
-        create_popup_layout=view.findViewById(R.id.create_popup_layout);
+//        create_popup_layout=view.findViewById(R.id.create_popup_layout);
 
 
         view.findViewById(R.id.following_layout).setOnClickListener(this);
@@ -281,23 +280,23 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
                 View v=tab.getCustomView();
                 ImageView image=v.findViewById(R.id.image);
 
-                switch (tab.getPosition()){
+                switch (tab.getPosition()) {
                     case 0:
 
-                        if(UserVideo_F.myvideo_count>0){
-                            create_popup_layout.setVisibility(View.GONE);
-                        }else {
-                            create_popup_layout.setVisibility(View.VISIBLE);
-                            Animation aniRotate = AnimationUtils.loadAnimation(context,R.anim.up_and_down_animation);
-                            create_popup_layout.startAnimation(aniRotate);
-                        }
+//                        if(UserVideo_F.myvideo_count>0){
+//                            create_popup_layout.setVisibility(View.GONE);
+//                        }else {
+//                            create_popup_layout.setVisibility(View.VISIBLE);
+//                            Animation aniRotate = AnimationUtils.loadAnimation(context,R.anim.up_and_down_animation);
+//                            create_popup_layout.startAnimation(aniRotate);
+//                        }
 
                         image.setImageDrawable(getResources().getDrawable(R.drawable.ic_my_video_color));
                         break;
 
                     case 1:
-                        create_popup_layout.clearAnimation();
-                        create_popup_layout.setVisibility(View.GONE);
+//                        create_popup_layout.clearAnimation();
+//                        create_popup_layout.setVisibility(View.GONE);
                         image.setImageDrawable(getResources().getDrawable(R.drawable.ic_liked_video_color));
                         break;
                 }
@@ -462,14 +461,14 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
                 JSONArray user_videos=data.getJSONArray("user_videos");
                 if(!user_videos.toString().equals("["+"0"+"]")){
                     video_count_txt.setText(user_videos.length()+" Videos");
-                    create_popup_layout.setVisibility(View.GONE);
+//                    create_popup_layout.setVisibility(View.GONE);
 
                 }
                 else {
 
-                    create_popup_layout.setVisibility(View.VISIBLE);
-                    Animation aniRotate = AnimationUtils.loadAnimation(context,R.anim.up_and_down_animation);
-                    create_popup_layout.startAnimation(aniRotate);
+//                    create_popup_layout.setVisibility(View.VISIBLE);
+//                    Animation aniRotate = AnimationUtils.loadAnimation(context,R.anim.up_and_down_animation);
+//                    create_popup_layout.startAnimation(aniRotate);
 
                 }
 
@@ -546,7 +545,7 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
                         break;
 
                     case R.id.settings_privacy:
-                        startActivity(new Intent(context, SettingsPrivacyActivity.class));
+                        startActivity(new Intent(context, SettingsActivity.class));
                         break;
 
                     case R.id.logout_id:

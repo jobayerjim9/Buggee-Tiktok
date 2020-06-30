@@ -18,10 +18,13 @@ import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Variables;
 import com.gmail.samehadar.iosdialog.IOSDialog;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -69,27 +72,39 @@ public class SignInPhoneActivity extends AppCompatActivity {
             @Override
             public void onValidityChanged(boolean isValidNumber) {
                 // your code
-                if (isValidNumber){
+                if (isValidNumber) {
 
-                }
-                else {
+                } else {
 
 
                 }
             }
         });
 
-        final ImageView nextPhoneSignUp=findViewById(R.id.nextPhoneSignUp);
+        final ImageView nextPhoneSignUp = findViewById(R.id.nextPhoneSignUp);
+        final ImageView doneButtonSignIn = findViewById(R.id.doneButtonSignIn);
+        doneButtonSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String otp = otpSignUp.getEditText().getText().toString();
+                if (otp.isEmpty()) {
+                    otpSignUp.setErrorEnabled(true);
+                    otpSignUp.setError("Enter An OTP");
+                } else {
+                    otpSignUp.setErrorEnabled(false);
+                    verifyVerificationCode(otp);
+                }
+            }
+        });
         nextPhoneSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (ccp.isValidFullNumber()) {
                     phoneSignUp.setErrorEnabled(false);
-                    phoneNumber="+"+ccp.getFullNumber();
+                    phoneNumber = "+" + ccp.getFullNumber();
                     checkPhoneExist(phoneNumber);
                     startPhoneNumberVerification(phoneNumber);
-                }
-                else {
+                } else {
                     phoneSignUp.setErrorEnabled(true);
                     phoneSignUp.setError("Phone Number is not valid");
                 }
@@ -171,6 +186,7 @@ public class SignInPhoneActivity extends AppCompatActivity {
                 phoneInputLayout.setVisibility(View.GONE);
                 otpSignUp.setVisibility(View.VISIBLE);
                 nextPhoneSignUp.setVisibility(View.GONE);
+                doneButtonSignIn.setVisibility(View.VISIBLE);
                 iosDialog.cancel();
                 // [START_EXCLUDE]
                 // Update UI
@@ -290,5 +306,45 @@ public class SignInPhoneActivity extends AppCompatActivity {
         // [END start_phone_auth]
 
         mVerificationInProgress = true;
+    }
+
+    private void verifyVerificationCode(String otp) {
+        try {
+            //creating the credential
+            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, otp);
+
+            //signing the user
+            signInWithPhoneAuthCredential(credential);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Something Wrong With Server! Try Again Later", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(SignInPhoneActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+
+                            loginWithPhoneNumber(phoneNumber);
+                            //verification successful we will start the profile activity
+
+
+                        } else {
+
+                            //verification unsuccessful.. display an error message
+
+                            String message = "Somthing is wrong, we will fix it soon...";
+
+                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                message = "Invalid code entered...";
+                            }
+
+                            Toast.makeText(SignInPhoneActivity.this, message, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 }

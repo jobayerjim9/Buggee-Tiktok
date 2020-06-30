@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -162,9 +163,9 @@ class Sound_Items_Adapter extends RecyclerView.Adapter<Sound_Items_Adapter.Custo
             holder.description_txt.setText(item.description);
 
             if(item.fav.equals("1"))
-            holder.fav_btn.setImageDrawable(context.getDrawable(R.drawable.ic_my_favourite));
+                holder.fav_btn.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_bookmark_24));
             else
-                holder.fav_btn.setImageDrawable(context.getDrawable(R.drawable.ic_my_un_favourite));
+                holder.fav_btn.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_bookmark_border_24));
 
 
             if(item.thum.equals("")) {
@@ -173,6 +174,7 @@ class Sound_Items_Adapter extends RecyclerView.Adapter<Sound_Items_Adapter.Custo
 
 
             if(item.thum!=null && !item.thum.equals("")) {
+                Log.d(Variables.tag, item.thum);
                 Uri uri = Uri.parse(item.thum);
                 holder.sound_image.setImageURI(uri);
             }

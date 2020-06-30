@@ -29,16 +29,16 @@ import java.util.List;
  */
 
 // this is the class which will add the selected soung to the created video
-public class Merge_Video_Audio extends AsyncTask<String,String,String> {
+public class Merge_Video_Audio extends AsyncTask<String, String, String> {
 
     ProgressDialog progressDialog;
     Context context;
 
-    String audio,video,output;
+    String audio, video, output, draft_file;
 
-    public Merge_Video_Audio(Context context){
-        this.context=context;
-        progressDialog=new ProgressDialog(context);
+    public Merge_Video_Audio(Context context) {
+        this.context = context;
+        progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Please Wait...");
     }
 
@@ -52,14 +52,16 @@ public class Merge_Video_Audio extends AsyncTask<String,String,String> {
     public String doInBackground(String... strings) {
         try {
             progressDialog.show();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
-         audio=strings[0];
-         video=strings[1];
-         output=strings[2];
-
-        Log.d("resp",audio+"----"+video+"-----"+output);
+        audio = strings[0];
+        video = strings[1];
+        output = strings[2];
+        if (strings.length == 4) {
+            draft_file = strings[3];
+        }
+        Log.d("resp", audio + "----" + video + "-----" + output);
 
         Thread thread = new Thread(runnable);
         thread.start();
@@ -76,7 +78,7 @@ public class Merge_Video_Audio extends AsyncTask<String,String,String> {
 
     public void Go_To_preview_Activity(){
         Intent intent =new Intent(context,Preview_Video_A.class);
-        intent.putExtra("path", Variables.root + "/output2.mp4");
+        intent.putExtra("path", Variables.outputfile2);
         context.startActivity(intent);
     }
 
@@ -153,7 +155,7 @@ public class Merge_Video_Audio extends AsyncTask<String,String,String> {
                         nuTracks.add(t);
                     }
                 }
-
+                Log.d("AudioPathMergeAudio", audio);
 
                  Track nuAudio = new AACTrackImpl(new FileDataSourceImpl(audio));
 
@@ -174,7 +176,12 @@ public class Merge_Video_Audio extends AsyncTask<String,String,String> {
                     Log.d("resp",e.toString());
 
                 }finally {
-                    Go_To_preview_Activity();
+                    if (output.equals(Variables.output_filter_file_final)) {
+                        Intent intent = new Intent(context, Post_Video_A.class);
+                        context.startActivity(intent);
+                    } else {
+                        Go_To_preview_Activity();
+                    }
                 }
 
             } catch (IOException e) {

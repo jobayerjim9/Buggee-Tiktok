@@ -279,7 +279,7 @@
                 android:layout_height="65dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="130dp"
-                android:background="@drawable/ic_black_disk"
+                android:background="@drawable/ic_music_and_multimedia"
                 android:gravity="center"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"

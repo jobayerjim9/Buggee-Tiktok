@@ -67,35 +67,38 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
 
         try {
 
-        holder.bind(i,item,listener);
-        if (item.followed==1 || Variables.u_id.equals(item.fb_id)) {
-            holder.smallPlusButton.setVisibility(View.GONE);
-        }
+            holder.bind(i, item, listener);
+            if (item.isFriend) {
+                holder.smallPlusButton.setVisibility(View.GONE);
+            }
 
-        holder.username.setText(item.username);
-        holder.name.setText(item.username);
+            holder.username.setText(item.username);
+            holder.name.setText(item.username);
 
-            if((item.sound_name==null || item.sound_name.equals("") || item.sound_name.equals("null"))){
-                holder.sound_name.setText("original sound - "+item.first_name+" "+item.last_name);
-            }else {
+            if ((item.sound_name == null || item.sound_name.equals("") || item.sound_name.equals("null"))) {
+                holder.sound_name.setText("original sound - " + item.first_name + " " + item.last_name);
+            } else {
                 holder.sound_name.setText(item.sound_name);
             }
-           holder.sound_name.setSelected(true);
+            holder.sound_name.setSelected(true);
 
 
-        holder.desc_txt.setText(item.video_description);
+            holder.desc_txt.setText(item.video_description);
+            try {
+                Picasso.with(context).
+                        load(item.profile_pic)
+                        .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
+                        .resize(100, 100).into(holder.user_pic);
 
-        Picasso.with(context).
-                load(item.profile_pic)
-                .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
-                .resize(100,100).into(holder.user_pic);
+                Picasso.with(context).
+                        load(item.profile_pic)
+                        .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
+                        .resize(100, 100).into(holder.user_pic2);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-            Picasso.with(context).
-                    load(item.profile_pic)
-                    .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
-                    .resize(100,100).into(holder.user_pic2);
-
-            if((item.sound_name==null || item.sound_name.equals(""))
+            if ((item.sound_name == null || item.sound_name.equals(""))
                     || item.sound_name.equals("null")){
 
                 item.sound_pic=item.profile_pic;

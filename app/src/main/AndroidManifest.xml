@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.android.buggee">
 
-    <uses-feature android:name="android.hardware.camera.autofocus" />
+<!--    <uses-feature android:name="android.hardware.camera.autofocus" />-->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -13,9 +13,15 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECORD_VIDEO" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission
+        android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
 
     <uses-feature
         android:name="android.hardware.camera2.full"
@@ -35,7 +41,10 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:replace="allowBackup,supportsRtl">
-        <activity android:name=".Settings.SettingsPrivacyActivity"></activity>
+        <activity android:name=".WatchVideos.LiveWatchActivity"></activity>
+        <activity android:name=".Video_Recording.LiveBroadcasterActivity" />
+        <activity android:name=".Settings.PrivacySettingsActivity" />
+        <activity android:name=".Settings.SettingsActivity" />
         <activity android:name=".Accounts.SignInPhoneActivity" />
         <activity android:name=".Accounts.SignUpDetailsActivity" />
         <activity android:name=".Accounts.SignUpActivity" />

@@ -6,6 +6,16 @@
     android:background="@color/colorPrimaryDark"
     tools:context="com.android.buggee.Accounts.PhoneSignUpFragment">
 
+    <ImageView
+        android:id="@+id/doneButtonSignIn"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/submit_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/otpSignUp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -81,8 +91,8 @@
 
     <ImageView
         android:id="@+id/nextPhoneSignUp"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:src="@drawable/next_button"

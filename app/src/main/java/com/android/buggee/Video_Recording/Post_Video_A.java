@@ -11,7 +11,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -44,12 +47,16 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_video);
-
-        video_path = Variables.output_filter_file;
+        Log.d("isAudioSelected?", Variables.audio_selected + "");
+        if (Variables.audio_selected) {
+            video_path = Variables.output_filter_file_final;
+        } else {
+            video_path = Variables.output_filter_file;
+        }
         video_thumbnail = findViewById(R.id.video_thumbnail);
 
 
-        description_edit=findViewById(R.id.description_edit);
+        description_edit = findViewById(R.id.description_edit);
 
         // this will get the thumbnail of video and show them in imageview
         Bitmap bmThumbnail;
@@ -96,16 +103,16 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
 
 
 // this will start the service for uploading the video into database
-    public void Start_Service(){
-
-        serviceCallback=this;
-
+    public void Start_Service() {
+        Log.d("videoPath", video_path);
+        serviceCallback = this;
+        Log.d("videoPath", video_path);
         Upload_Service mService = new Upload_Service(serviceCallback);
-        if (!Functions.isMyServiceRunning(this,mService.getClass())) {
+        if (!Functions.isMyServiceRunning(this, mService.getClass())) {
             Intent mServiceIntent = new Intent(this.getApplicationContext(), mService.getClass());
             mServiceIntent.setAction("startservice");
-            mServiceIntent.putExtra("uri",""+ Uri.fromFile(new File(video_path)));
-            mServiceIntent.putExtra("desc",""+description_edit.getText().toString());
+            mServiceIntent.putExtra("uri", "" + Uri.fromFile(new File(video_path)));
+            mServiceIntent.putExtra("desc", "" + description_edit.getText().toString());
             startService(mServiceIntent);
 
 
@@ -142,14 +149,30 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
     // when the video is uploading successfully it will restart the appliaction
     @Override
     public void ShowResponce(final String responce) {
+        if (mConnection != null)
+            unbindService(mConnection);
+
 
         Toast.makeText(Post_Video_A.this, responce, Toast.LENGTH_LONG).show();
         progressDialog.dismiss();
 
 
-        if(responce.equalsIgnoreCase("Your Video is uploaded Successfully")) {
+        if (responce.equalsIgnoreCase("Your Video is uploaded Successfully")) {
+            File output_filter_file_final = new File(Variables.output_filter_file_final);
+            output_filter_file_final.delete();
 
+            File output_filter_file = new File(Variables.output_filter_file);
+            output_filter_file.delete();
 
+            File outputfile = new File(Variables.outputfile);
+            outputfile.delete();
+
+            File outputfile2 = new File(Variables.outputfile2);
+            outputfile2.delete();
+
+            File SelectedAudio_AAC = new File(Variables.output_audio);
+            SelectedAudio_AAC.delete();
+            Variables.audio_selected = false;
             startActivity(new Intent(Post_Video_A.this, MainMenuActivity.class));
             finishAffinity();
 

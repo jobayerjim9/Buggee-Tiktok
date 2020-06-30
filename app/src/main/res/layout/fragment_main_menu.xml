@@ -12,16 +12,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+
+        <ImageView
             android:id="@+id/cameraButton"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginStart="24dp"
-            android:elevation="21dp"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_marginStart="8dp"
+            android:elevation="1dp"
+            android:outlineProvider="none"
+            android:scaleType="fitXY"
             android:src="@drawable/plus_button"
             app:layout_constraintBottom_toTopOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline2" />
+
 
 
         <androidx.constraintlayout.widget.Guideline
@@ -36,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_end="30dp" />
+            app:layout_constraintGuide_percent="0.96032834" />
 
         <com.android.buggee.Main_Menu.Custom_ViewPager
             android:id="@+id/viewpager"
@@ -44,8 +48,10 @@
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
         </com.android.buggee.Main_Menu.Custom_ViewPager>
 
@@ -54,12 +60,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#4D37517E"
-            android:elevation="20dp"
             android:paddingStart="70dp"
             android:paddingTop="16dp"
             android:paddingEnd="2dp"
             android:paddingBottom="16dp"
-            app:elevation="20dp"
             app:itemIconTint="@color/bottom_nav_color"
             app:itemTextAppearanceActive="@style/BottomNavigationView.Active"
             app:itemTextColor="@color/colorAccent"

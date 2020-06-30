@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -73,27 +74,24 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
 
 //        tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         adapter = new ViewPagerAdapter(getResources(), getChildFragmentManager());
-        viewPagerAdapter=new StaticViewPagerAdapter(getChildFragmentManager());
+        viewPagerAdapter = new StaticViewPagerAdapter(getChildFragmentManager());
         pager = view.findViewById(R.id.viewpager);
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(4);
         pager.setPagingEnabled(false);
         pager.setCurrentItem(0);
         bottomNav = view.findViewById(R.id.bottomNav);
-        CircleImageView cameraButton= view.findViewById(R.id.cameraButton);
+        ImageView cameraButton = view.findViewById(R.id.cameraButton);
+
+
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(check_permissions()) {
-                    if(Variables.sharedPreferences.getBoolean(Variables.islogin,false)) {
+                if (check_permissions()) {
 
-                        Intent intent = new Intent(getActivity(), Video_Recoder_A.class);
-                        startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
-                    }
-                    else {
-                        Toast.makeText(context, "You have to login First", Toast.LENGTH_SHORT).show();
-                    }
+                    RecordModeChoser recordModeChoser = new RecordModeChoser();
+                    recordModeChoser.show(getChildFragmentManager(), "chooser");
+
                 }
             }
         });

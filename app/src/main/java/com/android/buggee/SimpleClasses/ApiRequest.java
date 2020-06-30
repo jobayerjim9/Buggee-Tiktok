@@ -70,12 +70,12 @@ public class ApiRequest {
              @Override
              public Map<String, String> getHeaders() throws AuthFailureError {
                  HashMap<String, String> headers = new HashMap<String, String>();
-                 headers.put("fb-id",Variables.sharedPreferences.getString(Variables.u_id,"0"));
-                 headers.put("version", context.getResources().getString(R.string.version));
-                 headers.put("device", context.getResources().getString(R.string.device));
-                 headers.put("tokon", Variables.sharedPreferences.getString(Variables.api_token,""));
-                 headers.put("deviceid", Variables.sharedPreferences.getString(Variables.device_id,""));
-                 Log.d(Variables.tag,headers.toString());
+                 headers.put("Fb-Id", Variables.sharedPreferences.getString(Variables.u_id, "0"));
+                 headers.put("Version", context.getResources().getString(R.string.version));
+                 headers.put("Device", context.getResources().getString(R.string.device));
+                 headers.put("Tokon", Variables.sharedPreferences.getString(Variables.api_token, ""));
+                 headers.put("Deviceid", Variables.sharedPreferences.getString(Variables.device_id, ""));
+                 Log.d(Variables.tag, headers.toString());
                  return headers;
              }
          };

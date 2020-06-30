@@ -4,11 +4,17 @@ package com.android.buggee.Comments;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +32,21 @@ import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Fragment_Data_Send;
 import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,11 +59,12 @@ public class Comment_F extends RootFragment {
     RecyclerView recyclerView;
 
     Comments_Adapter adapter;
-
+    LiveCommentAdapter liveCommentAdapter;
     ArrayList<Comment_Get_Set> data_list;
-
+    ArrayList<LiveCommentData> liveCommentData = new ArrayList<>();
     String video_id;
     String user_id;
+    String video_type;
 
     EditText message_edit;
     ImageButton send_btn;
@@ -63,11 +80,12 @@ public class Comment_F extends RootFragment {
     }
 
     Fragment_Data_Send fragment_data_send;
-    @SuppressLint("ValidFragment")
+
     public Comment_F(int count, Fragment_Data_Send fragment_data_send){
         comment_count=count;
         this.fragment_data_send=fragment_data_send;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,64 +114,128 @@ public class Comment_F extends RootFragment {
         });
 
 
-        Bundle bundle=getArguments();
-        if(bundle!=null){
-            video_id=bundle.getString("video_id");
-            user_id=bundle.getString("user_id");
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            video_id = bundle.getString("video_id");
+            user_id = bundle.getString("user_id");
+            video_type = bundle.getString("video_type");
+
         }
 
 
-        comment_count_txt=view.findViewById(R.id.comment_count);
+        comment_count_txt = view.findViewById(R.id.comment_count);
 
-        recyclerView=view.findViewById(R.id.recylerview);
-        LinearLayoutManager layoutManager=new LinearLayoutManager(context);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(false);
+        recyclerView = view.findViewById(R.id.recylerview);
+        message_edit = view.findViewById(R.id.message_edit);
+        send_progress = view.findViewById(R.id.send_progress);
+        send_btn = view.findViewById(R.id.send_btn);
 
-
-        data_list=new ArrayList<>();
-        adapter=new Comments_Adapter(context, data_list, new Comments_Adapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int postion, Comment_Get_Set item, View view) {
-
-
-            }
-        });
-
-        recyclerView.setAdapter(adapter);
+        if (video_type.equals("recorded")) {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setHasFixedSize(false);
 
 
-        message_edit=view.findViewById(R.id.message_edit);
+            data_list = new ArrayList<>();
+            adapter = new Comments_Adapter(context, data_list, new Comments_Adapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int postion, Comment_Get_Set item, View view) {
 
 
-        send_progress=view.findViewById(R.id.send_progress);
-        send_btn=view.findViewById(R.id.send_btn);
-        send_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                }
+            });
 
-                String message=message_edit.getText().toString();
-                if(!TextUtils.isEmpty(message)){
-                    if(Variables.sharedPreferences.getBoolean(Variables.islogin,false)){
-                    Send_Comments(video_id,message);
-                    message_edit.setText(null);
-                    send_progress.setVisibility(View.VISIBLE);
-                    send_btn.setVisibility(View.GONE);
+            recyclerView.setAdapter(adapter);
+
+
+            send_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    String message = message_edit.getText().toString();
+                    if (!TextUtils.isEmpty(message)) {
+                        if (Variables.sharedPreferences.getBoolean(Variables.islogin, false)) {
+                            Send_Comments(video_id, message);
+                            message_edit.setText(null);
+                            send_progress.setVisibility(View.VISIBLE);
+                            send_btn.setVisibility(View.GONE);
+                        } else {
+                            Toast.makeText(context, "Please Login into the app", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    else {
-                        Toast.makeText(context, "Please Login into the app", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
+
+            Get_All_Comments();
+
+        } else if (video_type.equals("live")) {
+            final String id = user_id.replace(".", "");
+            LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setHasFixedSize(false);
+            liveCommentAdapter = new LiveCommentAdapter(context, liveCommentData);
+            recyclerView.setAdapter(liveCommentAdapter);
+            DatabaseReference liveRef = FirebaseDatabase.getInstance().getReference().child("liveComment").child(id);
+
+
+            liveRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    liveCommentData.clear();
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        try {
+
+                            LiveCommentData temp = dataSnapshot1.getValue(LiveCommentData.class);
+                            if (temp != null) {
+                                Log.d("comment", temp.getComment_text());
+                                liveCommentData.add(temp);
+                                liveCommentAdapter.notifyDataSetChanged();
+                                recyclerView.scrollToPosition(liveCommentData.size() - 1);
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
+
                 }
 
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
 
 
-
-
-        Get_All_Comments();
-
-
+            send_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (Variables.sharedPreferences.getBoolean(Variables.islogin, false)) {
+                        String message = message_edit.getText().toString();
+                        if (!TextUtils.isEmpty(message)) {
+                            SharedPreferences sharedPreferences = context.getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
+                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("liveComment").child(id);
+                            String commentId = databaseReference.push().getKey();
+                            final LiveCommentData liveComment = new LiveCommentData(Variables.user_id, message, sharedPreferences.getString(Variables.f_name, null), sharedPreferences.getString(Variables.l_name, null), commentId, Variables.user_pic);
+                            databaseReference.child(commentId).setValue(liveComment).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (!task.isSuccessful()) {
+                                        Toast.makeText(context, "Failed To Post Comment!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        recyclerView.scrollToPosition(liveCommentData.size() - 1);
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        Toast.makeText(context, "You Have To Login!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
         return view;
     }
 

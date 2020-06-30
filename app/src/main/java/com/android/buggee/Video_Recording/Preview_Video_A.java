@@ -53,18 +53,21 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
     final List<FilterType> filterTypes = FilterType.createFilterList();
     Filter_Adapter adapter;
     RecyclerView recylerview;
-
+    String draft_file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preview_video);
 
+        Intent intent = getIntent();
+        if (intent != null) {
+            draft_file = intent.getStringExtra("draft_file");
+        }
 
-        select_postion=0;
+        select_postion = 0;
 
-        video_url= Variables.outputfile2;
-
+        video_url = Variables.outputfile2;
 
 
         findViewById(R.id.Goback).setOnClickListener(new View.OnClickListener() {
@@ -180,24 +183,33 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(player!=null){
+        if (player != null) {
             player.removeListener(Preview_Video_A.this);
             player.release();
-            player=null;
+            player = null;
         }
     }
 
+    public void Merge_withAudio() {
 
+
+        String audio_file;
+        audio_file = Variables.app_folder + Variables.SelectedAudio_AAC;
+
+
+        Merge_Video_Audio merge_video_audio = new Merge_Video_Audio(Preview_Video_A.this);
+        merge_video_audio.doInBackground(audio_file, Variables.output_filter_file, Variables.output_filter_file_final);
+
+    }
 
 
     // this function will add the filter to video and save that same video for post the video in post video screen
-    public void Save_Video(String srcMp4Path, final String destMp4Path){
+    public void Save_Video(String srcMp4Path, final String destMp4Path) {
 
-        Functions.Show_determinent_loader(this,false,false);
+        Functions.Show_determinent_loader(this, false, false);
 
         new GPUMp4Composer(srcMp4Path, destMp4Path)
-                .size(1080, 1920)
-                .fillMode(FillMode.PRESERVE_ASPECT_CROP)
+                .mute(false)
                 .filter(new GlFilterGroup(FilterType.createGlFilter(filterTypes.get(select_postion), getApplicationContext())))
                 .listener(new GPUMp4Composer.Listener() {
                     @Override
@@ -216,10 +228,12 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
                                 Functions.cancel_determinent_loader();
-
-                                GotopostScreen();
+                                if (Variables.audio_selected) {
+                                    Merge_withAudio();
+                                } else {
+                                    GotopostScreen();
+                                }
 
 
                             }
@@ -263,6 +277,7 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
     public void GotopostScreen(){
 
         Intent intent =new Intent(Preview_Video_A.this,Post_Video_A.class);
+        intent.putExtra("draft_file", draft_file);
         startActivity(intent);
         overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
 

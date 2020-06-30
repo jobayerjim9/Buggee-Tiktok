@@ -95,7 +95,7 @@ public class SoundList_Main_A extends AppCompatActivity implements View.OnClickL
         public CharSequence getPageTitle(final int position) {
             switch (position) {
                 case 0:
-                    return "Discover";
+                    return "Hot Song";
                 case 1:
                     return "My Favorites";
 

@@ -428,14 +428,15 @@ public class Functions {
             String status,
             final API_CallBack api_callBack) {
 
-        Functions.Show_loader(activity,false,false);
-
+        Functions.Show_loader(activity, false, false);
+        Log.d("myId", fb_id);
+        Log.d("followId", followed_fb_id);
 
         JSONObject parameters = new JSONObject();
         try {
             parameters.put("fb_id", fb_id);
-            parameters.put("followed_fb_id",followed_fb_id);
-            parameters.put("status",status);
+            parameters.put("followed_fb_id", followed_fb_id);
+            parameters.put("status", status);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -444,6 +445,7 @@ public class Functions {
           ApiRequest.Call_Api(activity, Variables.follow_users, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
+                Log.d("followResponse", resp);
                 Functions.cancel_loader();
                 try {
                     JSONObject response=new JSONObject(resp);

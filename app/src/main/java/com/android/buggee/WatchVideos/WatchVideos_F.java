@@ -842,15 +842,16 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
     // this will open the comment screen
     public void OpenComment(Home_Get_Set item) {
-        int comment_count=Integer.parseInt(item.video_comment_count);
-        Fragment_Data_Send fragment_data_send=this;
+        int comment_count = Integer.parseInt(item.video_comment_count);
+        Fragment_Data_Send fragment_data_send = this;
 
-        Comment_F comment_f = new Comment_F(comment_count,fragment_data_send);
+        Comment_F comment_f = new Comment_F(comment_count, fragment_data_send);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
         Bundle args = new Bundle();
-        args.putString("video_id",item.video_id);
-        args.putString("user_id",item.fb_id);
+        args.putString("video_type", "recorded");
+        args.putString("video_id", item.video_id);
+        args.putString("user_id", item.fb_id);
         comment_f.setArguments(args);
         transaction.addToBackStack(null);
         transaction.replace(R.id.WatchVideo_F, comment_f).commit();

@@ -94,8 +94,6 @@
         <item name="textAllCaps">false</item>
         <item name="fontFamily">@font/avenir_regular</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:paddingLeft">12dp</item>
-
     </style>
     <style name="BottomNavigationView.Active" parent="@style/TextAppearance.AppCompat.Caption">
         <item name="android:textSize">40sp</item>

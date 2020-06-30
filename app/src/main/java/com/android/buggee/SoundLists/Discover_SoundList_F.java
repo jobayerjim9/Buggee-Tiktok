@@ -5,15 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.buggee.Main_Menu.RelateToFragment_OnBack.RootFragment;
@@ -59,6 +64,7 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
     RecyclerView listview;
     Sounds_Adapter adapter;
     ArrayList<Sound_catagory_Get_Set> datalist;
+    ArrayList<Sound_catagory_Get_Set> searchResult = new ArrayList<>();
 
     DownloadRequest prDownloader;
     static boolean active = false;
@@ -67,7 +73,7 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
     Context context;
 
     IOSDialog iosDialog;
-
+    EditText searchSound;
 
     SwipeRefreshLayout swiperefresh;
 
@@ -78,10 +84,41 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view= inflater.inflate(R.layout.activity_sound_list, container, false);
-        context=getContext();
+        view = inflater.inflate(R.layout.activity_sound_list, container, false);
+        context = getContext();
+        searchSound = view.findViewById(R.id.searchSound);
+        searchSound.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-        running_sound_id="none";
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String search = editable.toString().toLowerCase();
+                if (search.isEmpty()) {
+                    Set_adapter(datalist);
+                } else {
+                    searchResult.clear();
+                    for (Sound_catagory_Get_Set i : datalist) {
+                        for (Sounds_GetSet sounds_getSet : i.sound_list) {
+                            if (sounds_getSet.sound_name.toLowerCase().contains(search)) {
+                                searchResult.add(i);
+                            }
+                        }
+                    }
+                    if (!searchResult.isEmpty()) {
+                        Set_adapter(searchResult);
+                    }
+                }
+            }
+        });
+        running_sound_id = "none";
 
         iosDialog = new IOSDialog.Builder(context)
                 .setCancelable(false)
@@ -119,23 +156,20 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
     }
 
 
+    public void Set_adapter(ArrayList<Sound_catagory_Get_Set> items) {
 
-    public void Set_adapter(){
-
-        adapter=new Sounds_Adapter(context, datalist, new Sounds_Adapter.OnItemClickListener() {
+        adapter = new Sounds_Adapter(context, items, new Sounds_Adapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view,int postion, Sounds_GetSet item) {
+            public void onItemClick(View view, int postion, Sounds_GetSet item) {
 
-                Log.d("resp",item.acc_path);
+                Log.d("resp", item.acc_path);
 
-                if(view.getId()==R.id.done){
+                if (view.getId() == R.id.done) {
                     StopPlaying();
-                    Down_load_mp3(item.id,item.sound_name,item.acc_path);
-                }
-               else if(view.getId()==R.id.fav_btn){
+                    Down_load_mp3(item.id, item.sound_name, item.acc_path);
+                } else if (view.getId() == R.id.fav_btn) {
                     Call_Api_For_Fav_sound(postion, item);
-                }
-                else {
+                } else {
                     if (thread != null && !thread.isAlive()) {
                         StopPlaying();
                         playaudio(view, item);
@@ -231,7 +265,7 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
                 }
 
 
-                Set_adapter();
+                Set_adapter(datalist);
 
 
             }else {
@@ -406,9 +440,10 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
             public void onDownloadComplete() {
                 progressDialog.dismiss();
                 Intent output = new Intent();
-                output.putExtra("isSelected","yes");
-                output.putExtra("sound_name",sound_name);
-                output.putExtra("sound_id",id);
+                Variables.audio_selected = true;
+                output.putExtra("isSelected", "yes");
+                output.putExtra("sound_name", sound_name);
+                output.putExtra("sound_id", id);
                 getActivity().setResult(RESULT_OK, output);
                 getActivity().finish();
                 getActivity().overridePendingTransition(R.anim.in_from_top, R.anim.out_from_bottom);

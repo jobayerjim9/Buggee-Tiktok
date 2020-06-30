@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -121,6 +122,7 @@ public class SignInActivity extends AppCompatActivity {
 
     public void Parse_signup_data(String loginData){
         try {
+            Log.d("signInData", loginData);
             JSONObject jsonObject=new JSONObject(loginData);
             String code=jsonObject.optString("code");
             if(code.equals("200")){

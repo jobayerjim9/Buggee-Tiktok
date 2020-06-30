@@ -162,32 +162,36 @@ public class UserVideo_F extends Fragment {
                     for (int i=0;i<user_videos.length();i++) {
                         JSONObject itemdata = user_videos.optJSONObject(i);
 
-                        Home_Get_Set item=new Home_Get_Set();
-                        item.fb_id=user_id;
+                        Home_Get_Set item = new Home_Get_Set();
+                        item.fb_id = user_id;
 
-                        item.first_name=user_info.optString("first_name");
-                        item.last_name=user_info.optString("last_name");
-                        item.profile_pic=user_info.optString("profile_pic");
+                        item.first_name = user_info.optString("first_name");
+                        item.last_name = user_info.optString("last_name");
+                        item.profile_pic = user_info.optString("profile_pic");
+                        item.account_type = user_info.optString("account_type");
+                        item.isFriend = user_info.optBoolean("isFriend");
+                        item.message_privacy = user_info.optString("message_privacy");
+                        item.comment_privacy = user_info.optString("comment_privacy");
+                        item.live_privacy = user_info.optString("live_privacy");
+                        Log.d("resp", item.fb_id + " " + item.first_name);
 
-                        Log.d("resp", item.fb_id+" "+item.first_name);
+                        JSONObject count = itemdata.optJSONObject("count");
+                        item.like_count = count.optString("like_count");
+                        item.video_comment_count = count.optString("video_comment_count");
+                        item.views = count.optString("view");
 
-                        JSONObject count=itemdata.optJSONObject("count");
-                        item.like_count=count.optString("like_count");
-                        item.video_comment_count=count.optString("video_comment_count");
-                        item.views=count.optString("view");
-
-                        JSONObject sound_data=itemdata.optJSONObject("sound");
-                        item.sound_id=sound_data.optString("id");
-                        item.sound_name=sound_data.optString("sound_name");
-                        item.sound_pic=sound_data.optString("thum");
+                        JSONObject sound_data = itemdata.optJSONObject("sound");
+                        item.sound_id = sound_data.optString("id");
+                        item.sound_name = sound_data.optString("sound_name");
+                        item.sound_pic = sound_data.optString("thum");
 
 
-                        item.video_id=itemdata.optString("id");
-                        item.liked=itemdata.optString("liked");
-                        item.gif=itemdata.optString("gif");
-                        item.video_url=itemdata.optString("video");
-                        item.thum=itemdata.optString("thum");
-                        item.created_date=itemdata.optString("created");
+                        item.video_id = itemdata.optString("id");
+                        item.liked = itemdata.optString("liked");
+                        item.gif = itemdata.optString("gif");
+                        item.video_url = itemdata.optString("video");
+                        item.thum = itemdata.optString("thum");
+                        item.created_date = itemdata.optString("created");
 
                         item.video_description=itemdata.optString("description");
 

@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,17 +64,17 @@ public class Notification_Receive extends FirebaseMessagingService {
 
 
         if (remoteMessage.getData().size() > 0) {
-            sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
+            sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
             title = remoteMessage.getData().get("title");
             message = remoteMessage.getData().get("body");
-            pic=remoteMessage.getData().get("icon");
-            senderid=remoteMessage.getData().get("senderid");
-            receiverid=remoteMessage.getData().get("receiverid");
-            action_type=remoteMessage.getData().get("action_type");
+            pic = remoteMessage.getData().get("icon");
+            senderid = remoteMessage.getData().get("senderid");
+            receiverid = remoteMessage.getData().get("receiverid");
+            action_type = remoteMessage.getData().get("action_type");
+            Log.d("notification", action_type);
+            if (!Chat_Activity.senderid_for_check_notification.equals(senderid)) {
 
-            if(!Chat_Activity.senderid_for_check_notification.equals(senderid)){
-
-                sendNotification sendNotification=new sendNotification(this);
+                sendNotification sendNotification = new sendNotification(this);
                 sendNotification.execute(pic);
 
             }

@@ -70,7 +70,7 @@ class Favourite_Sound_Adapter extends RecyclerView.Adapter<Favourite_Sound_Adapt
                 Uri uri = Uri.parse(item.thum);
                 holder.sound_image.setImageURI(uri);
             }
-            holder.fav_btn.setImageDrawable(context.getDrawable(R.drawable.ic_my_favourite));
+            holder.fav_btn.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_bookmark_24));
             holder.bind(i, datalist.get(i), listener);
 
 

@@ -2,6 +2,7 @@ package com.android.buggee.Home;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,13 +13,13 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SoundLists.VideoSound_A;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -35,14 +36,15 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -98,6 +100,11 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 
+import io.agora.rtc.Constants;
+import io.agora.rtc.IRtcEngineEventHandler;
+import io.agora.rtc.RtcEngine;
+import io.agora.rtc.video.VideoCanvas;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -109,93 +116,289 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     View view;
     Context context;
+    private RtcEngine mRtcEngine;
 
-
-    RecyclerView recyclerView;
+    RecyclerView recyclerView, liveRecycler;
     ArrayList<Home_Get_Set> data_list;
-    int currentPage=-1;
-    LinearLayoutManager layoutManager;
+    ArrayList<LiveData> liveData = new ArrayList<>();
+    int currentPage = -1, liveCurrentPage = -1;
+    LinearLayoutManager layoutManager, liveLayoutManager;
+    LiveAdapter liveAdapter;
+    ProgressBar p_bar, live_progress;
+    TextView noItem;
+    SwipeRefreshLayout swiperefresh, liveSwipeRefresh;
+    int active = 1;
+    boolean is_user_stop_video = false;
 
-    ProgressBar p_bar;
-
-    SwipeRefreshLayout swiperefresh;
-
-    boolean is_user_stop_video=false;
     public Home_F() {
         // Required empty public constructor
     }
 
-    int swipe_count=0;
+    int swipe_count = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view= inflater.inflate(R.layout.fragment_home, container, false);
-        context=getContext();
+        try {
 
-        p_bar=view.findViewById(R.id.p_bar);
+            view = inflater.inflate(R.layout.fragment_home, container, false);
+            context = getContext();
+            initializeEngine();
+            p_bar = view.findViewById(R.id.p_bar);
+            live_progress = view.findViewById(R.id.live_progress);
+            noItem = view.findViewById(R.id.noItem);
+            TabLayout homeTab = view.findViewById(R.id.homeTab);
+            homeTab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    if (tab.getPosition() == 0 || tab.getPosition() == 1) {
+                        swiperefresh.setVisibility(View.VISIBLE);
+                        liveSwipeRefresh.setVisibility(View.GONE);
+                        noItem.setVisibility(View.GONE);
+                        active = 1;
+                        removePreviousRemoteView();
+                    } else if (tab.getPosition() == 2) {
+                        swiperefresh.setVisibility(View.GONE);
+                        liveSwipeRefresh.setVisibility(View.VISIBLE);
+                        active = 3;
+                        Release_Privious_Player();
+                        removePreviousRemoteView();
+                        getAllLiveVideo();
+                    }
+                }
 
-        recyclerView=view.findViewById(R.id.recylerview);
-        layoutManager=new LinearLayoutManager(context);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(false);
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
 
-        SnapHelper snapHelper =  new PagerSnapHelper();
-         snapHelper.attachToRecyclerView(recyclerView);
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+                    if (tab.getPosition() == 0 || tab.getPosition() == 1) {
+                        swiperefresh.setVisibility(View.VISIBLE);
+                        liveSwipeRefresh.setVisibility(View.GONE);
+                        noItem.setVisibility(View.GONE);
+                        active = 1;
+                        removePreviousRemoteView();
+                    } else if (tab.getPosition() == 2) {
+                        swiperefresh.setVisibility(View.GONE);
+                        liveSwipeRefresh.setVisibility(View.VISIBLE);
+                        active = 3;
+                        Release_Privious_Player();
+                        getAllLiveVideo();
+                    }
+
+                }
+            });
+            recyclerView = view.findViewById(R.id.recylerview);
+            layoutManager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setHasFixedSize(false);
+            SnapHelper snapHelper = new PagerSnapHelper();
+            snapHelper.attachToRecyclerView(recyclerView);
+
+            liveRecycler = view.findViewById(R.id.liveRecycler);
+            liveLayoutManager = new LinearLayoutManager(context);
+            liveRecycler.setLayoutManager(liveLayoutManager);
+            liveRecycler.setHasFixedSize(false);
+
+            SnapHelper snapHelper1 = new PagerSnapHelper();
+            snapHelper1.attachToRecyclerView(liveRecycler);
+
+            getAllLiveVideo();
 
 
+            // this is the scroll listener of recycler view which will tell the current item number
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
 
-        // this is the scroll listener of recycler view which will tell the current item number
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                }
+
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    //here we find the current item number
+                    final int scrollOffset = recyclerView.computeVerticalScrollOffset();
+                    final int height = recyclerView.getHeight();
+                    int page_no = scrollOffset / height;
+
+                    if (page_no != currentPage) {
+                        currentPage = page_no;
+
+                        Release_Privious_Player();
+                        Set_Player(currentPage);
+
+                    }
+                }
+            });
+
+
+            swiperefresh = view.findViewById(R.id.swiperefresh);
+            swiperefresh.setProgressViewOffset(false, 0, 200);
+
+            swiperefresh.setColorSchemeResources(R.color.black);
+            swiperefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    currentPage = -1;
+                    Call_Api_For_get_Allvideos();
+                }
+            });
+
+            liveSwipeRefresh = view.findViewById(R.id.liveSwipeRefresh);
+            liveSwipeRefresh.setProgressViewOffset(false, 0, 200);
+
+            liveSwipeRefresh.setColorSchemeResources(R.color.black);
+            liveSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    liveCurrentPage = -1;
+                    getAllLiveVideo();
+                }
+            });
+
+            Call_Api_For_get_Allvideos();
+
+            Load_add();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return view;
+    }
+
+    private void getAllLiveVideo() {
+        live_progress.setVisibility(View.VISIBLE);
+        ApiRequest.Call_Api(context, Variables.getAllLive, null, new Callback() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
+            public void Responce(String resp) {
+                Log.d("liveResponse", resp);
+                try {
+                    JSONObject jsonObject = new JSONObject(resp);
 
-            }
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                //here we find the current item number
-                final int scrollOffset = recyclerView.computeVerticalScrollOffset();
-                final int height = recyclerView.getHeight();
-                int page_no=scrollOffset / height;
+                    String code = jsonObject.optString("code");
+                    if (code.equals("200")) {
+                        liveData.clear();
+                        liveCurrentPage = -1;
+                        JSONArray msgArray = jsonObject.getJSONArray("msg");
+                        for (int i = 0; i < msgArray.length(); i++) {
+                            JSONObject itemdata = msgArray.optJSONObject(i);
+                            LiveData item = new LiveData();
+                            JSONObject user_info = itemdata.optJSONObject("user_info");
+                            JSONObject video_info = itemdata.optJSONObject("video_info");
+                            item.live_id = video_info.optString("live_id");
+                            item.username = user_info.optString("username");
+                            item.fb_id = user_info.optString("fb_id");
+                            item.first_name = user_info.optString("first_name");
+                            item.last_name = user_info.optString("last_name");
+                            item.profile_pic = user_info.optString("profile_pic");
+                            item.block = user_info.optString("block");
+                            item.account_type = user_info.optString("account_type");
+                            item.comment_privacy = user_info.optString("comment_privacy");
+                            item.live_privacy = user_info.optString("live_privacy");
+                            item.live_name = video_info.optString("live_name");
+                            item.live_details = video_info.optString("live_details");
+                            liveData.add(item);
 
-                if(page_no!=currentPage ){
-                    currentPage=page_no;
 
-                    Release_Privious_Player();
-                    Set_Player(currentPage);
+                        }
+                        liveSwipeRefresh.setRefreshing(false);
+                        liveAdapter = new LiveAdapter(context, liveData, new LiveAdapter.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(int position, LiveData item, View view) {
+                                switch (view.getId()) {
+                                    case R.id.comment_layout:
+                                        openLiveComment(item);
+                                        break;
+                                    case R.id.user_pic:
+                                    case R.id.user_pic2:
+                                        OpenLiveProfile(item, true);
+                                        break;
 
+                                }
+                            }
+                        });
+                        liveAdapter.setHasStableIds(true);
+                        liveRecycler.setAdapter(liveAdapter);
+                        liveRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                            @Override
+                            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                                super.onScrollStateChanged(recyclerView, newState);
+                            }
+
+                            @Override
+                            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                                super.onScrolled(recyclerView, dx, dy);
+                                final int scrollOffset = recyclerView.computeVerticalScrollOffset();
+                                final int height = recyclerView.getHeight();
+                                int page_no = scrollOffset / height;
+
+                                if (page_no != liveCurrentPage) {
+                                    liveCurrentPage = page_no;
+                                    removePreviousRemoteView();
+                                    Log.d("livePageOnScrolled", liveCurrentPage + "");
+                                    joinChannel(liveData.get(liveCurrentPage).live_id, liveCurrentPage);
+                                }
+
+                            }
+                        });
+                        if (active == 3) {
+
+                            if (liveData.size() > 0) {
+                                noItem.setVisibility(View.GONE);
+
+                            } else {
+                                live_progress.setVisibility(View.GONE);
+                                noItem.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
         });
 
 
+    }
 
-        swiperefresh=view.findViewById(R.id.swiperefresh);
-        swiperefresh.setProgressViewOffset(false, 0, 200);
+    private void openLiveComment(LiveData item) {
 
-        swiperefresh.setColorSchemeResources(R.color.black);
-        swiperefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                currentPage=-1;
-                Call_Api_For_get_Allvideos();
-            }
-        });
+        if (!item.comment_privacy.equals("only me") && item.comment_privacy.equals("everyone")) {
 
-        Call_Api_For_get_Allvideos();
+            Comment_F comment_f = new Comment_F();
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
+            Bundle args = new Bundle();
+            args.putString("video_type", "live");
+            args.putString("video_id", item.live_id);
+            args.putString("user_id", item.fb_id);
+            comment_f.setArguments(args);
+            transaction.addToBackStack(null);
+            transaction.replace(R.id.MainMenuFragment, comment_f).commit();
+        } else if (item.comment_privacy.equals("friend")) {
+            Comment_F comment_f = new Comment_F();
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
+            Bundle args = new Bundle();
+            args.putString("video_type", "live");
+            args.putString("video_id", item.live_id);
+            args.putString("user_id", item.live_id);
+            comment_f.setArguments(args);
+            transaction.addToBackStack(null);
+            transaction.replace(R.id.MainMenuFragment, comment_f).commit();
+        }
 
-        Load_add();
 
-        return view;
     }
 
 
-
-
     InterstitialAd mInterstitialAd;
+
     public void Load_add() {
 
         // this is test app id you will get the actual id when you add app in your
@@ -232,17 +435,21 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
                 switch(view.getId()) {
                     case R.id.smallPlusButton:
-                        Follow_unFollow_User(item,postion);
+                        if (item.account_type.equals("private")) {
+                            sentFriendRequest(item);
+                        } else {
+                            Follow_unFollow_User(item, postion);
+                        }
                         break;
 
                     case R.id.user_pic:
                         onPause();
-                        OpenProfile(item,false);
+                        OpenProfile(item, false);
                         break;
 
                     case R.id.username:
                         onPause();
-                        OpenProfile(item,false);
+                        OpenProfile(item, false);
                         break;
 
                     case R.id.like_layout:
@@ -270,7 +477,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                                     public void Responce(Bundle bundle) {
 
                                         if (bundle.getString("action").equals("save")) {
-                                            Save_Video(item);
+                                            // Save_Video(item);
                                         } else if (bundle.getString("action").equals("delete")) {
                                             Functions.Show_loader(context, false, false);
                                             Functions.Call_Api_For_Delete_Video(getActivity(), item.video_id, new API_CallBack() {
@@ -314,7 +521,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                                 intent.putExtra("data", item);
                                 startActivity(intent);
                             }
-                        }else {
+                        } else {
                             Toast.makeText(context, "Please Login.", Toast.LENGTH_SHORT).show();
                         }
 
@@ -322,13 +529,15 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 }
 
             }
-        });
+         });
 
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
 
     }
 
+    private void sentFriendRequest(Home_Get_Set item) {
+    }
 
 
     // Bottom two function will call the api and get all the videos form api and parse the json data
@@ -350,6 +559,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
             @Override
             public void Responce(String resp) {
                 swiperefresh.setRefreshing(false);
+                Log.d("videoLoadResoponse", resp);
                 Parse_data(resp);
             }
         });
@@ -369,30 +579,34 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 JSONArray msgArray=jsonObject.getJSONArray("msg");
                 for (int i=0;i<msgArray.length();i++) {
                     JSONObject itemdata = msgArray.optJSONObject(i);
-                    Home_Get_Set item=new Home_Get_Set();
-                    item.fb_id=itemdata.optString("fb_id");
+                    Home_Get_Set item = new Home_Get_Set();
+                    item.fb_id = itemdata.optString("fb_id");
 
-                    JSONObject user_info=itemdata.optJSONObject("user_info");
+                    JSONObject user_info = itemdata.optJSONObject("user_info");
+                    item.account_type = user_info.optString("account_type");
+                    item.isFriend = user_info.optBoolean("isFriend");
+                    item.message_privacy = user_info.optString("message_privacy");
+                    item.comment_privacy = user_info.optString("comment_privacy");
+                    item.live_privacy = user_info.optString("live_privacy");
+                    item.username = user_info.optString("username");
+                    item.first_name = user_info.optString("first_name", context.getResources().getString(R.string.app_name));
+                    item.last_name = user_info.optString("last_name", "User");
+                    item.profile_pic = user_info.optString("profile_pic", "null");
 
-                    item.username=user_info.optString("username");
-                    item.first_name=user_info.optString("first_name",context.getResources().getString(R.string.app_name));
-                    item.last_name=user_info.optString("last_name","User");
-                    item.profile_pic=user_info.optString("profile_pic","null");
+                    JSONObject sound_data = itemdata.optJSONObject("sound");
+                    item.sound_id = sound_data.optString("id");
+                    item.sound_name = sound_data.optString("sound_name");
+                    item.sound_pic = sound_data.optString("thum");
 
-                    JSONObject sound_data=itemdata.optJSONObject("sound");
-                    item.sound_id=sound_data.optString("id");
-                    item.sound_name=sound_data.optString("sound_name");
-                    item.sound_pic=sound_data.optString("thum");
+                    JSONObject count = itemdata.optJSONObject("count");
+                    item.like_count = count.optString("like_count");
+                    item.video_comment_count = count.optString("video_comment_count");
+                    item.video_id = itemdata.optString("id");
+                    item.liked = itemdata.optString("liked");
+                    item.video_url = itemdata.optString("video");
+                    item.video_description = itemdata.optString("description");
 
-                    JSONObject count=itemdata.optJSONObject("count");
-                    item.like_count=count.optString("like_count");
-                    item.video_comment_count=count.optString("video_comment_count");
-                    item.video_id=itemdata.optString("id");
-                    item.liked=itemdata.optString("liked");
-                    item.video_url=itemdata.optString("video");
-                    item.video_description=itemdata.optString("description");
-
-                    item.thum=itemdata.optString("thum");
+                    item.thum = itemdata.optString("thum");
                     item.created_date=itemdata.optString("created");
 
                     data_list.add(item);
@@ -413,7 +627,6 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
 
     private void Call_Api_For_Singlevideos(final int postion) {
-
 
         JSONObject parameters = new JSONObject();
         try {
@@ -446,30 +659,33 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 JSONArray msgArray=jsonObject.getJSONArray("msg");
                 for (int i=0;i<msgArray.length();i++) {
                     JSONObject itemdata = msgArray.optJSONObject(i);
-                    Home_Get_Set item=new Home_Get_Set();
-                    item.fb_id=itemdata.optString("fb_id");
+                    Home_Get_Set item = new Home_Get_Set();
+                    item.fb_id = itemdata.optString("fb_id");
 
-                    JSONObject user_info=itemdata.optJSONObject("user_info");
+                    JSONObject user_info = itemdata.optJSONObject("user_info");
+                    item.account_type = user_info.optString("account_type");
+                    item.isFriend = user_info.optBoolean("isFriend");
+                    item.message_privacy = user_info.optString("message_privacy");
+                    item.comment_privacy = user_info.optString("comment_privacy");
+                    item.live_privacy = user_info.optString("live_privacy");
+                    item.username = user_info.optString("username");
+                    item.first_name = user_info.optString("first_name", context.getResources().getString(R.string.app_name));
+                    item.last_name = user_info.optString("last_name", "User");
+                    item.profile_pic = user_info.optString("profile_pic", "null");
 
-                    item.username=user_info.optString("username");
-                    item.first_name=user_info.optString("first_name",context.getResources().getString(R.string.app_name));
-                    item.last_name=user_info.optString("last_name","User");
-                    item.profile_pic=user_info.optString("profile_pic","null");
-
-                    JSONObject sound_data=itemdata.optJSONObject("sound");
-                    item.sound_id=sound_data.optString("id");
-                    item.sound_name=sound_data.optString("sound_name");
-                    item.sound_pic=sound_data.optString("thum");
-
-
-
-                    JSONObject count=itemdata.optJSONObject("count");
-                    item.like_count=count.optString("like_count");
-                    item.video_comment_count=count.optString("video_comment_count");
+                    JSONObject sound_data = itemdata.optJSONObject("sound");
+                    item.sound_id = sound_data.optString("id");
+                    item.sound_name = sound_data.optString("sound_name");
+                    item.sound_pic = sound_data.optString("thum");
 
 
-                    item.video_id=itemdata.optString("id");
-                    item.liked=itemdata.optString("liked");
+                    JSONObject count = itemdata.optJSONObject("count");
+                    item.like_count = count.optString("like_count");
+                    item.video_comment_count = count.optString("video_comment_count");
+
+
+                    item.video_id = itemdata.optString("id");
+                    item.liked = itemdata.optString("liked");
                     item.video_url=itemdata.optString("video");
                     item.video_description=itemdata.optString("description");
 
@@ -500,7 +716,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     // this will call when swipe for another video and
     // this function will set the player to the current video
     public void Set_Player(final int currentPage){
-
+        Log.d("exoplayerCurrentPage", currentPage + "");
             final Home_Get_Set item= data_list.get(currentPage);
             DefaultTrackSelector trackSelector = new DefaultTrackSelector();
              final SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
@@ -767,33 +983,83 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     // this will open the comment screen
     private void OpenComment(Home_Get_Set item) {
 
-        int comment_counnt=Integer.parseInt(item.video_comment_count);
+        if (!item.comment_privacy.equals("only me") && item.comment_privacy.equals("everyone")) {
+            int comment_counnt = Integer.parseInt(item.video_comment_count);
 
-        Fragment_Data_Send fragment_data_send=this;
+            Fragment_Data_Send fragment_data_send = this;
 
-        Comment_F comment_f = new Comment_F(comment_counnt,fragment_data_send);
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
-        Bundle args = new Bundle();
-        args.putString("video_id",item.video_id);
-        args.putString("user_id",item.fb_id);
-        comment_f.setArguments(args);
-        transaction.addToBackStack(null);
-        transaction.replace(R.id.MainMenuFragment, comment_f).commit();
+            Comment_F comment_f = new Comment_F(comment_counnt, fragment_data_send);
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
+            Bundle args = new Bundle();
+            args.putString("video_type", "recorded");
+            args.putString("video_id", item.video_id);
+            args.putString("user_id", item.fb_id);
+            comment_f.setArguments(args);
+            transaction.addToBackStack(null);
+            transaction.replace(R.id.MainMenuFragment, comment_f).commit();
+        } else if (item.comment_privacy.equals("friend")) {
+            if (item.isFriend) {
+                int comment_counnt = Integer.parseInt(item.video_comment_count);
+
+                Fragment_Data_Send fragment_data_send = this;
+
+                Comment_F comment_f = new Comment_F(comment_counnt, fragment_data_send);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
+                Bundle args = new Bundle();
+                args.putString("video_type", "recorded");
+                args.putString("video_id", item.video_id);
+                args.putString("user_id", item.fb_id);
+                comment_f.setArguments(args);
+                transaction.addToBackStack(null);
+                transaction.replace(R.id.MainMenuFragment, comment_f).commit();
+            } else {
+                Toast.makeText(context, "You cannot view comment!", Toast.LENGTH_SHORT).show();
+            }
+        }
 
 
     }
 
+    private void OpenLiveProfile(LiveData item, boolean from_right_to_left) {
+        if (Variables.sharedPreferences.getString(Variables.u_id, "0").equals(item.fb_id)) {
+            TabLayout.Tab profile = MainMenuFragment.tabLayout.getTabAt(4);
+            profile.select();
+
+        } else {
+            Profile_F profile_f = new Profile_F();
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            if (from_right_to_left)
+                transaction.setCustomAnimations(R.anim.in_from_right, R.anim.out_to_left, R.anim.in_from_left, R.anim.out_to_right);
+            else
+                transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
+
+            Bundle args = new Bundle();
+
+            args.putString("user_id", item.fb_id);
+            args.putBoolean("isFriend", true);
+            args.putString("account_type", item.account_type);
+            args.putString("message_privacy", item.account_type);
+            args.putString("comment_privacy", item.comment_privacy);
+            args.putString("live_privacy", item.live_privacy);
+            args.putString("user_name", item.first_name + " " + item.last_name);
+            args.putString("user_pic", item.profile_pic);
+            profile_f.setArguments(args);
+            transaction.addToBackStack(null);
+            transaction.replace(R.id.MainMenuFragment, profile_f).commit();
+        }
+
+    }
 
 
     // this will open the profile of user which have uploaded the currenlty running video
     private void OpenProfile(Home_Get_Set item,boolean from_right_to_left) {
-        if(Variables.sharedPreferences.getString(Variables.u_id,"0").equals(item.fb_id)){
+        if (Variables.sharedPreferences.getString(Variables.u_id, "0").equals(item.fb_id)) {
+//            TabLayout.Tab profile= MainMenuFragment.tabLayout.getTabAt(4);
+//            profile.select();
 
-            TabLayout.Tab profile= MainMenuFragment.tabLayout.getTabAt(4);
-            profile.select();
-
-        }else {
+        } else {
             Profile_F profile_f = new Profile_F(new Fragment_Callback() {
                 @Override
                 public void Responce(Bundle bundle) {
@@ -801,15 +1067,21 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 }
             });
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            if(from_right_to_left)
-            transaction.setCustomAnimations(R.anim.in_from_right, R.anim.out_to_left, R.anim.in_from_left, R.anim.out_to_right);
+            if (from_right_to_left)
+                transaction.setCustomAnimations(R.anim.in_from_right, R.anim.out_to_left, R.anim.in_from_left, R.anim.out_to_right);
             else
                 transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
 
             Bundle args = new Bundle();
+
             args.putString("user_id", item.fb_id);
-            args.putString("user_name",item.first_name+" "+item.last_name);
-            args.putString("user_pic",item.profile_pic);
+            args.putBoolean("isFriend", item.isFriend);
+            args.putString("account_type", item.account_type);
+            args.putString("message_privacy", item.account_type);
+            args.putString("comment_privacy", item.comment_privacy);
+            args.putString("live_privacy", item.live_privacy);
+            args.putString("user_name", item.first_name + " " + item.last_name);
+            args.putString("user_pic", item.profile_pic);
             profile_f.setArguments(args);
             transaction.addToBackStack(null);
             transaction.replace(R.id.MainMenuFragment, profile_f).commit();
@@ -849,16 +1121,13 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
             public void onClick(DialogInterface dialog, int item) {
 
-                if (options[item].equals("Save Video"))
-
-                {
-                    if(Functions.Checkstoragepermision(getActivity()))
-                    Save_Video(home_get_set);
-
-                }
+                if (options[item].equals("Save Video")) {
+                    if (Functions.Checkstoragepermision(getActivity())) {
+                        // Save_Video(home_get_set);
+                    }
 
 
-                else if (options[item].equals("Cancel")) {
+                } else if (options[item].equals("Cancel")) {
 
                     dialog.dismiss();
 
@@ -1058,8 +1327,13 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(privious_player!=null){
+        if (privious_player != null) {
             privious_player.release();
+        }
+        if (mRtcEngine != null) {
+            mRtcEngine.leaveChannel();
+            RtcEngine.destroy();
+            mRtcEngine = null;
         }
     }
 
@@ -1164,18 +1438,19 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     }
 
 
-    public  String follow_status="0";
-    public void Follow_unFollow_User(Home_Get_Set home_get_set, final int position){
+    String follow_status = "0";
+
+    public void Follow_unFollow_User(Home_Get_Set home_get_set, final int position) {
 
         final String send_status;
-        if(follow_status.equals("0")){
-            send_status="1";
-        }else {
-            send_status="0";
+        if (follow_status.equals("0")) {
+            send_status = "1";
+        } else {
+            send_status = "0";
         }
 
         Functions.Call_Api_For_Follow_or_unFollow(getActivity(),
-                Variables.sharedPreferences.getString(Variables.u_id,""),
+                Variables.sharedPreferences.getString(Variables.u_id, ""),
                 home_get_set.fb_id,
                 send_status,
                 new API_CallBack() {
@@ -1188,11 +1463,10 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                     @Override
                     public void OnSuccess(String responce) {
 
-                        if(send_status.equals("1")){
-                            data_list.get(position).followed=1;
-                        }
-                        else if(send_status.equals("0")){
-                            data_list.get(position).followed=0;
+                        if (send_status.equals("1")) {
+                            data_list.get(position).followed = 1;
+                        } else if (send_status.equals("0")) {
+                            data_list.get(position).followed = 0;
                         }
                         adapter.notifyDataSetChanged();
                     }
@@ -1205,5 +1479,141 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 });
 
 
+    }
+    //Live Video Section
+
+    private final IRtcEngineEventHandler mRtcEventHandler = new IRtcEngineEventHandler() {
+        @Override
+        // Listen for the onJoinChannelSuccess callback.
+        // This callback occurs when the local user successfully joins the channel.
+        public void onJoinChannelSuccess(String channel, final int uid, int elapsed) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i("agora", "Join channel success, uid: " + (uid & 0xFFFFFFFFL));
+                    //  setupRemoteVideo(uid);
+                }
+            });
+        }
+
+        @Override
+        // Listen for the onFirstRemoteVideoDecoded callback.
+        // This callback occurs when the first video frame of the broadcaster is received and decoded after the broadcaster successfully joins the channel.
+        // You can call the setupRemoteVideo method in this callback to set up the remote video view.
+        public void onFirstRemoteVideoDecoded(final int uid, int width, int height, int elapsed) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    live_progress.setVisibility(View.GONE);
+                    Log.i("agora", "First remote video decoded, uid: " + (uid & 0xFFFFFFFFL));
+                    //setupRemoteVideo(uid);
+                    if (liveCurrentPage < 0) {
+                        setupRemoteVideo(uid, 0);
+                    } else {
+                        setupRemoteVideo(uid, liveCurrentPage);
+                    }
+                }
+            });
+        }
+
+        @Override
+        // Listen for the onUserOffline callback.
+        // This callback occurs when the broadcaster leaves the channel or drops offline.
+        public void onUserOffline(final int uid, int reason) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Toast.makeText(context, "Broadcaster Gone Offline!", Toast.LENGTH_SHORT).show();
+                    //  mRtcEngine.leaveChannel();
+                    Log.i("agora", "User offline, uid: " + (uid & 0xFFFFFFFFL));
+                    getAllLiveVideo();
+                    //onRemoteUserLeft();
+                }
+            });
+        }
+    };
+
+    private void initializeEngine() {
+        try {
+            mRtcEngine = RtcEngine.create(activity.getBaseContext(), getString(R.string.private_app_id), mRtcEventHandler);
+            setChannelProfile();
+        } catch (Exception e) {
+            Log.e("initEngine", Log.getStackTraceString(e));
+            throw new RuntimeException("NEED TO check rtc sdk init fatal error\n" + Log.getStackTraceString(e));
+        }
+    }
+
+    private void setChannelProfile() {
+        mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
+        mRtcEngine.setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
+        //joinChannel();
+    }
+
+    private void setupLocalVideo(final int currentPage) {
+        Log.d("liveCurrentPage", currentPage + "");
+        // Enable the video module.
+        mRtcEngine.enableVideo();
+        View layout = liveLayoutManager.findViewByPosition(currentPage);
+        // Create a SurfaceView object.
+        RecyclerView.ViewHolder vie = liveRecycler.findViewHolderForAdapterPosition(currentPage);
+        FrameLayout mLocalContainer = layout.findViewById(R.id.videoholder);
+        SurfaceView mLocalView;
+        localFrame = mLocalContainer;
+        mLocalView = RtcEngine.CreateRendererView(activity.getBaseContext());
+        mLocalView.setZOrderMediaOverlay(true);
+        mLocalContainer.addView(mLocalView);
+        // Set the local video view.
+        VideoCanvas localVideoCanvas = new VideoCanvas(mLocalView, VideoCanvas.RENDER_MODE_HIDDEN, 0);
+
+        mRtcEngine.setupLocalVideo(localVideoCanvas);
+
+    }
+
+    private void removePreviousRemoteView() {
+        if (previousFrame != null) {
+            mRtcEngine.leaveChannel();
+            previousFrame.removeAllViews();
+            localFrame.removeAllViews();
+        }
+    }
+
+    private FrameLayout previousFrame, localFrame;
+
+    private void setupRemoteVideo(int uid, final int currentPage) {
+        Log.d("videoSetup", "start");
+        Toast.makeText(context, uid + "", Toast.LENGTH_SHORT).show();
+        // Create a SurfaceView object.
+        View layout = liveLayoutManager.findViewByPosition(currentPage);
+        FrameLayout mRemoteContainer = layout.findViewById(R.id.videoholder);
+        SurfaceView mRemoteView;
+
+        mRemoteView = RtcEngine.CreateRendererView(activity.getBaseContext());
+        mRemoteView.setZOrderMediaOverlay(true);
+        mRemoteContainer.addView(mRemoteView);
+        previousFrame = mRemoteContainer;
+
+        // Set the remote video view.
+        mRtcEngine.setupRemoteVideo(new VideoCanvas(mRemoteView, VideoCanvas.RENDER_MODE_FILL, uid));
+
+    }
+
+    private void joinChannel(String liveId, int currentPage) {
+        mRtcEngine.enableVideo();
+        Log.d("ChannelJoin", "start");
+        // For SDKs earlier than v3.0.0, call this method to enable interoperability between the Native SDK and the Web SDK if the Web SDK is in the channel. As of v3.0.0, the Native SDK enables the interoperability with the Web SDK by default.
+        mRtcEngine.enableWebSdkInteroperability(true);
+        // Join a channel with a token.
+        String mRoomName = Variables.user_id;
+        mRtcEngine.joinChannel(null, liveId, "Extra Data", 0);
+        setupLocalVideo(currentPage);
+    }
+
+    private Activity activity;
+
+    @Override
+    public void onAttach(@NonNull Activity activity) {
+        super.onAttach(activity);
+        this.activity = activity;
     }
 }

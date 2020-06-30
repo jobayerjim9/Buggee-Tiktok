@@ -24,8 +24,19 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\jobay\AppData\Local\Temp\ic_android_black_24dp.xml" />
+                                                <entry key="imagePath" value="C:\Users\jobay\AppData\Local\Temp\baseline_image_24.xml" />
                                                 <entry key="opacityPercent" value="80" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                      <entry key="clipartAsset">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/image/baseline_image_24.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -37,7 +48,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\jobay\OneDrive\Desktop\Buggee\Icons\small-plus-rightside\drawable-xxxhdpi\small-plus.png" />
+                                                <entry key="imagePath" value="C:\Users\jobay\OneDrive\Desktop\Buggee\settings page\terms\drawable-xxxhdpi\check-circle.png" />
                                                 <entry key="opacityPercent" value="80" />
                                               </map>
                                             </option>
@@ -70,11 +81,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\jobay\OneDrive\Desktop\Buggee\Icons\small-plus-rightside\drawable-xxxhdpi\small-plus.png" />
-                                      <entry key="outputName" value="ic_small_plus" />
+                                      <entry key="imageAsset" value="C:\Users\jobay\OneDrive\Desktop\Buggee\settings page\terms\drawable-xxxhdpi\check-circle.png" />
+                                      <entry key="outputName" value="ic_image_placeholder" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="37517e" />
+                                      <entry key="themeColor" value="00b9ff" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -345,7 +355,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/arrow_forward_ios/baseline_arrow_forward_ios_24.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/search/baseline_search_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -356,9 +366,9 @@
                         <option name="values">
                           <map>
                             <entry key="autoMirrored" value="true" />
-                            <entry key="color" value="04a8e8" />
-                            <entry key="outputName" value="ic_baseline_arrow_forward_ios_24" />
-                            <entry key="sourceFile" value="C:\Users\jobay\OneDrive\Desktop\Current Project\camera.svg" />
+                            <entry key="color" value="ffffff" />
+                            <entry key="outputName" value="ic_baseline_search_24_white" />
+                            <entry key="sourceFile" value="C:\Users\jobay\OneDrive\Desktop\Buggee\music-and-multimedia.svg" />
                           </map>
                         </option>
                       </PersistentState>

@@ -54,14 +54,14 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
     Context context;
 
 
-   public  TextView follow_unfollow_btn;
-   public  TextView username,video_count_txt;
-   public  ImageView imageView;
-   public  TextView follow_count_txt,fans_count_txt,heart_count_txt;
+    public TextView follow_unfollow_btn;
+    public TextView username, video_count_txt;
+    public ImageView imageView;
+    public TextView follow_count_txt, fans_count_txt, heart_count_txt;
 
-    ImageView back_btn,setting_btn;
-
-    String user_id,user_name,user_pic;
+    ImageView back_btn, setting_btn;
+    Boolean isFriend;
+    String user_id, user_name, user_pic, account_type, message_privacy, comment_privacy, live_privacy;
 
     Bundle bundle;
 
@@ -71,7 +71,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
 
     private ViewPagerAdapter adapter;
 
-    public boolean isdataload=false;
+    public boolean isdataload = false;
 
 
     RelativeLayout tabs_main_layout;
@@ -101,16 +101,20 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view= inflater.inflate(R.layout.fragment_profile, container, false);
-        context=getContext();
+        view = inflater.inflate(R.layout.fragment_profile, container, false);
+        context = getContext();
 
 
-
-         bundle=getArguments();
-        if(bundle!=null){
-            user_id=bundle.getString("user_id");
-            user_name=bundle.getString("user_name");
-            user_pic=bundle.getString("user_pic");
+        bundle = getArguments();
+        if (bundle != null) {
+            user_id = bundle.getString("user_id");
+            account_type = bundle.getString("account_type");
+            message_privacy = bundle.getString("message_privacy");
+            live_privacy = bundle.getString("live_privacy");
+            isFriend = bundle.getBoolean("isFriend");
+            comment_privacy = bundle.getString("comment_privacy");
+            user_name = bundle.getString("user_name");
+            user_pic = bundle.getString("user_pic");
         }
 
 
@@ -121,15 +125,19 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.user_image:
                 OpenfullsizeImage(pic_url);
                 break;
 
             case R.id.follow_unfollow_btn:
 
-                if(Variables.sharedPreferences.getBoolean(Variables.islogin,false))
-                    Follow_unFollow_User();
+                if (Variables.sharedPreferences.getBoolean(Variables.islogin, false))
+                    if (account_type.equals("private")) {
+                        sentFollowRequest();
+                    } else {
+                        Follow_unFollow_User();
+                    }
                 else
                     Toast.makeText(context, "Please login in to app", Toast.LENGTH_SHORT).show();
 
@@ -153,31 +161,36 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         }
     }
 
+    private void sentFollowRequest() {
+    }
 
 
-    public View init(){
+    public View init() {
 
-        username=view.findViewById(R.id.username);
-        imageView=view.findViewById(R.id.user_image);
+        username = view.findViewById(R.id.username);
+        imageView = view.findViewById(R.id.user_image);
         imageView.setOnClickListener(this);
 
-        video_count_txt=view.findViewById(R.id.video_count_txt);
+        video_count_txt = view.findViewById(R.id.video_count_txt);
 
-        follow_count_txt=view.findViewById(R.id.follow_count_txt);
-        fans_count_txt=view.findViewById(R.id.fan_count_txt);
-        heart_count_txt=view.findViewById(R.id.heart_count_txt);
+        follow_count_txt = view.findViewById(R.id.follow_count_txt);
+        fans_count_txt = view.findViewById(R.id.fan_count_txt);
+        heart_count_txt = view.findViewById(R.id.heart_count_txt);
 
 
-
-        setting_btn=view.findViewById(R.id.setting_btn);
+        setting_btn = view.findViewById(R.id.setting_btn);
         setting_btn.setOnClickListener(this);
 
-        back_btn=view.findViewById(R.id.back_btn);
+        back_btn = view.findViewById(R.id.back_btn);
         back_btn.setOnClickListener(this);
 
-        follow_unfollow_btn=view.findViewById(R.id.follow_unfollow_btn);
+        follow_unfollow_btn = view.findViewById(R.id.follow_unfollow_btn);
         follow_unfollow_btn.setOnClickListener(this);
-
+        if (isFriend) {
+            follow_unfollow_btn.setText("UnFollow");
+        } else {
+            follow_unfollow_btn.setText("Follow");
+        }
 
 
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
@@ -191,10 +204,14 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         setupTabIcons();
 
 
-        tabs_main_layout=view.findViewById(R.id.tabs_main_layout);
-        top_layout=view.findViewById(R.id.top_layout);
+        tabs_main_layout = view.findViewById(R.id.tabs_main_layout);
+        top_layout = view.findViewById(R.id.top_layout);
 
-
+        if (account_type.equals("private")) {
+            if (!isFriend) {
+                tabs_main_layout.setVisibility(View.GONE);
+            }
+        }
 
         ViewTreeObserver observer = top_layout.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -202,7 +219,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
             @Override
             public void onGlobalLayout() {
 
-                final int height=top_layout.getMeasuredHeight();
+                final int height = top_layout.getMeasuredHeight();
 
                 top_layout.getViewTreeObserver().removeGlobalOnLayoutListener(
                         this);
@@ -226,14 +243,19 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         });
 
 
-
-
-
         view.findViewById(R.id.following_layout).setOnClickListener(this);
         view.findViewById(R.id.fans_layout).setOnClickListener(this);
 
-        isdataload=true;
-
+        isdataload = true;
+        if (message_privacy.equals("friend")) {
+            if (isFriend) {
+                setting_btn.setVisibility(View.VISIBLE);
+            } else {
+                setting_btn.setVisibility(View.GONE);
+            }
+        } else if (message_privacy.equals("only me")) {
+            setting_btn.setVisibility(View.GONE);
+        }
 
         Call_Api_For_get_Allvideos();
 
@@ -279,7 +301,6 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
 
                 switch (tab.getPosition()){
                     case 0:
-
                         image.setImageDrawable(getResources().getDrawable(R.drawable.ic_my_video_color));
                          break;
 
@@ -337,6 +358,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
             switch (position) {
                 case 0:
                     result = new UserVideo_F(user_id);
+
                     break;
                 case 1:
                     result = new Liked_Video_F(user_id);

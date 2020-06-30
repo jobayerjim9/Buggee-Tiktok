@@ -173,14 +173,16 @@ public class Chat_Activity extends Fragment {
         if (bundle != null) {
             senderid = Variables.user_id;
             Receiverid = bundle.getString("user_id");
-            Receiver_name=bundle.getString("user_name");
-            Receiver_pic=bundle.getString("user_pic");
+            senderid = senderid.replace(".", "");
+            Receiverid = Receiverid.replace(".", "");
+            Receiver_name = bundle.getString("user_name");
+            Receiver_pic = bundle.getString("user_pic");
             user_name.setText(Receiver_name);
-            senderid_for_check_notification=Receiverid;
+            senderid_for_check_notification = Receiverid;
 
             // these two method will get other datial of user like there profile pic link and username
             Picasso.with(context).load(Receiver_pic)
-                    .resize(100,100)
+                    .resize(100, 100)
                     .placeholder(R.drawable.profile_image_placeholder)
                     .into(profileimage);
 
@@ -484,23 +486,23 @@ public class Chat_Activity extends Fragment {
     public void getChat_data() {
         mChats.clear();
         mchatRef_reteriving = FirebaseDatabase.getInstance().getReference();
+        senderid = senderid.replace(".", "");
         query_getchat = mchatRef_reteriving.child("chat").child(senderid + "-" + Receiverid);
-
-        my_block_status_query =mchatRef_reteriving.child("Inbox")
-                .child(Variables.user_id)
+        String uid = Variables.user_id.replace(".", "");
+        Receiverid = Receiverid.replace(".", "");
+        my_block_status_query = mchatRef_reteriving.child("Inbox")
+                .child(uid)
                 .child(Receiverid);
-
-        other_block_status_query=mchatRef_reteriving.child("Inbox")
+        Receiverid = Receiverid.replace(".", "");
+        other_block_status_query = mchatRef_reteriving.child("Inbox")
                 .child(Receiverid)
-                .child(Variables.user_id);
-
-
+                .child(uid);
 
 
         // this will get all the messages between two users
-      eventListener=new ChildEventListener() {
-      @Override
-      public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        eventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
              try {
                  Chat_GetSet model = dataSnapshot.getValue(Chat_GetSet.class);
                  mChats.add(model);
@@ -634,6 +636,8 @@ public class Chat_Activity extends Fragment {
     public void SendMessage(final String message) {
         Date c = Calendar.getInstance().getTime();
         final String formattedDate = Variables.df.format(c);
+        senderid = senderid.replace(".", "");
+        Receiverid = Receiverid.replace(".", "");
 
         final String current_user_ref = "chat" + "/" + senderid + "-" + Receiverid;
         final String chat_user_ref = "chat" + "/" + Receiverid + "-" + senderid;
@@ -1158,17 +1162,19 @@ public class Chat_Activity extends Fragment {
 
 
     public void Block_user(){
+        String uid = Variables.user_id.replace(".", "");
         rootref.child("Inbox")
                 .child(Receiverid)
-                .child(Variables.user_id).child("block").setValue("1");
+                .child(uid).child("block").setValue("1");
         Toast.makeText(context, "User Blocked", Toast.LENGTH_SHORT).show();
 
     }
 
     public void UnBlock_user(){
+        String uid = Variables.user_id.replace(".", "");
         rootref.child("Inbox")
                 .child(Receiverid)
-                .child(Variables.user_id).child("block").setValue("0");
+                .child(uid).child("block").setValue("0");
         Toast.makeText(context, "User UnBlocked", Toast.LENGTH_SHORT).show();
 
     }

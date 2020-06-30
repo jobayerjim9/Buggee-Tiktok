@@ -437,6 +437,7 @@ public class VideoSound_A extends AppCompatActivity implements View.OnClickListe
 
 
     public void Open_video_recording(){
+        Variables.audio_selected = true;
         Intent intent = new Intent(VideoSound_A.this, Video_Recoder_A.class);
         intent.putExtra("sound_name",sound_name.getText().toString());
         intent.putExtra("sound_id",item.sound_id);

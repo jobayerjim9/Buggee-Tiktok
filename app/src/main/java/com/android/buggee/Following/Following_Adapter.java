@@ -99,18 +99,19 @@ public class Following_Adapter extends RecyclerView.Adapter<Following_Adapter.Cu
     public void onBindViewHolder(final Following_Adapter.CustomViewHolder holder, final int i) {
         holder.setIsRecyclable(false);
 
-        Following_Get_Set item=datalist.get(i);
-
-        holder.user_name.setText(item.first_name+" "+item.last_name);
-
-        Picasso.with(context)
-                .load(item.profile_pic)
-                .placeholder(R.drawable.profile_image_placeholder)
-                .into(holder.user_image);
-
+        Following_Get_Set item = datalist.get(i);
+        holder.user_name.setText(item.first_name + " " + item.last_name);
+        try {
+            Picasso.with(context)
+                    .load(item.profile_pic)
+                    .placeholder(R.drawable.profile_image_placeholder)
+                    .into(holder.user_image);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         holder.user_id.setText(item.username);
 
-        if(item.is_show_follow_unfollow_btn) {
+        if (item.is_show_follow_unfollow_btn) {
             holder.action_txt.setVisibility(View.VISIBLE);
 
             if (following_or_fans.equals("following")) {

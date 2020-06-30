@@ -1,6 +1,8 @@
 package com.android.buggee.Main_Menu;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.Variables;
+import com.android.buggee.Video_Recording.LiveBroadcasterActivity;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 
@@ -28,10 +31,13 @@ public class MainMenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.live_file), Context.MODE_PRIVATE);
+        boolean liveExist = preferences.getBoolean(getString(R.string.live_exist), false);
 
-        mainMenuActivity=this;
 
-        intent=getIntent();
+        mainMenuActivity = this;
+
+        intent = getIntent();
 
         setIntent(null);
 
@@ -60,7 +66,13 @@ public class MainMenuActivity extends AppCompatActivity {
             mainMenuFragment = (MainMenuFragment) getSupportFragmentManager().getFragments().get(0);
         }
 
-
+        if (liveExist) {
+            Intent intent = new Intent(this, LiveBroadcasterActivity.class);
+            intent.putExtra("liveName", preferences.getString(getString(R.string.live_name), "No"));
+            intent.putExtra("liveDetails", preferences.getString(getString(R.string.live_details), "No"));
+            startActivity(intent);
+            finish();
+        }
 
 
     }
