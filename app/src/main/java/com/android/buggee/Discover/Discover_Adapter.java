@@ -19,6 +19,8 @@ import com.android.buggee.Home.Home_Get_Set;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.Variables;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 /**
@@ -156,11 +158,12 @@ public class Discover_Adapter extends RecyclerView.Adapter<Discover_Adapter.Cust
         class CustomViewHolder extends RecyclerView.ViewHolder {
 
             ImageView video_thumbnail;
-
+            TextView likeText;
 
             public CustomViewHolder(View view) {
                 super(view);
                 video_thumbnail = view.findViewById(R.id.video_thumbnail);
+                likeText = view.findViewById(R.id.likeText);
 
             }
 
@@ -183,18 +186,22 @@ public class Discover_Adapter extends RecyclerView.Adapter<Discover_Adapter.Cust
             try {
                 Home_Get_Set item = datalist.get(i);
                 holder.bind(i, datalist);
-
-
+                int like = Integer.parseInt(item.like_count);
+                String placeholder = String.valueOf(like);
+                if (like > 999) {
+                    placeholder = (like / 1000) + "K";
+                }
+                holder.likeText.setText(placeholder);
 
                 try {
-                Glide.with(context)
-                        .asGif()
-                        .load(item.gif)
-                        .skipMemoryCache(true)
-                        .thumbnail(new RequestBuilder[]{Glide
-                        .with(context)
-                        .load(item.thum)})
-                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE)
+                    Glide.with(context)
+                            .asGif()
+                            .load(item.gif)
+                            .skipMemoryCache(true)
+                            .thumbnail(new RequestBuilder[]{Glide
+                                    .with(context)
+                                    .load(item.thum)})
+                            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE)
                                 .placeholder(context.getResources().getDrawable(R.drawable.image_placeholder)).centerCrop())
                         .into(holder.video_thumbnail);
 

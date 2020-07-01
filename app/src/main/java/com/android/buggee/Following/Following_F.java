@@ -25,12 +25,16 @@ import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Fragment_Callback;
 import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
+import com.google.android.material.tabs.TabLayout;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,19 +78,60 @@ public class Following_F extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view= inflater.inflate(R.layout.fragment_following, container, false);
-        context=getContext();
+        view = inflater.inflate(R.layout.fragment_following, container, false);
+        context = getContext();
 
-        Bundle bundle=getArguments();
-        if(bundle!=null){
-             user_id=bundle.getString("id");
-             following_or_fan=bundle.getString("from_where");
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            user_id = bundle.getString("id");
+            following_or_fan = bundle.getString("from_where");
+        }
+        title_txt = view.findViewById(R.id.title_txt);
+        title_txt.setText(Variables.sharedPreferences.getString(Variables.f_name, "") + " " + Variables.sharedPreferences.getString(Variables.l_name, ""));
+        String pic_url = Variables.sharedPreferences.getString(Variables.u_pic, "null");
+        CircleImageView user_image = view.findViewById(R.id.user_image);
+        try {
+            Picasso.with(context).load(pic_url)
+                    .resize(200, 200)
+                    .placeholder(R.drawable.profile_image_placeholder)
+                    .centerCrop()
+                    .into(user_image);
+
+        } catch (Exception e) {
+
         }
 
+        TabLayout followTab = view.findViewById(R.id.followTab);
+        followTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) {
+                    Call_Api_For_get_Allfan();
 
-        title_txt=view.findViewById(R.id.title_txt);
+                } else {
+                    Call_Api_For_get_Allfollowing();
+                }
+            }
 
-        datalist=new ArrayList<>();
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) {
+                    Call_Api_For_get_Allfan();
+
+                } else {
+                    Call_Api_For_get_Allfollowing();
+                }
+            }
+        });
+
+        Call_Api_For_get_Allfan();
+
+        datalist = new ArrayList<>();
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recylerview);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(context);
@@ -100,7 +145,7 @@ public class Following_F extends Fragment {
             public void onItemClick(View view, int postion, Following_Get_Set item) {
 
                 switch (view.getId()){
-                    case R.id.action_txt:
+                    case R.id.actionButton:
                         if(user_id.equals(Variables.sharedPreferences.getString(Variables.u_id,"")))
                         Follow_unFollow_User(item,postion);
                         break;
@@ -130,16 +175,6 @@ public class Following_F extends Fragment {
             }
         });
 
-
-
-        if(following_or_fan.equals("following")){
-        Call_Api_For_get_Allfollowing();
-        title_txt.setText("Following");
-        }
-        else {
-            Call_Api_For_get_Allfan();
-            title_txt.setText("Followers");
-        }
 
         return view;
     }

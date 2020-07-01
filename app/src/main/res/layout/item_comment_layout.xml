@@ -42,6 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/avenir_bold"
                     android:text="Username"
                     android:textColor="@android:color/white"
                     android:textSize="13dp"
@@ -53,6 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="5dp"
+                    android:fontFamily="@font/avenir_regular"
                     android:text="Comment message here..."
                     android:textColor="@color/white"
                     android:textSize="12dp" />

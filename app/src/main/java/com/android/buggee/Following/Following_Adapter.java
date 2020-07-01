@@ -1,8 +1,11 @@
 package com.android.buggee.Following;
 
 import android.content.Context;
+
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,11 +61,12 @@ public class Following_Adapter extends RecyclerView.Adapter<Following_Adapter.Cu
         TextView user_id;
         TextView action_txt;
         RelativeLayout mainlayout;
-
+        CardView actionButton;
         public CustomViewHolder(View view) {
             super(view);
 
-            mainlayout=view.findViewById(R.id.mainlayout);
+            mainlayout = view.findViewById(R.id.mainlayout);
+            actionButton = view.findViewById(R.id.actionButton);
 
             user_image=view.findViewById(R.id.user_image);
             user_name=view.findViewById(R.id.user_name);
@@ -74,18 +78,18 @@ public class Following_Adapter extends RecyclerView.Adapter<Following_Adapter.Cu
         public void bind(final int pos , final Following_Get_Set item, final Following_Adapter.OnItemClickListener listener) {
 
 
-
             mainlayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(v,pos,item);
+                    listener.onItemClick(v, pos, item);
                 }
             });
 
-            action_txt.setOnClickListener(new View.OnClickListener() {
+
+            actionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(v,pos,item);
+                    listener.onItemClick(v, pos, item);
                 }
             });
 
@@ -109,7 +113,7 @@ public class Following_Adapter extends RecyclerView.Adapter<Following_Adapter.Cu
         } catch (Exception e) {
             e.printStackTrace();
         }
-        holder.user_id.setText(item.username);
+        holder.user_id.setText("@" + item.username);
 
         if (item.is_show_follow_unfollow_btn) {
             holder.action_txt.setVisibility(View.VISIBLE);
@@ -118,14 +122,11 @@ public class Following_Adapter extends RecyclerView.Adapter<Following_Adapter.Cu
 
                 if (item.follow.equals("0")) {
                     holder.action_txt.setText("Follow");
-                    holder.action_txt.setBackgroundColor(ContextCompat.getColor(context, R.color.redcolor));
-                    holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.white));
                 }
 
                 else {
                     holder.action_txt.setText("UnFollow");
-                    holder.action_txt.setBackground(ContextCompat.getDrawable(context, R.drawable.d_gray_border));
-                    holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.black));
+                    holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.green));
                 }
 
 
@@ -133,12 +134,9 @@ public class Following_Adapter extends RecyclerView.Adapter<Following_Adapter.Cu
 
                 if (item.follow.equals("0")) {
                     holder.action_txt.setText("Follow");
-                    holder.action_txt.setBackgroundColor(ContextCompat.getColor(context, R.color.redcolor));
-                    holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.white));
                 } else {
-                    holder.action_txt.setText("Friends");
-                    holder.action_txt.setBackground(ContextCompat.getDrawable(context, R.drawable.d_gray_border));
-                    holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.black));
+                    holder.action_txt.setText("UnFollow");
+                    holder.action_txt.setTextColor(ContextCompat.getColor(context, R.color.green));
                 }
             }
 

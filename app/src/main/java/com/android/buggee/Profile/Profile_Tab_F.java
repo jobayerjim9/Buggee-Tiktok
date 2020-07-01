@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -98,8 +99,8 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view= inflater.inflate(R.layout.fragment_profile_tab, container, false);
-        context=getContext();
+        view = inflater.inflate(R.layout.fragment_profile_tab_new, container, false);
+        context = getContext();
 
 
 
@@ -168,32 +169,30 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         heart_count_txt=view.findViewById(R.id.heart_count_txt);
 
 
-
-        setting_btn=view.findViewById(R.id.setting_btn);
+        setting_btn = view.findViewById(R.id.setting_btn);
         setting_btn.setOnClickListener(this);
 
 
+        tabLayout = (TabLayout) view.findViewById(R.id.tabs);
+        pager = view.findViewById(R.id.pager);
+        pager.setOffscreenPageLimit(2);
+
+        adapter = new ViewPagerAdapter(getResources(), getChildFragmentManager());
+        pager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(pager);
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            View tab = ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(i);
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) tab.getLayoutParams();
+            p.setMargins(0, 0, 50, 0);
+            tab.requestLayout();
+        }
+        //setupTabIcons();
 
 
+        tabs_main_layout = view.findViewById(R.id.tabs_main_layout);
+        top_layout = view.findViewById(R.id.top_layout);
 
 
-//        tabLayout = (TabLayout) view.findViewById(R.id.tabs);
-//        pager = view.findViewById(R.id.pager);
-//        pager.setOffscreenPageLimit(2);
-//
-//        adapter = new ViewPagerAdapter(getResources(), getChildFragmentManager());
-//        pager.setAdapter(adapter);
-//        tabLayout.setupWithViewPager(pager);
-//
-//        setupTabIcons();
-//
-//
-//        tabs_main_layout=view.findViewById(R.id.tabs_main_layout);
-//        top_layout=view.findViewById(R.id.top_layout);
-//
-//
-//
-//
 //        ViewTreeObserver observer = top_layout.getViewTreeObserver();
 //        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 //
@@ -373,7 +372,13 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
 
         @Override
         public CharSequence getPageTitle(final int position) {
-            return null;
+            if (position == 0) {
+                return "Posts";
+            } else if (position == 1) {
+                return "Saved";
+            } else {
+                return null;
+            }
         }
 
 
@@ -592,8 +597,9 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
         Bundle args = new Bundle();
-        args.putString("id", Variables.sharedPreferences.getString(Variables.u_id,""));
-        args.putString("from_where","fan");
+        args.putString("id", Variables.sharedPreferences.getString(Variables.u_id, ""));
+        args.putString("id", Variables.sharedPreferences.getString(Variables.u_id, ""));
+        args.putString("from_where", "fan");
         following_f.setArguments(args);
         transaction.addToBackStack(null);
         transaction.replace(R.id.MainMenuFragment, following_f).commit();

@@ -200,8 +200,13 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         adapter = new ViewPagerAdapter(getResources(), getChildFragmentManager());
         pager.setAdapter(adapter);
         tabLayout.setupWithViewPager(pager);
-
-        setupTabIcons();
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            View tab = ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(i);
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) tab.getLayoutParams();
+            p.setMargins(0, 0, 50, 0);
+            tab.requestLayout();
+        }
+//        setupTabIcons();
 
 
         tabs_main_layout = view.findViewById(R.id.tabs_main_layout);
@@ -213,34 +218,34 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
             }
         }
 
-        ViewTreeObserver observer = top_layout.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-            @Override
-            public void onGlobalLayout() {
-
-                final int height = top_layout.getMeasuredHeight();
-
-                top_layout.getViewTreeObserver().removeGlobalOnLayoutListener(
-                        this);
-
-                ViewTreeObserver observer = tabs_main_layout.getViewTreeObserver();
-                observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-                    @Override
-                    public void onGlobalLayout() {
-
-                        RelativeLayout.LayoutParams params= (RelativeLayout.LayoutParams) tabs_main_layout.getLayoutParams();
-                        params.height= (int) (tabs_main_layout.getMeasuredHeight()+ height);
-                        tabs_main_layout.setLayoutParams(params);
-                        tabs_main_layout.getViewTreeObserver().removeGlobalOnLayoutListener(
-                                this);
-
-                    }
-                });
-
-            }
-        });
+//        ViewTreeObserver observer = top_layout.getViewTreeObserver();
+//        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//
+//            @Override
+//            public void onGlobalLayout() {
+//
+//                final int height = top_layout.getMeasuredHeight();
+//
+//                top_layout.getViewTreeObserver().removeGlobalOnLayoutListener(
+//                        this);
+//
+//                ViewTreeObserver observer = tabs_main_layout.getViewTreeObserver();
+//                observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//
+//                    @Override
+//                    public void onGlobalLayout() {
+//
+//                        RelativeLayout.LayoutParams params= (RelativeLayout.LayoutParams) tabs_main_layout.getLayoutParams();
+//                        params.height= (int) (tabs_main_layout.getMeasuredHeight()+ height);
+//                        tabs_main_layout.setLayoutParams(params);
+//                        tabs_main_layout.getViewTreeObserver().removeGlobalOnLayoutListener(
+//                                this);
+//
+//                    }
+//                });
+//
+//            }
+//        });
 
 
         view.findViewById(R.id.following_layout).setOnClickListener(this);
@@ -381,7 +386,13 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
 
         @Override
         public CharSequence getPageTitle(final int position) {
-            return null;
+            if (position == 0) {
+                return "Posts";
+            } else if (position == 1) {
+                return "Saved";
+            } else {
+                return null;
+            }
         }
 
 
@@ -450,26 +461,29 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         try {
             JSONObject jsonObject=new JSONObject(responce);
             String code=jsonObject.optString("code");
-            if(code.equals("200")){
-                JSONArray msgArray=jsonObject.getJSONArray("msg");
+            if(code.equals("200")) {
+                JSONArray msgArray = jsonObject.getJSONArray("msg");
 
-                JSONObject data=msgArray.getJSONObject(0);
-                JSONObject user_info=data.optJSONObject("user_info");
-                username.setText(user_info.optString("first_name")+" "+user_info.optString("last_name"));
+                JSONObject data = msgArray.getJSONObject(0);
+                JSONObject user_info = data.optJSONObject("user_info");
+                username.setText(user_info.optString("first_name") + " " + user_info.optString("last_name"));
 
-                Profile_F.pic_url=user_info.optString("profile_pic");
-                Picasso.with(context)
-                        .load(Profile_F.pic_url)
-                        .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
-                        .resize(200,200).centerCrop().into(imageView);
-
+                Profile_F.pic_url = user_info.optString("profile_pic");
+                try {
+                    Picasso.with(context)
+                            .load(Profile_F.pic_url)
+                            .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
+                            .resize(200, 200).centerCrop().into(imageView);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 follow_count_txt.setText(data.optString("total_following"));
                 fans_count_txt.setText(data.optString("total_fans"));
                 heart_count_txt.setText(data.optString("total_heart"));
 
 
-                if(!data.optString("fb_id").
-                        equals(Variables.sharedPreferences.getString(Variables.u_id,""))) {
+                if (!data.optString("fb_id").
+                        equals(Variables.sharedPreferences.getString(Variables.u_id, ""))) {
 
                     follow_unfollow_btn.setVisibility(View.VISIBLE);
                     JSONObject follow_Status = data.optJSONObject("follow_Status");

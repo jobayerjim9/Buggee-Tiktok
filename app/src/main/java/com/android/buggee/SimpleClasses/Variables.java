@@ -28,7 +28,7 @@ public class Variables {
 
     public static int max_recording_duration = 18000;
     public static int recording_duration = 18000;
-    public static String app_folder = root + "/MusicTok/";
+    public static String app_folder = root + "/Buggee/";
     public static String outputfile = app_folder + "output.mp4";
     public static String outputfile2 = app_folder + "output2.mp4";
     public static String output_filter_file = app_folder + "output-filtered.mp4";
