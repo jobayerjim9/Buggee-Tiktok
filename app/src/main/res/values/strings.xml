@@ -56,6 +56,12 @@
     <!-- Legal digits for channel names -->
     <string name="legal_channel_name_characters" translatable="false">&#xA0;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&amp;()+,-:;&lt;=.>?@[]^_`{|}~</string>
     <string name="private_app_id" translatable="false">b7172f62d7bc4d3c970804555c5497f5</string>
+    <string name="request_verification">Request Verification</string>
+    <string name="apply_for_tic_tic_verification">Apply for Buggee Verification</string>
+    <string name="upper_body">A verified badge is check that aapears next to an \nBuggee accounts name to indiacte that the \naccount is the authentic presence of notable \npublic figure , celebrity, global brand or entity it \nrepresents.</string>
+    <string name="upper_body_below">Submitting a request for verification \ndoes not guarantee that your account will be verified</string>
+    <string name="lower_body">We require a goverment-issued photo ID that shows \nyour name and date of birth(e.g driver\'s license.\npassport or national identification card) or official \nbusiness documents(tax filing, recent utility bill, article of \nincorporation) in order to review your request.</string>
+
     <!-- Obtain a temp Access Token at https://dashboard.agora.io -->
     <!-- You will need to deploy your own token server for production release -->
     <!-- Leave this value empty if Security keys/Token is not enabled for your project -->

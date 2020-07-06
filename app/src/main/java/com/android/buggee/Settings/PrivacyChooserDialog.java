@@ -3,10 +3,13 @@ package com.android.buggee.Settings;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +21,7 @@ import androidx.fragment.app.DialogFragment;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.gmail.samehadar.iosdialog.IOSDialog;
 
@@ -28,7 +32,7 @@ import java.util.Objects;
 
 public class PrivacyChooserDialog extends DialogFragment {
     private Context context;
-    IOSDialog iosDialog;
+    //    IOSDialog iosDialog;
     CardView onlyMe, friends, everyone;
     String privacy;
 
@@ -46,17 +50,19 @@ public class PrivacyChooserDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
         LayoutInflater inflater = Objects.requireNonNull(getActivity()).getLayoutInflater();
         View v = inflater.inflate(R.layout.dialog_privacy_chooser, null);
-        iosDialog = new IOSDialog.Builder(context)
-                .setCancelable(false)
-                .setSpinnerClockwise(false)
-                .setMessageContentGravity(Gravity.END)
-                .build();
-        onlyMe = v.findViewById(R.id.onlyMe);
-        friends = v.findViewById(R.id.friends);
-        everyone = v.findViewById(R.id.everyone);
+//        iosDialog = new IOSDialog.Builder(context)
+//                .setCancelable(false)
+//                .setSpinnerClockwise(false)
+//                .setMessageContentGravity(Gravity.END)
+//                .build();
+        TextView onlyMe = v.findViewById(R.id.onlyMeText);
+        TextView friends = v.findViewById(R.id.friendText);
+        TextView everyone = v.findViewById(R.id.everyoneText);
 
 
         onlyMe.setOnClickListener(new View.OnClickListener() {
@@ -116,11 +122,11 @@ public class PrivacyChooserDialog extends DialogFragment {
             e.printStackTrace();
         }
 
-        iosDialog.show();
+        Functions.Show_loader(context, false, false);
         ApiRequest.Call_Api(context, Variables.messagePrivacy, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+                Functions.cancel_loader();
                 try {
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");
@@ -140,6 +146,13 @@ public class PrivacyChooserDialog extends DialogFragment {
 
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
     private void updateCommentPrivacy(final String privacy) {
         JSONObject parameters = new JSONObject();
         try {
@@ -151,11 +164,11 @@ public class PrivacyChooserDialog extends DialogFragment {
             e.printStackTrace();
         }
 
-        iosDialog.show();
+        Functions.Show_loader(context, false, false);
         ApiRequest.Call_Api(context, Variables.commentPrivacy, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+                Functions.cancel_loader();
                 try {
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");
@@ -187,11 +200,11 @@ public class PrivacyChooserDialog extends DialogFragment {
             e.printStackTrace();
         }
 
-        iosDialog.show();
+        Functions.Show_loader(context, false, false);
         ApiRequest.Call_Api(context, Variables.livePrivacy, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+                Functions.cancel_loader();
                 try {
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");

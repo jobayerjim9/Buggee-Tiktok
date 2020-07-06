@@ -51,6 +51,9 @@ public class Variables {
     public static String device_token = "device_token";
     public static String api_token = "api_token";
     public static String device_id = "device_id";
+    public static String bio = "bio";
+    public static String page_have = "page_have";
+    public static String current = "device_id";
 
 
     public static String tag = "musictok_";
@@ -58,8 +61,8 @@ public class Variables {
     public static String Selected_sound_id = "null";
 
 
-    public static String gif_firstpart="https://media.giphy.com/media/";
-    public static String gif_secondpart="/100w.gif";
+    public static String gif_firstpart = "https://media.giphy.com/media/";
+    public static String gif_secondpart = "/100w.gif";
 
     public static String gif_firstpart_chat="https://media.giphy.com/media/";
     public static String gif_secondpart_chat="/200w.gif";
@@ -131,9 +134,14 @@ public class Variables {
     public static String createLive = domain + "createLive";
     public static String deleteLive = domain + "deleteLive";
     public static String getAllLive = domain + "getAllLive";
-
-
+    public static final String getVerified = domain + "getVerified";
+    public static final String updateBio = domain + "updateBio";
+    public static final String createPage = domain + "createPage";
     public static String getNotifications = domain + "getNotifications";
+    public static String getPageInfo = domain + "getPageInfo";
+    public static String updatePageName = domain + "updatePageName";
+    public static String updatePageDesc = domain + "updatePageDesc";
+    public static String updatePagePic = domain + "updatePagePic";
 
 
 }

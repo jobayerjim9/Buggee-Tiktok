@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/colorPrimaryDark"
     android:paddingTop="32dp"
     tools:context="com.android.buggee.Notifications.Notification_F">
 
@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="100dp"
-        android:background="@color/white"
         ads:layout_constraintBottom_toBottomOf="parent"
         ads:layout_constraintEnd_toEndOf="parent"
         ads:layout_constraintStart_toStartOf="parent"
@@ -24,24 +23,22 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:background="@color/white"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/d_bottom_gray_line">
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/avenir_bold"
                     android:text="Notifications"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="16dp"
                     android:textStyle="bold" />
 
@@ -55,7 +52,8 @@
                     android:layout_marginRight="15dp"
                     android:background="@color/transparent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_send_black" />
+                    android:src="@drawable/ic_send_black"
+                    android:tint="@color/white" />
 
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
@@ -85,7 +83,6 @@
                 android:id="@+id/no_data_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
                 android:visibility="gone">
 
                 <ImageView
@@ -93,7 +90,8 @@
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:layout_centerInParent="true"
-                    android:src="@drawable/ic_whoops" />
+                    android:src="@drawable/ic_whoops"
+                    android:tint="@color/white" />
 
                 <TextView
                     android:id="@+id/whoops"
@@ -101,8 +99,9 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/img_no_job"
                     android:layout_centerHorizontal="true"
+                    android:fontFamily="@font/avenir_bold"
                     android:text="Whoops!"
-                    android:textColor="@color/dimgray"
+                    android:textColor="@color/white"
                     android:textSize="22sp" />
 
                 <TextView
@@ -112,9 +111,10 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="55dp"
                     android:layout_marginRight="55dp"
+                    android:fontFamily="@font/avenir_regular"
                     android:gravity="center"
                     android:text="There is no notifications you have so far"
-                    android:textColor="@color/dimgray"
+                    android:textColor="@color/white"
                     android:textSize="14sp" />
 
             </RelativeLayout>

@@ -9,15 +9,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -28,9 +29,10 @@ import androidx.fragment.app.DialogFragment;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.android.buggee.Video_Recording.LiveBroadcasterActivity;
-import com.gmail.samehadar.iosdialog.IOSDialog;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
@@ -48,10 +50,9 @@ import java.util.Objects;
 public class LiveDetailsDialog extends DialogFragment {
     private Context context;
     TextInputLayout liveName, liveDetails;
+//
 
-    IOSDialog iosDialog;
     String encodedImage = null;
-
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -59,12 +60,13 @@ public class LiveDetailsDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = Objects.requireNonNull(getActivity()).getLayoutInflater();
         View v = inflater.inflate(R.layout.live_details, null);
-        iosDialog = new IOSDialog.Builder(context)
-                .setCancelable(false)
-                .setSpinnerClockwise(false)
-                .setMessageContentGravity(Gravity.END)
-                .build();
-        Button startLive = v.findViewById(R.id.startLive);
+//        iosDialog = new IOSDialog.Builder(context)
+//                .setCancelable(false)
+//                .setSpinnerClockwise(false)
+//                .setMessageContentGravity(Gravity.END)
+//                .build();
+
+        ImageView startLive = v.findViewById(R.id.startLive);
         liveName = v.findViewById(R.id.liveName);
         liveDetails = v.findViewById(R.id.liveDetails);
         startLive.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +95,13 @@ public class LiveDetailsDialog extends DialogFragment {
         return builder.create();
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
     private void uploadToServer(final String name, final String details) {
         JSONObject parameters = new JSONObject();
         try {
@@ -105,12 +114,13 @@ public class LiveDetailsDialog extends DialogFragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        iosDialog.show();
+        Functions.Show_loader(context, false, false);
+//        iosDialog.show();
         ApiRequest.Call_Api(context, Variables.createLive, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+//                iosDialog.cancel();
+                Functions.cancel_loader();
                 Log.d("liveResponseCreate", resp);
                 try {
                     JSONObject jsonObject = new JSONObject(resp);

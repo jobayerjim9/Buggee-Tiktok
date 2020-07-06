@@ -24,23 +24,20 @@
         android:src="@drawable/ic_back"
         android:background="@color/transparent"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Next"
-        android:textSize="15dp"
-        android:textStyle="bold"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:paddingRight="20dp"
-        android:paddingLeft="20dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginRight="10dp"
+    <ImageView
         android:id="@+id/next_btn"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_above="@+id/recylerview"
-        android:textColor="@color/white"
-        android:background="@color/redcolor"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="15dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/next_button" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

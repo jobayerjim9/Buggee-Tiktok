@@ -8,17 +8,25 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.android.buggee.Accounts.PageActivity;
 import com.android.buggee.Settings.SettingsActivity;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Fragment_Callback;
+import com.android.buggee.Video_Recording.LiveBroadcasterActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import android.text.InputType;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
@@ -29,12 +37,14 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.buggee.Following.Following_F;
 import com.android.buggee.Main_Menu.MainMenuActivity;
 import com.android.buggee.Main_Menu.RelateToFragment_OnBack.RootFragment;
@@ -44,6 +54,8 @@ import com.android.buggee.R;
 import com.android.buggee.See_Full_Image_F;
 import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -53,14 +65,14 @@ import org.json.JSONObject;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Profile_Tab_F extends RootFragment implements View.OnClickListener  {
+public class Profile_Tab_F extends RootFragment implements View.OnClickListener {
     View view;
     Context context;
 
 
-    public  TextView username,video_count_txt;
-    public  ImageView imageView;
-    public  TextView follow_count_txt,fans_count_txt,heart_count_txt;
+    public TextView username;
+    public ImageView imageView;
+    public TextView follow_count_txt, fans_count_txt, heart_count_txt, bioText;
 
     ImageView setting_btn;
 
@@ -73,16 +85,16 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
 
     private ViewPagerAdapter adapter;
 
-    public boolean isdataload=false;
+    public boolean isdataload = false;
 
 
     RelativeLayout tabs_main_layout;
 
     LinearLayout top_layout;
+    EditText bioEditText;
+    ImageView bioSubmit;
 
-
-
-    public  static String pic_url;
+    public static String pic_url;
 
 
     // public  LinearLayout create_popup_layout;
@@ -101,20 +113,74 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_profile_tab_new, container, false);
         context = getContext();
-
-
-
-
+        bioEditText = view.findViewById(R.id.bioEditText);
+        bioText = view.findViewById(R.id.bioText);
+        bioSubmit = view.findViewById(R.id.bioSubmit);
+        bioText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bioText.setVisibility(View.GONE);
+                bioEditText.setVisibility(View.VISIBLE);
+                bioEditText.requestFocus();
+                bioSubmit.setVisibility(View.VISIBLE);
+            }
+        });
+        bioSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String bio = bioEditText.getText().toString();
+                updateBio(bio);
+            }
+        });
 
 
         return init();
     }
 
+    private void updateBio(final String bio) {
+        JSONObject parameters = new JSONObject();
+        try {
+            parameters.put("id", Variables.sharedPreferences.getString(Variables.u_id, ""));
+            parameters.put("bio", bio);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Functions.Show_loader(context, false, false);
+//        iosDialog.show();
+        ApiRequest.Call_Api(context, Variables.updateBio, parameters, new Callback() {
+            @Override
+            public void Responce(String resp) {
+//                iosDialog.cancel();
+
+                Functions.cancel_loader();
+                Log.d("liveResponseCreate", resp);
+                try {
+                    JSONObject jsonObject = new JSONObject(resp);
+                    boolean success = jsonObject.optBoolean("success");
+                    if (success) {
+                        if (!bio.isEmpty()) {
+                            bioText.setText(bio);
+                        }
+                        bioText.setVisibility(View.VISIBLE);
+                        bioEditText.setVisibility(View.GONE);
+                        bioSubmit.setVisibility(View.GONE);
+                        Variables.sharedPreferences.edit().putString(Variables.bio, bio).apply();
+                        Toast.makeText(context, "Bio Updated", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.user_image:
                 OpenfullsizeImage(pic_url);
                 break;
@@ -162,7 +228,7 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         imageView=view.findViewById(R.id.user_image);
         imageView.setOnClickListener(this);
 
-        video_count_txt=view.findViewById(R.id.video_count_txt);
+
 
         follow_count_txt=view.findViewById(R.id.follow_count_txt);
         fans_count_txt=view.findViewById(R.id.fan_count_txt);
@@ -240,9 +306,14 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
     }
 
 
-    public void update_profile(){
+    public void update_profile() {
         username.setText(Variables.sharedPreferences.getString(Variables.f_name, "") + " " + Variables.sharedPreferences.getString(Variables.l_name, ""));
         pic_url = Variables.sharedPreferences.getString(Variables.u_pic, "null");
+        String bio = Variables.sharedPreferences.getString(Variables.bio, "");
+        if (!bio.isEmpty()) {
+            bioText.setText(bio);
+        }
+        bioEditText.setText(Variables.sharedPreferences.getString(Variables.bio, ""));
 
         try {
             Picasso.with(context).load(pic_url)
@@ -465,7 +536,7 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
 
                 JSONArray user_videos=data.getJSONArray("user_videos");
                 if(!user_videos.toString().equals("["+"0"+"]")){
-                    video_count_txt.setText(user_videos.length()+" Videos");
+
 //                    create_popup_layout.setVisibility(View.GONE);
 
                 }
@@ -531,12 +602,15 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
     }
 
 
-    public void Open_menu_tab(View anchor_view){
+    public void Open_menu_tab(View anchor_view) {
         Context wrapper = new ContextThemeWrapper(context, R.style.AlertDialogCustom);
         PopupMenu popup = new PopupMenu(wrapper, anchor_view);
         popup.getMenuInflater().inflate(R.menu.menu, popup.getMenu());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            popup.setGravity(Gravity.TOP|Gravity.RIGHT);
+            popup.setGravity(Gravity.TOP | Gravity.RIGHT);
+        }
+        if (Variables.sharedPreferences.getInt(Variables.page_have, 0) == 0) {
+            popup.getMenu().removeItem(R.id.manage_page);
         }
         popup.show();
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -547,6 +621,9 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
 
                     case R.id.edit_Profile_id:
                         Open_Edit_profile();
+                        break;
+                    case R.id.manage_page:
+                        startActivity(new Intent(context, PageActivity.class));
                         break;
 
                     case R.id.settings_privacy:

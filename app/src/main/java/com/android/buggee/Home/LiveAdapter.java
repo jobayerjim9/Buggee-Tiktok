@@ -64,6 +64,11 @@ public class LiveAdapter extends RecyclerView.Adapter<LiveAdapter.LiveViewHolder
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (liveData.get(position).verified != null && liveData.get(position).verified.equalsIgnoreCase("1")) {
+            holder.varified_btn.setVisibility(View.VISIBLE);
+        } else {
+            holder.varified_btn.setVisibility(View.GONE);
+        }
         holder.name.setText(liveData.get(position).username);
 
 
@@ -82,7 +87,7 @@ public class LiveAdapter extends RecyclerView.Adapter<LiveAdapter.LiveViewHolder
     class LiveViewHolder extends RecyclerView.ViewHolder {
         CircleImageView user_pic2, user_pic;
         LinearLayout comment_layout;
-        ImageView smallPlusButton;
+        ImageView smallPlusButton, varified_btn;
         TextView username, desc_txt, name;
 
         public LiveViewHolder(@NonNull View itemView) {
@@ -90,20 +95,21 @@ public class LiveAdapter extends RecyclerView.Adapter<LiveAdapter.LiveViewHolder
             username = itemView.findViewById(R.id.username);
             desc_txt = itemView.findViewById(R.id.desc_txt);
             name = itemView.findViewById(R.id.name);
-            comment_layout = itemView.findViewById(R.id.comment_layout);
+//            comment_layout = itemView.findViewById(R.id.comment_layout);
             user_pic2 = itemView.findViewById(R.id.user_pic2);
             smallPlusButton = itemView.findViewById(R.id.smallPlusButton);
+            varified_btn = itemView.findViewById(R.id.varified_btn);
             user_pic = itemView.findViewById(R.id.user_pic);
             name = itemView.findViewById(R.id.name);
         }
 
         public void bind(final int postion, final LiveData item, final LiveAdapter.OnItemClickListener listener) {
-            comment_layout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.onItemClick(postion, item, view);
-                }
-            });
+//            comment_layout.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    listener.onItemClick(postion, item, view);
+//                }
+//            });
 
             user_pic.setOnClickListener(new View.OnClickListener() {
                 @Override

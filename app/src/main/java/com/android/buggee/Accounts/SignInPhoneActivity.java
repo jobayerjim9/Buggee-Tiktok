@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.gmail.samehadar.iosdialog.IOSDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -44,7 +45,7 @@ public class SignInPhoneActivity extends AppCompatActivity {
     CountryCodePicker ccp;
     TextInputLayout phoneSignUp,otpSignUp;
     LinearLayout phoneInputLayout;
-    IOSDialog iosDialog;
+    //    IOSDialog iosDialog;
     String phoneNumber;
     SharedPreferences sharedPreferences;
     private boolean mVerificationInProgress = false;
@@ -57,16 +58,16 @@ public class SignInPhoneActivity extends AppCompatActivity {
     }
 
     private void initUi() {
-        iosDialog = new IOSDialog.Builder(this)
-                .setCancelable(false)
-                .setSpinnerClockwise(false)
-                .setMessageContentGravity(Gravity.END)
-                .build();
-        sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
-        ccp=findViewById(R.id.ccp);
-        phoneSignUp=findViewById(R.id.phoneSignUp);
-        otpSignUp=findViewById(R.id.otpSignUp);
-        phoneInputLayout=findViewById(R.id.phoneInputLayout);
+//        iosDialog = new IOSDialog.Builder(this)
+//                .setCancelable(false)
+//                .setSpinnerClockwise(false)
+//                .setMessageContentGravity(Gravity.END)
+//                .build();
+        sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
+        ccp = findViewById(R.id.ccp);
+        phoneSignUp = findViewById(R.id.phoneSignUp);
+        otpSignUp = findViewById(R.id.otpSignUp);
+        phoneInputLayout = findViewById(R.id.phoneInputLayout);
         ccp.registerCarrierNumberEditText(phoneSignUp.getEditText());
         ccp.setPhoneNumberValidityChangeListener(new CountryCodePicker.PhoneNumberValidityChangeListener() {
             @Override
@@ -136,7 +137,8 @@ public class SignInPhoneActivity extends AppCompatActivity {
                 phoneInputLayout.setVisibility(View.GONE);
                 otpSignUp.setVisibility(View.VISIBLE);
                 loginWithPhoneNumber(phoneNumber);
-                iosDialog.cancel();
+//                iosDialog.cancel();
+                Functions.cancel_loader();
                 // signInWithPhoneAuthCredential(credential);
             }
 
@@ -160,15 +162,14 @@ public class SignInPhoneActivity extends AppCompatActivity {
                     // [START_EXCLUDE]
                     Toast.makeText(SignInPhoneActivity.this, "Quota exceeded", Toast.LENGTH_SHORT).show();
                     // [END_EXCLUDE]
-                }
-                else if (e instanceof FirebaseNetworkException)
-                {
+                } else if (e instanceof FirebaseNetworkException) {
                     Toast.makeText(SignInPhoneActivity.this, "Network Error!", Toast.LENGTH_SHORT).show();
                 }
 
                 // Show a message and update the UI
                 // [START_EXCLUDE]
-                iosDialog.cancel();
+//                iosDialog.cancel();
+                Functions.cancel_loader();
                 // [END_EXCLUDE]
             }
 
@@ -187,7 +188,8 @@ public class SignInPhoneActivity extends AppCompatActivity {
                 otpSignUp.setVisibility(View.VISIBLE);
                 nextPhoneSignUp.setVisibility(View.GONE);
                 doneButtonSignIn.setVisibility(View.VISIBLE);
-                iosDialog.cancel();
+//                iosDialog.cancel();
+                Functions.cancel_loader();
                 // [START_EXCLUDE]
                 // Update UI
 
@@ -201,14 +203,14 @@ public class SignInPhoneActivity extends AppCompatActivity {
 
     private void checkPhoneExist(final String phoneNumber) {
 
-        iosDialog.show();
+        Functions.Show_loader(SignInPhoneActivity.this, false, false);
         JSONObject parameters = new JSONObject();
         try {
             parameters.put("phone", phoneNumber);
 
         } catch (JSONException e) {
             e.printStackTrace();
-            iosDialog.cancel();
+            Functions.cancel_loader();
             Toast.makeText(this, "Server Error", Toast.LENGTH_SHORT).show();
         }
 
@@ -216,8 +218,8 @@ public class SignInPhoneActivity extends AppCompatActivity {
         ApiRequest.Call_Api(this, Variables.checkphoneExist, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
-                Log.d("SignUpExist",resp);
+                Functions.cancel_loader();
+                Log.d("SignUpExist", resp);
                 try {
                     JSONObject jsonObject=new JSONObject(resp);
                     boolean exist=jsonObject.optBoolean("success");
@@ -248,11 +250,12 @@ public class SignInPhoneActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        iosDialog.show();
+//        iosDialog.show();
+        Functions.Show_loader(SignInPhoneActivity.this, false, false);
         ApiRequest.Call_Api(this, Variables.loginPhone, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+                Functions.cancel_loader();
                 Parse_signup_data(resp);
             }
         });
@@ -263,22 +266,24 @@ public class SignInPhoneActivity extends AppCompatActivity {
         try {
             JSONObject jsonObject=new JSONObject(loginData);
             String code=jsonObject.optString("code");
-            if(code.equals("200")){
-                JSONArray jsonArray=jsonObject.getJSONArray("msg");
+            if(code.equals("200")) {
+                JSONArray jsonArray = jsonObject.getJSONArray("msg");
                 JSONObject userdata = jsonArray.getJSONObject(0);
-                SharedPreferences.Editor editor=sharedPreferences.edit();
-                editor.putString(Variables.u_id,userdata.optString("fb_id"));
-                editor.putString(Variables.f_name,userdata.optString("first_name"));
-                editor.putString(Variables.l_name,userdata.optString("last_name"));
-                editor.putString(Variables.u_name,userdata.optString("first_name")+" "+userdata.optString("last_name"));
-                editor.putString(Variables.gender,userdata.optString("gender"));
-                editor.putString(Variables.u_pic,userdata.optString("profile_pic"));
-                editor.putString(Variables.api_token,userdata.optString("tokon"));
-                editor.putBoolean(Variables.islogin,true);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(Variables.u_id, userdata.optString("fb_id"));
+                editor.putString(Variables.f_name, userdata.optString("first_name"));
+                editor.putString(Variables.l_name, userdata.optString("last_name"));
+                editor.putString(Variables.u_name, userdata.optString("first_name") + " " + userdata.optString("last_name"));
+                editor.putString(Variables.gender, userdata.optString("gender"));
+                editor.putString(Variables.bio, userdata.optString("bio"));
+                editor.putInt(Variables.page_have, userdata.optInt("page_have"));
+                editor.putString(Variables.u_pic, userdata.optString("profile_pic"));
+                editor.putString(Variables.api_token, userdata.optString("tokon"));
+                editor.putBoolean(Variables.islogin, true);
                 editor.commit();
 
-                Variables.sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
-                Variables.user_id=Variables.sharedPreferences.getString(Variables.u_id,"");
+                Variables.sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
+                Variables.user_id = Variables.sharedPreferences.getString(Variables.u_id, "");
 
                 Toast.makeText(this, "Sign In Successful", Toast.LENGTH_SHORT).show();
                 finish();
@@ -295,7 +300,8 @@ public class SignInPhoneActivity extends AppCompatActivity {
 
     }
     private void startPhoneNumberVerification(String phoneNumber) {
-        iosDialog.show();
+//        iosDialog.show();
+        Functions.Show_loader(SignInPhoneActivity.this, false, false);
         // [START start_phone_auth]
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify

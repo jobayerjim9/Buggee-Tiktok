@@ -215,6 +215,9 @@ public class Comment_F extends RootFragment {
                     if (Variables.sharedPreferences.getBoolean(Variables.islogin, false)) {
                         String message = message_edit.getText().toString();
                         if (!TextUtils.isEmpty(message)) {
+                            send_progress.setVisibility(View.VISIBLE);
+                            send_btn.setVisibility(View.GONE);
+
                             SharedPreferences sharedPreferences = context.getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
                             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("liveComment").child(id);
                             String commentId = databaseReference.push().getKey();
@@ -222,9 +225,12 @@ public class Comment_F extends RootFragment {
                             databaseReference.child(commentId).setValue(liveComment).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
+                                    send_progress.setVisibility(View.GONE);
+                                    send_btn.setVisibility(View.VISIBLE);
                                     if (!task.isSuccessful()) {
                                         Toast.makeText(context, "Failed To Post Comment!", Toast.LENGTH_SHORT).show();
                                     } else {
+                                        message_edit.setText("");
                                         recyclerView.scrollToPosition(liveCommentData.size() - 1);
                                     }
                                 }

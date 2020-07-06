@@ -77,7 +77,6 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
         viewPagerAdapter = new StaticViewPagerAdapter(getChildFragmentManager());
         pager = view.findViewById(R.id.viewpager);
         pager.setAdapter(adapter);
-        pager.setOffscreenPageLimit(4);
         pager.setPagingEnabled(false);
         pager.setCurrentItem(0);
         bottomNav = view.findViewById(R.id.bottomNav);

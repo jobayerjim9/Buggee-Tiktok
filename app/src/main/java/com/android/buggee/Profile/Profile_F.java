@@ -56,12 +56,12 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
 
     public TextView follow_unfollow_btn;
     public TextView username, video_count_txt;
-    public ImageView imageView;
+    public ImageView imageView, varified_btn;
     public TextView follow_count_txt, fans_count_txt, heart_count_txt;
 
     ImageView back_btn, setting_btn;
     Boolean isFriend;
-    String user_id, user_name, user_pic, account_type, message_privacy, comment_privacy, live_privacy;
+    String user_id, user_name, user_pic, account_type, message_privacy, comment_privacy, live_privacy, verified;
 
     Bundle bundle;
 
@@ -115,6 +115,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
             comment_privacy = bundle.getString("comment_privacy");
             user_name = bundle.getString("user_name");
             user_pic = bundle.getString("user_pic");
+            verified = bundle.getString("verified");
         }
 
 
@@ -168,6 +169,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
     public View init() {
 
         username = view.findViewById(R.id.username);
+        varified_btn = view.findViewById(R.id.varified_btn);
         imageView = view.findViewById(R.id.user_image);
         imageView.setOnClickListener(this);
 
@@ -192,7 +194,11 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
             follow_unfollow_btn.setText("Follow");
         }
 
-
+        if (verified != null && verified.equalsIgnoreCase("1")) {
+            varified_btn.setVisibility(View.VISIBLE);
+        } else {
+            varified_btn.setVisibility(View.GONE);
+        }
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         pager = view.findViewById(R.id.pager);
         pager.setOffscreenPageLimit(2);
@@ -211,13 +217,16 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
 
         tabs_main_layout = view.findViewById(R.id.tabs_main_layout);
         top_layout = view.findViewById(R.id.top_layout);
+        try {
 
-        if (account_type.equals("private")) {
-            if (!isFriend) {
-                tabs_main_layout.setVisibility(View.GONE);
+            if (account_type.equals("private")) {
+                if (!isFriend) {
+                    tabs_main_layout.setVisibility(View.GONE);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
 //        ViewTreeObserver observer = top_layout.getViewTreeObserver();
 //        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 //

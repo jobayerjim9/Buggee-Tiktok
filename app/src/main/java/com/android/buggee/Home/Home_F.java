@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -17,11 +18,18 @@ import android.os.Environment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.buggee.Accounts.PageProfileDialog;
+import com.android.buggee.Comments.LiveCommentAdapter;
+import com.android.buggee.Comments.LiveCommentData;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.WebViewActivity;
 import com.android.buggee.SoundLists.VideoSound_A;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -32,6 +40,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
+
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -41,7 +51,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -91,6 +103,11 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.volokh.danylo.hashtaghelper.HashTagHelper;
 
 import org.json.JSONArray;
@@ -105,6 +122,7 @@ import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -118,7 +136,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     Context context;
     private RtcEngine mRtcEngine;
 
-    RecyclerView recyclerView, liveRecycler;
+    RecyclerView recyclerView, liveRecycler, liveComentRecycler;
     ArrayList<Home_Get_Set> data_list;
     ArrayList<LiveData> liveData = new ArrayList<>();
     int currentPage = -1, liveCurrentPage = -1;
@@ -129,6 +147,10 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     SwipeRefreshLayout swiperefresh, liveSwipeRefresh;
     int active = 1;
     boolean is_user_stop_video = false;
+    EditText message_edit;
+    ImageButton send_btn;
+    ProgressBar send_progress;
+    CardView liveComment;
 
     public Home_F() {
         // Required empty public constructor
@@ -144,9 +166,37 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
             view = inflater.inflate(R.layout.fragment_home, container, false);
             context = getContext();
+
             initializeEngine();
             p_bar = view.findViewById(R.id.p_bar);
             live_progress = view.findViewById(R.id.live_progress);
+            liveComment = view.findViewById(R.id.liveComment);
+            liveComentRecycler = view.findViewById(R.id.liveComentRecycler);
+            message_edit = view.findViewById(R.id.message_edit);
+            send_btn = view.findViewById(R.id.send_btn);
+            send_progress = view.findViewById(R.id.send_progress);
+            liveRecycler = view.findViewById(R.id.liveRecycler);
+            final LinearLayout swipeDetector = view.findViewById(R.id.swipeDetector);
+            ConstraintLayout home = view.findViewById(R.id.home);
+            final Animation animRightToLeft = AnimationUtils.loadAnimation(context, R.anim.in_from_right);
+            final Animation outAnime = AnimationUtils.loadAnimation(context, R.anim.out_to_right);
+            swipeDetector.setOnTouchListener(new OnSwipeTouchListener(context) {
+                @Override
+                public void onSwipeLeft() {
+                    super.onSwipeLeft();
+                    liveComment.setVisibility(View.VISIBLE);
+                    liveComment.startAnimation(animRightToLeft);
+                }
+            });
+
+            liveComentRecycler.setOnTouchListener(new OnSwipeTouchListener(context) {
+                @Override
+                public void onSwipeRight() {
+                    super.onSwipeRight();
+                    liveComment.setVisibility(View.GONE);
+                    liveComment.startAnimation(outAnime);
+                }
+            });
             noItem = view.findViewById(R.id.noItem);
             TabLayout homeTab = view.findViewById(R.id.homeTab);
             homeTab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -156,11 +206,14 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                         swiperefresh.setVisibility(View.VISIBLE);
                         liveSwipeRefresh.setVisibility(View.GONE);
                         noItem.setVisibility(View.GONE);
+                        liveComment.setVisibility(View.GONE);
+                        swipeDetector.setVisibility(View.GONE);
                         active = 1;
                         removePreviousRemoteView();
                     } else if (tab.getPosition() == 2) {
                         swiperefresh.setVisibility(View.GONE);
                         liveSwipeRefresh.setVisibility(View.VISIBLE);
+                        swipeDetector.setVisibility(View.VISIBLE);
                         active = 3;
                         Release_Privious_Player();
                         removePreviousRemoteView();
@@ -178,12 +231,15 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                     if (tab.getPosition() == 0 || tab.getPosition() == 1) {
                         swiperefresh.setVisibility(View.VISIBLE);
                         liveSwipeRefresh.setVisibility(View.GONE);
+                        swipeDetector.setVisibility(View.GONE);
                         noItem.setVisibility(View.GONE);
+                        liveComment.setVisibility(View.GONE);
                         active = 1;
                         removePreviousRemoteView();
                     } else if (tab.getPosition() == 2) {
                         swiperefresh.setVisibility(View.GONE);
                         liveSwipeRefresh.setVisibility(View.VISIBLE);
+                        swipeDetector.setVisibility(View.VISIBLE);
                         active = 3;
                         Release_Privious_Player();
                         getAllLiveVideo();
@@ -198,7 +254,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
             SnapHelper snapHelper = new PagerSnapHelper();
             snapHelper.attachToRecyclerView(recyclerView);
 
-            liveRecycler = view.findViewById(R.id.liveRecycler);
+
             liveLayoutManager = new LinearLayoutManager(context);
             liveRecycler.setLayoutManager(liveLayoutManager);
             liveRecycler.setHasFixedSize(false);
@@ -291,6 +347,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                             item.live_id = video_info.optString("live_id");
                             item.username = user_info.optString("username");
                             item.fb_id = user_info.optString("fb_id");
+                            item.verified = user_info.optString("verified");
                             item.first_name = user_info.optString("first_name");
                             item.last_name = user_info.optString("last_name");
                             item.profile_pic = user_info.optString("profile_pic");
@@ -304,6 +361,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
 
                         }
+
                         liveSwipeRefresh.setRefreshing(false);
                         liveAdapter = new LiveAdapter(context, liveData, new LiveAdapter.OnItemClickListener() {
                             @Override
@@ -340,6 +398,8 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                                     removePreviousRemoteView();
                                     Log.d("livePageOnScrolled", liveCurrentPage + "");
                                     joinChannel(liveData.get(liveCurrentPage).live_id, liveCurrentPage);
+                                    setupLiveComment(liveData.get(liveCurrentPage).live_id);
+
                                 }
 
                             }
@@ -365,6 +425,84 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
 
     }
+
+    private ArrayList<LiveCommentData> liveCommentData = new ArrayList<>();
+
+    private void setupLiveComment(String live_id) {
+        liveComment.setVisibility(View.GONE);
+        liveCommentData.clear();
+        final String id = live_id.replace(".", "");
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        liveComentRecycler.setLayoutManager(layoutManager);
+        liveComentRecycler.setHasFixedSize(false);
+        final LiveCommentAdapter liveCommentAdapter = new LiveCommentAdapter(context, liveCommentData);
+        liveComentRecycler.setAdapter(liveCommentAdapter);
+        DatabaseReference liveRef = FirebaseDatabase.getInstance().getReference().child("liveComment").child(id);
+
+
+        liveRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                liveCommentData.clear();
+                liveComment.setVisibility(View.VISIBLE);
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    try {
+                        LiveCommentData temp = dataSnapshot1.getValue(LiveCommentData.class);
+                        if (temp != null) {
+                            Log.d("comment", temp.getComment_text());
+                            liveCommentData.add(temp);
+                            liveCommentAdapter.notifyDataSetChanged();
+                            liveComentRecycler.scrollToPosition(liveCommentData.size() - 1);
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        send_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Variables.sharedPreferences.getBoolean(Variables.islogin, false)) {
+                    String message = message_edit.getText().toString();
+                    if (!TextUtils.isEmpty(message)) {
+                        send_progress.setVisibility(View.VISIBLE);
+                        send_btn.setVisibility(View.GONE);
+                        SharedPreferences sharedPreferences = context.getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("liveComment").child(id);
+                        String commentId = databaseReference.push().getKey();
+                        final LiveCommentData liveComment = new LiveCommentData(Variables.user_id, message, sharedPreferences.getString(Variables.f_name, null), sharedPreferences.getString(Variables.l_name, null), commentId, Variables.user_pic);
+                        databaseReference.child(commentId).setValue(liveComment).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                send_progress.setVisibility(View.GONE);
+                                send_btn.setVisibility(View.VISIBLE);
+
+                                if (!task.isSuccessful()) {
+                                    Toast.makeText(context, "Failed To Post Comment!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    message_edit.setText("");
+                                    recyclerView.scrollToPosition(liveCommentData.size() - 1);
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    Toast.makeText(context, "You Have To Login!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 
     private void openLiveComment(LiveData item) {
 
@@ -442,6 +580,12 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                         }
                         break;
 
+                    case R.id.pageVisit:
+                        Intent web = new Intent(context, WebViewActivity.class);
+                        web.putExtra("url", item.url);
+                        context.startActivity(web);
+                        break;
+
                     case R.id.user_pic:
                         onPause();
                         OpenProfile(item, false);
@@ -517,7 +661,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                     case R.id.sound_image_layout:
                         if(Variables.sharedPreferences.getBoolean(Variables.islogin,false)) {
                             if(check_permissions()) {
-                                Intent intent = new Intent(getActivity(), VideoSound_A.class);
+                                Intent intent = new Intent(context, VideoSound_A.class);
                                 intent.putExtra("data", item);
                                 startActivity(intent);
                             }
@@ -581,6 +725,10 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                     JSONObject itemdata = msgArray.optJSONObject(i);
                     Home_Get_Set item = new Home_Get_Set();
                     item.fb_id = itemdata.optString("fb_id");
+                    item.upload_from = itemdata.optString("upload_from");
+                    item.url = itemdata.optString("url");
+                    item.page_name = itemdata.optString("page_name");
+                    item.page_pic = itemdata.optString("page_pic");
 
                     JSONObject user_info = itemdata.optJSONObject("user_info");
                     item.account_type = user_info.optString("account_type");
@@ -589,6 +737,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                     item.comment_privacy = user_info.optString("comment_privacy");
                     item.live_privacy = user_info.optString("live_privacy");
                     item.username = user_info.optString("username");
+                    item.verified = user_info.optString("verified");
                     item.first_name = user_info.optString("first_name", context.getResources().getString(R.string.app_name));
                     item.last_name = user_info.optString("last_name", "User");
                     item.profile_pic = user_info.optString("profile_pic", "null");
@@ -661,7 +810,10 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                     JSONObject itemdata = msgArray.optJSONObject(i);
                     Home_Get_Set item = new Home_Get_Set();
                     item.fb_id = itemdata.optString("fb_id");
-
+                    item.upload_from = itemdata.optString("upload_from");
+                    item.url = itemdata.optString("url");
+                    item.page_name = itemdata.optString("page_name");
+                    item.page_pic = itemdata.optString("page_pic");
                     JSONObject user_info = itemdata.optJSONObject("user_info");
                     item.account_type = user_info.optString("account_type");
                     item.isFriend = user_info.optBoolean("isFriend");
@@ -672,7 +824,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                     item.first_name = user_info.optString("first_name", context.getResources().getString(R.string.app_name));
                     item.last_name = user_info.optString("last_name", "User");
                     item.profile_pic = user_info.optString("profile_pic", "null");
-
+                    item.verified = user_info.optString("verified");
                     JSONObject sound_data = itemdata.optJSONObject("sound");
                     item.sound_id = sound_data.optString("id");
                     item.sound_name = sound_data.optString("sound_name");
@@ -1024,8 +1176,8 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     private void OpenLiveProfile(LiveData item, boolean from_right_to_left) {
         if (Variables.sharedPreferences.getString(Variables.u_id, "0").equals(item.fb_id)) {
-            TabLayout.Tab profile = MainMenuFragment.tabLayout.getTabAt(4);
-            profile.select();
+//            TabLayout.Tab profile = MainMenuFragment.tabLayout.getTabAt(4);
+//            profile.select();
 
         } else {
             Profile_F profile_f = new Profile_F();
@@ -1045,6 +1197,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
             args.putString("live_privacy", item.live_privacy);
             args.putString("user_name", item.first_name + " " + item.last_name);
             args.putString("user_pic", item.profile_pic);
+            args.putString("verified", item.verified);
             profile_f.setArguments(args);
             transaction.addToBackStack(null);
             transaction.replace(R.id.MainMenuFragment, profile_f).commit();
@@ -1055,36 +1208,42 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     // this will open the profile of user which have uploaded the currenlty running video
     private void OpenProfile(Home_Get_Set item,boolean from_right_to_left) {
-        if (Variables.sharedPreferences.getString(Variables.u_id, "0").equals(item.fb_id)) {
+        if (item.upload_from.equals("profile")) {
+            if (Variables.sharedPreferences.getString(Variables.u_id, "0").equals(item.fb_id)) {
 //            TabLayout.Tab profile= MainMenuFragment.tabLayout.getTabAt(4);
 //            profile.select();
 
+            } else {
+                Profile_F profile_f = new Profile_F(new Fragment_Callback() {
+                    @Override
+                    public void Responce(Bundle bundle) {
+                        Call_Api_For_Singlevideos(currentPage);
+                    }
+                });
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                if (from_right_to_left)
+                    transaction.setCustomAnimations(R.anim.in_from_right, R.anim.out_to_left, R.anim.in_from_left, R.anim.out_to_right);
+                else
+                    transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
+
+                Bundle args = new Bundle();
+
+                args.putString("user_id", item.fb_id);
+                args.putBoolean("isFriend", item.isFriend);
+                args.putString("account_type", item.account_type);
+                args.putString("message_privacy", item.account_type);
+                args.putString("comment_privacy", item.comment_privacy);
+                args.putString("live_privacy", item.live_privacy);
+                args.putString("user_name", item.first_name + " " + item.last_name);
+                args.putString("user_pic", item.profile_pic);
+                args.putString("verified", item.verified);
+                profile_f.setArguments(args);
+                transaction.addToBackStack(null);
+                transaction.replace(R.id.MainMenuFragment, profile_f).commit();
+            }
         } else {
-            Profile_F profile_f = new Profile_F(new Fragment_Callback() {
-                @Override
-                public void Responce(Bundle bundle) {
-                    Call_Api_For_Singlevideos(currentPage);
-                }
-            });
-            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            if (from_right_to_left)
-                transaction.setCustomAnimations(R.anim.in_from_right, R.anim.out_to_left, R.anim.in_from_left, R.anim.out_to_right);
-            else
-                transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
-
-            Bundle args = new Bundle();
-
-            args.putString("user_id", item.fb_id);
-            args.putBoolean("isFriend", item.isFriend);
-            args.putString("account_type", item.account_type);
-            args.putString("message_privacy", item.account_type);
-            args.putString("comment_privacy", item.comment_privacy);
-            args.putString("live_privacy", item.live_privacy);
-            args.putString("user_name", item.first_name + " " + item.last_name);
-            args.putString("user_pic", item.profile_pic);
-            profile_f.setArguments(args);
-            transaction.addToBackStack(null);
-            transaction.replace(R.id.MainMenuFragment, profile_f).commit();
+            PageProfileDialog pageProfileDialog = new PageProfileDialog();
+            pageProfileDialog.show(getChildFragmentManager(), item.fb_id);
         }
 
     }
@@ -1615,5 +1774,72 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+    }
+
+    public class OnSwipeTouchListener implements View.OnTouchListener {
+
+        private final GestureDetector gestureDetector;
+
+        public OnSwipeTouchListener(Context ctx) {
+            gestureDetector = new GestureDetector(ctx, new GestureListener());
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return gestureDetector.onTouchEvent(event);
+        }
+
+        private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+            private static final int SWIPE_THRESHOLD = 1;
+            private static final int SWIPE_VELOCITY_THRESHOLD = 1;
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                boolean result = false;
+                try {
+                    float diffY = e2.getY() - e1.getY();
+                    float diffX = e2.getX() - e1.getX();
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                            if (diffX > 0) {
+                                onSwipeRight();
+                            } else {
+                                onSwipeLeft();
+                            }
+                        }
+                        result = true;
+                    } else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffY > 0) {
+                            onSwipeBottom();
+                        } else {
+                            onSwipeTop();
+                        }
+                    }
+                    result = true;
+
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                return result;
+            }
+        }
+
+        public void onSwipeRight() {
+        }
+
+        public void onSwipeLeft() {
+        }
+
+        public void onSwipeTop() {
+        }
+
+        public void onSwipeBottom() {
+        }
     }
 }

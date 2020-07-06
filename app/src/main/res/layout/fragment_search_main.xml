@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Search_Main_F"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     android:clickable="true"
-    android:id="@+id/Search_Main_F"
-    android:background="@color/white"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Search.Search_Main_F">
 
 
@@ -17,16 +17,16 @@
 
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/search_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="15dp"
+            android:layout_marginBottom="5dp"
+            app:cardBackgroundColor="@color/colorPrimaryDark"
             app:cardCornerRadius="5dp"
-            app:cardElevation="0dp"
-            android:id="@+id/search_layout"
-            app:cardBackgroundColor="@color/lightgraycolor">
+            app:cardElevation="0dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -34,72 +34,66 @@
                 android:paddingStart="10dp">
 
                 <ImageButton
+                    android:id="@+id/search"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:id="@+id/search"
-                    android:padding="4dp"
-                    android:scaleType="fitCenter"
                     android:layout_centerVertical="true"
                     android:background="@color/transparent"
-                    android:tint="@color/dimgray"
-                    android:src="@drawable/ic_discovery_gray"/>
+                    android:padding="4dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_discovery_gray"
+                    android:tint="@color/white" />
 
                 <EditText
+                    android:id="@+id/search_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Search"
-                    android:padding="7dp"
-                    android:textSize="14dp"
-                    android:id="@+id/search_edit"
-                    android:textColorHint="@color/darkgray"
-                    android:textColor="@color/black"
                     android:layout_toEndOf="@+id/search"
                     android:backgroundTint="@color/transparent"
-                    />
+                    android:hint="Search"
+                    android:padding="7dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:textSize="14dp" />
 
                 <TextView
+                    android:id="@+id/search_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Search"
-                    android:id="@+id/search_btn"
-                    android:textSize="16dp"
-                    android:visibility="gone"
-                    android:layout_marginEnd="10dp"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
-                    android:textColor="@color/colorAccent"/>
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:text="Search"
+                    android:textColor="@color/text"
+                    android:textSize="16dp"
+                    android:visibility="gone" />
 
             </RelativeLayout>
 
         </androidx.cardview.widget.CardView>
 
         <com.google.android.material.tabs.TabLayout
-           android:id="@+id/tabs"
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
             android:layout_below="@+id/search_layout"
-           android:layout_weight="1"
-           android:layout_width="match_parent"
-           android:layout_height="40dp"
-           app:tabMode="fixed"
-           app:tabTextColor="@color/dark_gray"
-           app:tabSelectedTextColor="@color/colorAccent"
-            app:tabTextAppearance="@style/tab_text"
-           app:tabGravity="fill"
-           app:tabPaddingStart="10dp"
-           app:tabPaddingEnd="10dp"
-           app:tabIndicatorHeight="3dp"
-           android:layout_marginStart="-1dp"
-           app:tabIndicatorColor="@color/colorAccent"/>
+            android:layout_weight="1"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/white"
+            app:tabIndicatorHeight="3dp"
+            app:tabMode="fixed"
+            app:tabPaddingEnd="10dp"
+            app:tabPaddingStart="10dp"
+            app:tabTextAppearance="@style/tab_text" />
 
 
-       <androidx.viewpager.widget.ViewPager
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           android:id="@+id/viewpager"
-           android:layout_below="@+id/tabs">
-       </androidx.viewpager.widget.ViewPager>
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/tabs"></androidx.viewpager.widget.ViewPager>
 
 
-
-   </RelativeLayout>
+    </RelativeLayout>
 
 </FrameLayout>

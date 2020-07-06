@@ -16,12 +16,28 @@ import com.android.buggee.SimpleClasses.Variables;
 import com.squareup.picasso.Picasso;
 
 public class SettingsActivity extends AppCompatActivity {
-
+    TextView createPage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_privacy);
         TextView privacySettings = findViewById(R.id.privacySettings);
+        createPage = findViewById(R.id.createPage);
+        int pageHave = Variables.sharedPreferences.getInt(Variables.page_have, 0);
+        if (pageHave == 1) {
+            createPage.setVisibility(View.GONE);
+        }
+        createPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CreatePageDialog createPageDialog = new CreatePageDialog();
+                createPageDialog.setCancelable(false);
+                createPageDialog.show(getSupportFragmentManager(), "createDialog");
+
+            }
+        });
+        TextView getVerified = findViewById(R.id.getVerified);
+        TextView myAccount = findViewById(R.id.myAccount);
         ImageView backButton = findViewById(R.id.backButton);
         ImageView profilePic = findViewById(R.id.profilePic);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -44,6 +60,18 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(new Intent(SettingsActivity.this, PrivacySettingsActivity.class));
             }
         });
+        myAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        getVerified.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SettingsActivity.this, RequestVerificationActivity.class));
+            }
+        });
         TextView logout = findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,5 +86,14 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(new Intent(SettingsActivity.this, MainMenuActivity.class));
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        int pageHave = Variables.sharedPreferences.getInt(Variables.page_have, 0);
+        if (pageHave == 1) {
+            createPage.setVisibility(View.GONE);
+        }
     }
 }

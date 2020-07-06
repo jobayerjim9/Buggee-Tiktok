@@ -18,12 +18,16 @@ import android.widget.Toast;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.gmail.samehadar.iosdialog.IOSDialog;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -40,7 +44,7 @@ public class PhoneSignUpFragment extends Fragment {
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private FirebaseAuth mAuth;
-    IOSDialog iosDialog;
+    //    IOSDialog iosDialog;
     CountryCodePicker ccp;
     TextInputLayout phoneSignUp,otpSignUp;
     LinearLayout phoneInputLayout;
@@ -51,22 +55,36 @@ public class PhoneSignUpFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v= inflater.inflate(R.layout.fragment_phone_sign_up, container, false);
-        iosDialog = new IOSDialog.Builder(getContext())
-                .setCancelable(false)
-                .setSpinnerClockwise(false)
-                .setMessageContentGravity(Gravity.END)
-                .build();
-        ccp=v.findViewById(R.id.ccp);
-        phoneSignUp=v.findViewById(R.id.phoneSignUp);
-        otpSignUp=v.findViewById(R.id.otpSignUp);
-        phoneInputLayout=v.findViewById(R.id.phoneInputLayout);
+        View v = inflater.inflate(R.layout.fragment_phone_sign_up, container, false);
+//        iosDialog = new IOSDialog.Builder(getContext())
+//                .setCancelable(false)
+//                .setSpinnerClockwise(false)
+//                .setMessageContentGravity(Gravity.END)
+//                .build();
+        final ImageView doneButtonSignIn = v.findViewById(R.id.doneButtonSignIn);
+        doneButtonSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String otp = otpSignUp.getEditText().getText().toString();
+                if (otp.isEmpty()) {
+                    otpSignUp.setErrorEnabled(true);
+                    otpSignUp.setError("Enter An OTP");
+                } else {
+                    otpSignUp.setErrorEnabled(false);
+                    verifyVerificationCode(otp);
+                }
+            }
+        });
+        ccp = v.findViewById(R.id.ccp);
+        phoneSignUp = v.findViewById(R.id.phoneSignUp);
+        otpSignUp = v.findViewById(R.id.otpSignUp);
+        phoneInputLayout = v.findViewById(R.id.phoneInputLayout);
         ccp.registerCarrierNumberEditText(phoneSignUp.getEditText());
         ccp.setPhoneNumberValidityChangeListener(new CountryCodePicker.PhoneNumberValidityChangeListener() {
             @Override
             public void onValidityChanged(boolean isValidNumber) {
                 // your code
-                if (isValidNumber){
+                if (isValidNumber) {
 
                 }
                 else {
@@ -105,7 +123,8 @@ public class PhoneSignUpFragment extends Fragment {
                 //     detect the incoming verification SMS and perform verification without
                 //     user action.
                 // [START_EXCLUDE silent]
-                iosDialog.cancel();
+//                iosDialog.cancel();
+                Functions.cancel_loader();
                 mVerificationInProgress = false;
                 // [END_EXCLUDE]
 
@@ -133,7 +152,8 @@ public class PhoneSignUpFragment extends Fragment {
                 // [START_EXCLUDE silent]
                 mVerificationInProgress = false;
                 // [END_EXCLUDE]
-                iosDialog.cancel();
+//                iosDialog.cancel();
+                Functions.cancel_loader();
 
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     // Invalid request
@@ -171,9 +191,11 @@ public class PhoneSignUpFragment extends Fragment {
                 phoneInputLayout.setVisibility(View.GONE);
                 otpSignUp.setVisibility(View.VISIBLE);
                 nextPhoneSignUp.setVisibility(View.GONE);
+                doneButtonSignIn.setVisibility(View.VISIBLE);
                 // [START_EXCLUDE]
                 // Update UI
-                iosDialog.cancel();
+//                iosDialog.cancel();
+                Functions.cancel_loader();
                 // [END_EXCLUDE]
             }
         };
@@ -184,14 +206,16 @@ public class PhoneSignUpFragment extends Fragment {
     }
 
     private void checkPhoneExist(final String phoneNumber) {
-        iosDialog.show();
+//        iosDialog.show();
+        Functions.Show_loader(getContext(), false, false);
         JSONObject parameters = new JSONObject();
         try {
             parameters.put("phone", phoneNumber);
 
         } catch (JSONException e) {
             e.printStackTrace();
-            iosDialog.cancel();
+//            iosDialog.cancel();
+            Functions.cancel_loader();
             Toast.makeText(getContext(), "Server Error", Toast.LENGTH_SHORT).show();
         }
 
@@ -199,8 +223,8 @@ public class PhoneSignUpFragment extends Fragment {
         ApiRequest.Call_Api(getContext(), Variables.checkphoneExist, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
-                Log.d("SignUpExist",resp);
+                Functions.cancel_loader();
+                Log.d("SignUpExist", resp);
                 try {
                     JSONObject jsonObject=new JSONObject(resp);
                     boolean exist=jsonObject.optBoolean("success");
@@ -223,9 +247,51 @@ public class PhoneSignUpFragment extends Fragment {
 
     }
 
+    private void verifyVerificationCode(String otp) {
+        try {
+            //creating the credential
+            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, otp);
+
+            //signing the user
+            signInWithPhoneAuthCredential(credential);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Something Wrong With Server! Try Again Later", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Intent intent = new Intent(getContext(), SignUpDetailsActivity.class);
+                            intent.putExtra("email", phoneNumber);
+                            getContext().startActivity(intent);
+                            getActivity().finish();
+                            //verification successful we will start the profile activity
+
+
+                        } else {
+
+                            //verification unsuccessful.. display an error message
+
+                            String message = "Somthing is wrong, we will fix it soon...";
+
+                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                message = "Invalid code entered...";
+                            }
+
+                            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
     private void startPhoneNumberVerification(String phoneNumber) {
         // [START start_phone_auth]
-        iosDialog.show();
+//        iosDialog.show();
+        Functions.Show_loader(getContext(), false, false);
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
                 60,                 // Timeout duration

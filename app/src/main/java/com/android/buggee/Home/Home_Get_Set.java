@@ -7,8 +7,8 @@ import java.io.Serializable;
  */
 
 public class Home_Get_Set implements Serializable {
-    public String fb_id, username, first_name, last_name, profile_pic, account_type, message_privacy, comment_privacy, live_privacy;
-    public String video_id, video_description, video_url, gif, thum, created_date;
+    public String fb_id, username, first_name, last_name, profile_pic, account_type, message_privacy, comment_privacy, live_privacy, verified;
+    public String video_id, video_description, video_url, gif, thum, created_date, upload_from, url, page_name, page_pic;
     public int followed;
     public String sound_id, sound_name, sound_pic;
     public boolean isFriend;

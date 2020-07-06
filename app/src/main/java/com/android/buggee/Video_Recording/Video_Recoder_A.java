@@ -17,6 +17,9 @@ import android.os.Environment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.MotionEvent;
@@ -30,6 +33,7 @@ import android.widget.Toast;
 
 import com.android.buggee.SimpleClasses.FileUtils;
 import com.android.buggee.Video_Recording.GallerySelectedVideo.GallerySelectedVideo_A;
+import com.android.buggee.Video_Recording.InfiniteScroller.InfiniteAdapter;
 import com.coremedia.iso.boxes.Container;
 import com.android.buggee.R;
 import com.android.buggee.SegmentProgress.ProgressBarListener;
@@ -109,7 +113,7 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
         Variables.Selected_sound_id = "null";
         Variables.recording_duration = Variables.max_recording_duration;
 
-
+        camera_options = findViewById(R.id.camera_options);
         cameraView = findViewById(R.id.camera);
         sec15 = findViewById(R.id.sec15);
         sec30 = findViewById(R.id.sec30);
@@ -172,8 +176,54 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
                 }
             }
         });
-        camera_options = findViewById(R.id.camera_options);
 
+//        final ArrayList<String> arrayList=new ArrayList<>();
+//        arrayList.add("15s");
+//        arrayList.add("30s");
+//        arrayList.add("60s");
+//        RecyclerView recyclerView=findViewById(R.id.recyclerView);
+//        recyclerView.setHasFixedSize(true);
+//        final LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+//        recyclerView.setLayoutManager(linearLayoutManager);
+//        final InfiniteAdapter infiniteAdapter=new InfiniteAdapter(this,arrayList);
+//        recyclerView.setAdapter(infiniteAdapter);
+//        camera_options = findViewById(R.id.camera_options);
+//        PagerSnapHelper snapHelper = new PagerSnapHelper();
+//        snapHelper.attachToRecyclerView(recyclerView);
+//        recyclerView.scrollToPosition(3);
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+//                    infiniteAdapter.notifyDataSetChanged();
+//                    int position=linearLayoutManager.findFirstVisibleItemPosition()%arrayList.size();
+//                    if (position==0) {
+//                        Variables.recording_duration = 30000;
+//                        Variables.max_recording_duration = 30000;
+//                        initlize_Video_progress();
+//                    }
+//                    else if (position==1) {
+//                        Variables.recording_duration = 60000;
+//                        Variables.max_recording_duration = 60000;
+//                        initlize_Video_progress();
+//                    }
+//                    else if (position==2) {
+//
+//                        Variables.recording_duration = 15000;
+//                        Variables.max_recording_duration = 15000;
+//                        initlize_Video_progress();
+//                    }
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//
+//            }
+//        });
         cameraView.addCameraKitListener(new CameraKitEventListener() {
             @Override
             public void onEvent(CameraKitEvent cameraKitEvent) {
@@ -578,12 +628,12 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
                 try {
                     File video_file = FileUtils.getFileFromUri(this, uri);
 
-                    if (getfileduration(uri) < 19500) {
+                    if (getfileduration(uri) < 60000) {
                         Chnage_Video_size(video_file.getAbsolutePath(), Variables.gallery_resize_video);
 
                     } else {
                         try {
-                            startTrim(video_file, new File(Variables.gallery_trimed_video), 1000, 18000);
+                            startTrim(video_file, new File(Variables.gallery_trimed_video), 1000, 60000);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

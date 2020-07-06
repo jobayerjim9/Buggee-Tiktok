@@ -86,10 +86,9 @@ public class Upload_Service extends Service{
     }
 
 
-
     Uri uri;
-
-    String video_base64="",thumb_base_64="",Gif_base_64="";
+    String url, uploadFrom;
+    String video_base64 = "", thumb_base_64 = "", Gif_base_64 = "";
 
     String description;
 
@@ -123,19 +122,20 @@ public class Upload_Service extends Service{
         if (intent.getAction().equals("startservice")) {
             showNotification();
 
-            String uri_string= intent.getStringExtra("uri");
+            String uri_string = intent.getStringExtra("uri");
             uri = Uri.parse(uri_string);
-            description=intent.getStringExtra("desc");
+            description = intent.getStringExtra("desc");
+            uploadFrom = intent.getStringExtra("uploadFrom");
+            url = intent.getStringExtra("url");
 
             new Thread(new Runnable() {
                 @Override
                 public void run() {
 
 
-
-            Bitmap bmThumbnail;
-            bmThumbnail = ThumbnailUtils.createVideoThumbnail(uri.getPath(),
-                    MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
+                    Bitmap bmThumbnail;
+                    bmThumbnail = ThumbnailUtils.createVideoThumbnail(uri.getPath(),
+                            MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
 
                     Bitmap bmThumbnail_resized = Bitmap.createScaledBitmap(bmThumbnail,(int)(bmThumbnail.getWidth()*0.4), (int)(bmThumbnail.getHeight()*0.4), true);
 
@@ -176,18 +176,20 @@ public class Upload_Service extends Service{
             JSONObject parameters = new JSONObject();
 
             try {
-                parameters.put("fb_id", sharedPreferences.getString(Variables.u_id,""));
+                parameters.put("fb_id", sharedPreferences.getString(Variables.u_id, ""));
                 parameters.put("sound_id", Variables.Selected_sound_id);
-                parameters.put("description",description);
+                parameters.put("description", description);
+                parameters.put("uploadFrom", uploadFrom);
+                parameters.put("url", url);
 
-                JSONObject vidoefiledata=new JSONObject();
-                vidoefiledata.put("file_data",video_base64);
-                parameters.put("videobase64",vidoefiledata);
+                JSONObject vidoefiledata = new JSONObject();
+                vidoefiledata.put("file_data", video_base64);
+                parameters.put("videobase64", vidoefiledata);
 
 
-                JSONObject imagefiledata=new JSONObject();
-                imagefiledata.put("file_data",thumb_base_64);
-                parameters.put("picbase64",imagefiledata);
+                JSONObject imagefiledata = new JSONObject();
+                imagefiledata.put("file_data", thumb_base_64);
+                parameters.put("picbase64", imagefiledata);
 
 
                 JSONObject giffiledata=new JSONObject();

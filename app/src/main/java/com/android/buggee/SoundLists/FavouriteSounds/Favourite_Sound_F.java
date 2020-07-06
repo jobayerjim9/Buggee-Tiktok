@@ -22,6 +22,7 @@ import com.android.buggee.Main_Menu.RelateToFragment_OnBack.RootFragment;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.android.buggee.SoundLists.Sounds_GetSet;
 import com.downloader.Error;
@@ -75,7 +76,7 @@ public class Favourite_Sound_F extends RootFragment implements Player.EventListe
 
     DownloadRequest prDownloader;
 
-    IOSDialog iosDialog;
+    //    IOSDialog iosDialog;
     public static String running_sound_id;
 
 
@@ -90,17 +91,17 @@ public class Favourite_Sound_F extends RootFragment implements Player.EventListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view= inflater.inflate(R.layout.activity_sound_list, container, false);
+        view = inflater.inflate(R.layout.activity_sound_list, container, false);
 
-        context=getContext();
+        context = getContext();
 
-        running_sound_id="none";
-
-        iosDialog = new IOSDialog.Builder(context)
-                .setCancelable(false)
-                .setSpinnerClockwise(false)
-                .setMessageContentGravity(Gravity.END)
-                .build();
+        running_sound_id = "none";
+//
+//        iosDialog = new IOSDialog.Builder(context)
+//                .setCancelable(false)
+//                .setSpinnerClockwise(false)
+//                .setMessageContentGravity(Gravity.END)
+//                .build();
 
         PRDownloader.initialize(context);
 
@@ -108,7 +109,7 @@ public class Favourite_Sound_F extends RootFragment implements Player.EventListe
         recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
 
-        swiperefresh=view.findViewById(R.id.swiperefresh);
+        swiperefresh = view.findViewById(R.id.swiperefresh);
         swiperefresh.setColorSchemeResources(R.color.black);
         swiperefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -411,7 +412,7 @@ public class Favourite_Sound_F extends RootFragment implements Player.EventListe
 
     private void Call_Api_For_Fav_sound(final int pos, String video_id) {
 
-        iosDialog.show();
+        Functions.Show_loader(context, false, false);
 
         JSONObject parameters = new JSONObject();
         try {
@@ -425,7 +426,7 @@ public class Favourite_Sound_F extends RootFragment implements Player.EventListe
         ApiRequest.Call_Api(context, Variables.fav_sound, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+                Functions.cancel_loader();
                 datalist.remove(pos);
                 adapter.notifyItemRemoved(pos);
                 adapter.notifyDataSetChanged();

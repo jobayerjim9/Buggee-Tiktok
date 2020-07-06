@@ -16,8 +16,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.android.buggee.Main_Menu.MainMenuActivity;
@@ -40,8 +43,12 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
 
     ServiceCallback serviceCallback;
 
-
+    LinearLayout pageSwitchLayout;
+    Switch pageSwitch;
+    EditText urlEditText;
     EditText description_edit;
+    String uploadFrom = "profile";
+    String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +60,30 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
         } else {
             video_path = Variables.output_filter_file;
         }
+        pageSwitchLayout = findViewById(R.id.pageSwitchLayout);
+        pageSwitch = findViewById(R.id.pageSwitch);
+        urlEditText = findViewById(R.id.urlEditText);
         video_thumbnail = findViewById(R.id.video_thumbnail);
+        int page_have = Variables.sharedPreferences.getInt(Variables.page_have, 0);
+        if (page_have == 1) {
+            pageSwitchLayout.setVisibility(View.VISIBLE);
+        } else {
+            pageSwitchLayout.setVisibility(View.GONE);
+        }
 
+        pageSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                Log.d("pageSwitch", b + "");
+                if (b) {
+                    uploadFrom = "page";
+                    urlEditText.setVisibility(View.VISIBLE);
+                } else {
+                    urlEditText.setVisibility(View.GONE);
+                    uploadFrom = "profile";
+                }
+            }
+        });
 
         description_edit = findViewById(R.id.description_edit);
 
@@ -113,6 +142,8 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
             mServiceIntent.setAction("startservice");
             mServiceIntent.putExtra("uri", "" + Uri.fromFile(new File(video_path)));
             mServiceIntent.putExtra("desc", "" + description_edit.getText().toString());
+            mServiceIntent.putExtra("uploadFrom", "" + uploadFrom);
+            mServiceIntent.putExtra("url", "" + urlEditText.getText().toString());
             startService(mServiceIntent);
 
 

@@ -5,14 +5,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/d_round_white_background">
 
-    <com.gmail.samehadar.iosdialog.CamomileSpinner
-        android:id="@+id/loader"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="18dp"
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="fitCenter"
         android:layout_centerInParent="true"
-        app:spinnerColor="@color/app_color"
-        app:clockwise="true"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="default_loader.json"
+        app:lottie_loop="true" />
 
 </RelativeLayout>

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.gmail.samehadar.iosdialog.IOSDialog;
 import com.google.android.material.textfield.TextInputLayout;
@@ -26,7 +27,8 @@ import org.json.JSONObject;
 public class SignInActivity extends AppCompatActivity {
     TextInputLayout emailUsernameInput,passwordInput;
     SharedPreferences sharedPreferences;
-    IOSDialog iosDialog;
+
+    //    IOSDialog iosDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,19 +37,19 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void initUi() {
-        sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
-        iosDialog = new IOSDialog.Builder(this)
-                .setCancelable(false)
-                .setSpinnerClockwise(false)
-                .setMessageContentGravity(Gravity.END)
-                .build();
-        TextView loginViaMobile=findViewById(R.id.loginViaMobile);
-        emailUsernameInput=findViewById(R.id.emailUsernameInput);
-        passwordInput=findViewById(R.id.passwordInput);
+        sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
+//        iosDialog = new IOSDialog.Builder(this)
+//                .setCancelable(false)
+//                .setSpinnerClockwise(false)
+//                .setMessageContentGravity(Gravity.END)
+//                .build();
+        TextView loginViaMobile = findViewById(R.id.loginViaMobile);
+        emailUsernameInput = findViewById(R.id.emailUsernameInput);
+        passwordInput = findViewById(R.id.passwordInput);
         loginViaMobile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(SignInActivity.this,SignInPhoneActivity.class));
+                startActivity(new Intent(SignInActivity.this, SignInPhoneActivity.class));
                 finish();
             }
         });
@@ -87,12 +89,12 @@ public class SignInActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        iosDialog.show();
+        Functions.Show_loader(SignInActivity.this, false, true);
+//        iosDialog.show();
         ApiRequest.Call_Api(this, Variables.loginUsername, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+                Functions.cancel_loader();
                 Parse_signup_data(resp);
 
             }
@@ -109,11 +111,12 @@ public class SignInActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        iosDialog.show();
+//        iosDialog.show();
+        Functions.Show_loader(SignInActivity.this, false, false);
         ApiRequest.Call_Api(this, Variables.loginEmail, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+                Functions.cancel_loader();
                 Parse_signup_data(resp);
 
             }
@@ -125,22 +128,24 @@ public class SignInActivity extends AppCompatActivity {
             Log.d("signInData", loginData);
             JSONObject jsonObject=new JSONObject(loginData);
             String code=jsonObject.optString("code");
-            if(code.equals("200")){
-                JSONArray jsonArray=jsonObject.getJSONArray("msg");
+            if(code.equals("200")) {
+                JSONArray jsonArray = jsonObject.getJSONArray("msg");
                 JSONObject userdata = jsonArray.getJSONObject(0);
-                SharedPreferences.Editor editor=sharedPreferences.edit();
-                editor.putString(Variables.u_id,userdata.optString("fb_id"));
-                editor.putString(Variables.f_name,userdata.optString("first_name"));
-                editor.putString(Variables.l_name,userdata.optString("last_name"));
-                editor.putString(Variables.u_name,userdata.optString("first_name")+" "+userdata.optString("last_name"));
-                editor.putString(Variables.gender,userdata.optString("gender"));
-                editor.putString(Variables.u_pic,userdata.optString("profile_pic"));
-                editor.putString(Variables.api_token,userdata.optString("tokon"));
-                editor.putBoolean(Variables.islogin,true);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(Variables.u_id, userdata.optString("fb_id"));
+                editor.putString(Variables.f_name, userdata.optString("first_name"));
+                editor.putString(Variables.l_name, userdata.optString("last_name"));
+                editor.putString(Variables.u_name, userdata.optString("first_name") + " " + userdata.optString("last_name"));
+                editor.putString(Variables.gender, userdata.optString("gender"));
+                editor.putString(Variables.bio, userdata.optString("bio"));
+                editor.putInt(Variables.page_have, userdata.optInt("page_have"));
+                editor.putString(Variables.u_pic, userdata.optString("profile_pic"));
+                editor.putString(Variables.api_token, userdata.optString("tokon"));
+                editor.putBoolean(Variables.islogin, true);
                 editor.commit();
 
-                Variables.sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
-                Variables.user_id=Variables.sharedPreferences.getString(Variables.u_id,"");
+                Variables.sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
+                Variables.user_id = Variables.sharedPreferences.getString(Variables.u_id, "");
 
                 Toast.makeText(this, "Sign In Successful", Toast.LENGTH_SHORT).show();
                 finish();

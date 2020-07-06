@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group>
-
+        <item
+            android:id="@+id/manage_page"
+            android:title="Manage Page" />
         <item
             android:id="@+id/edit_Profile_id"
-            android:title="Edit Profile"/>
+            android:title="Edit Profile" />
         <item
             android:id="@+id/settings_privacy"
-            android:title="Setting and privacy"/>
+            android:title="Setting and privacy" />
         <item
             android:id="@+id/logout_id"
-            android:title="Logout"/>
+            android:title="Logout" />
 
 
     </group>

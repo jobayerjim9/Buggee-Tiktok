@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceView;
@@ -24,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.android.buggee.Comments.Comment_F;
 import com.android.buggee.Comments.LiveCommentAdapter;
 import com.android.buggee.Comments.LiveCommentData;
@@ -31,6 +33,7 @@ import com.android.buggee.Main_Menu.MainMenuActivity;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.gmail.samehadar.iosdialog.IOSDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -45,7 +48,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
@@ -53,11 +59,13 @@ import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 
+import static io.agora.rtc.Constants.LOG_FILTER_DEBUG;
+
 
 public class LiveBroadcasterActivity extends AppCompatActivity {
     private static final int PERMISSION_REQ_ID = 22;
     private RtcEngine mRtcEngine;
-    IOSDialog iosDialog;
+    //    IOSDialog iosDialog;
     DatabaseReference liveRef;
 
     private LiveCommentAdapter liveCommentAdapter;
@@ -74,17 +82,37 @@ public class LiveBroadcasterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.live_broadcast);
-        iosDialog = new IOSDialog.Builder(this)
-                .setCancelable(false)
-                .setSpinnerClockwise(false)
-                .setMessageContentGravity(Gravity.END)
-                .build();
-        if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID) &&
-                checkSelfPermission(REQUESTED_PERMISSIONS[1], PERMISSION_REQ_ID) &&
-                checkSelfPermission(REQUESTED_PERMISSIONS[2], PERMISSION_REQ_ID)) {
-            Log.d("init", "start");
-            initializeEngine();
-        }
+//        iosDialog = new IOSDialog.Builder(this)
+//                .setCancelable(false)
+//                .setSpinnerClockwise(false)
+//                .setMessageContentGravity(Gravity.END)
+//                .build();
+
+        final LottieAnimationView liveAnimation = findViewById(R.id.liveAnimation);
+        final LottieAnimationView liveCountDown = findViewById(R.id.liveCountDown);
+        new CountDownTimer(5000, 1000) {
+            @Override
+            public void onTick(long l) {
+                Log.d("time", (l / 1000) + "");
+                if ((l / 1000) == 1) {
+                    if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID) &&
+                            checkSelfPermission(REQUESTED_PERMISSIONS[1], PERMISSION_REQ_ID) &&
+                            checkSelfPermission(REQUESTED_PERMISSIONS[2], PERMISSION_REQ_ID)) {
+                        Log.d("init", "start");
+                        initializeEngine();
+                    }
+                }
+            }
+
+            @Override
+            public void onFinish() {
+
+                liveCountDown.cancelAnimation();
+                liveCountDown.setVisibility(View.GONE);
+            }
+        }.start();
+
+
         liveRecycler = findViewById(R.id.liveRecycler);
         final String id = Variables.user_id.replace(".", "");
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -151,11 +179,11 @@ public class LiveBroadcasterActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        iosDialog.show();
+        Functions.Show_loader(LiveBroadcasterActivity.this, false, false);
         ApiRequest.Call_Api(LiveBroadcasterActivity.this, Variables.deleteLive, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+                Functions.cancel_loader();
                 Log.d("liveResponse", resp);
                 try {
                     JSONObject jsonObject = new JSONObject(resp);
@@ -246,6 +274,11 @@ public class LiveBroadcasterActivity extends AppCompatActivity {
     private void initializeEngine() {
         try {
             mRtcEngine = RtcEngine.create(getBaseContext(), getString(R.string.private_app_id), mRtcEventHandler);
+            mRtcEngine.setLogFilter(LOG_FILTER_DEBUG);
+            String ts = new SimpleDateFormat("yyyyMMdd").format(new Date());
+            String filepath = Variables.app_folder + ts + ".log";
+            File file = new File(filepath);
+            mRtcEngine.setLogFile(filepath);
             setChannelProfile();
         } catch (Exception e) {
             Log.e("initEngine", Log.getStackTraceString(e));

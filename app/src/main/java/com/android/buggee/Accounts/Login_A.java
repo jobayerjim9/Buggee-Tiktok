@@ -21,7 +21,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Base64;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -33,6 +32,7 @@ import com.android.buggee.Main_Menu.MainMenuActivity;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -44,7 +44,6 @@ import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.gmail.samehadar.iosdialog.IOSDialog;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -71,7 +70,7 @@ public class Login_A extends Activity {
 
     FirebaseAuth mAuth;
     FirebaseUser firebaseUser;
-    IOSDialog iosDialog;
+//    IOSDialog iosDialog;
 
     SharedPreferences sharedPreferences;
 
@@ -105,23 +104,23 @@ public class Login_A extends Activity {
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Login_A.this,SignUpActivity.class));
+                startActivity(new Intent(Login_A.this, SignUpActivity.class));
                 finish();
             }
         });
         mAuth = FirebaseAuth.getInstance();
-        firebaseUser=mAuth.getCurrentUser();
+        firebaseUser = mAuth.getCurrentUser();
 
         // if the user is already login trought facebook then we will logout the user automatically
         LoginManager.getInstance().logOut();
+//
+//        iosDialog = new IOSDialog.Builder(this)
+//                .setCancelable(false)
+//                .setSpinnerClockwise(false)
+//                .setMessageContentGravity(Gravity.END)
+//                .build();
 
-        iosDialog = new IOSDialog.Builder(this)
-                .setCancelable(false)
-                .setSpinnerClockwise(false)
-                .setMessageContentGravity(Gravity.END)
-                .build();
-
-        sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
 
         findViewById(R.id.facebook_btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -261,17 +260,18 @@ public class Login_A extends Activity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            iosDialog.show();
-                             final String id = Profile.getCurrentProfile().getId();
+                            // iosDialog.show();
+                            Functions.Show_loader(Login_A.this, false, false);
+                            final String id = Profile.getCurrentProfile().getId();
                             GraphRequest request = GraphRequest.newMeRequest(token, new GraphRequest.GraphJSONObjectCallback() {
                                 @Override
                                 public void onCompleted(JSONObject user, GraphResponse graphResponse) {
 
-                                    Log.d("resp",user.toString());
+                                    Log.d("resp", user.toString());
                                     //after get the info of user we will pass to function which will store the info in our server
 
-                                    String fname=""+user.optString("first_name");
-                                    String lname=""+user.optString("last_name");
+                                    String fname = "" + user.optString("first_name");
+                                    String lname = "" + user.optString("last_name");
 
 
                                     if(fname.equals("") || fname.equals("null"))
@@ -418,22 +418,23 @@ public class Login_A extends Activity {
             parameters.put("fb_id", id);
             parameters.put("first_name",""+f_name);
             parameters.put("last_name", ""+l_name);
-            parameters.put("profile_pic",picture);
-            parameters.put("gender","m");
-            parameters.put("version",appversion);
-            parameters.put("signup_type",singnup_type);
-            parameters.put("device",Variables.device);
+            parameters.put("profile_pic", picture);
+            parameters.put("gender", "m");
+            parameters.put("version", appversion);
+            parameters.put("signup_type", singnup_type);
+            parameters.put("device", Variables.device);
 
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        iosDialog.show();
+        Functions.Show_loader(Login_A.this, false, false);
+//        iosDialog.show();
         ApiRequest.Call_Api(this, Variables.SignUp, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+//                iosDialog.cancel();
+                Functions.cancel_loader();
                 Parse_signup_data(resp);
 
             }
@@ -449,22 +450,24 @@ public class Login_A extends Activity {
         try {
             JSONObject jsonObject=new JSONObject(loginData);
             String code=jsonObject.optString("code");
-            if(code.equals("200")){
-                JSONArray jsonArray=jsonObject.getJSONArray("msg");
+            if(code.equals("200")) {
+                JSONArray jsonArray = jsonObject.getJSONArray("msg");
                 JSONObject userdata = jsonArray.getJSONObject(0);
-                SharedPreferences.Editor editor=sharedPreferences.edit();
-                editor.putString(Variables.u_id,userdata.optString("fb_id"));
-                editor.putString(Variables.f_name,userdata.optString("first_name"));
-                editor.putString(Variables.l_name,userdata.optString("last_name"));
-                editor.putString(Variables.u_name,userdata.optString("first_name")+" "+userdata.optString("last_name"));
-                editor.putString(Variables.gender,userdata.optString("gender"));
-                editor.putString(Variables.u_pic,userdata.optString("profile_pic"));
-                editor.putString(Variables.api_token,userdata.optString("tokon"));
-                editor.putBoolean(Variables.islogin,true);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(Variables.u_id, userdata.optString("fb_id"));
+                editor.putString(Variables.f_name, userdata.optString("first_name"));
+                editor.putString(Variables.l_name, userdata.optString("last_name"));
+                editor.putString(Variables.u_name, userdata.optString("first_name") + " " + userdata.optString("last_name"));
+                editor.putString(Variables.gender, userdata.optString("gender"));
+                editor.putString(Variables.bio, userdata.optString("bio"));
+                editor.putInt(Variables.page_have, userdata.optInt("page_have"));
+                editor.putString(Variables.u_pic, userdata.optString("profile_pic"));
+                editor.putString(Variables.api_token, userdata.optString("tokon"));
+                editor.putBoolean(Variables.islogin, true);
                 editor.commit();
 
-                Variables.sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
-                Variables.user_id=Variables.sharedPreferences.getString(Variables.u_id,"");
+                Variables.sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
+                Variables.user_id = Variables.sharedPreferences.getString(Variables.u_id, "");
 
                 top_view.setVisibility(View.GONE);
                 finish();

@@ -1,7 +1,14 @@
 package com.android.buggee.Home;
 
 import android.content.Context;
+
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +20,7 @@ import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.API_CallBack;
 import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -62,28 +70,38 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
 
     @Override
     public void onBindViewHolder(final Home_Adapter.CustomViewHolder holder, final int i) {
-        final Home_Get_Set item= dataList.get(i);
+        final Home_Get_Set item = dataList.get(i);
         holder.setIsRecyclable(false);
 
-        try {
 
-            holder.bind(i, item, listener);
-            if (item.isFriend) {
-                holder.smallPlusButton.setVisibility(View.GONE);
+        holder.bind(i, item, listener);
+
+        if (item.isFriend || item.fb_id.equals(Variables.sharedPreferences.getString(Variables.u_id, ""))) {
+            holder.smallPlusButton.setVisibility(View.GONE);
+        }
+
+
+        if (item.upload_from.equals("page")) {
+            holder.name.setText(item.page_name);
+            holder.pageCard.setVisibility(View.VISIBLE);
+            Log.d("profilePic", item.page_pic);
+            try {
+                Picasso.with(context).
+                        load(Variables.base_url + item.page_pic)
+                        .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
+                        .resize(100, 100).into(holder.user_pic);
+
+                Picasso.with(context).
+                        load(Variables.base_url + item.page_pic)
+                        .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
+                        .resize(100, 100).into(holder.user_pic2);
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            holder.username.setText(item.username);
+        } else {
+            holder.pageCard.setVisibility(View.GONE);
             holder.name.setText(item.username);
-
-            if ((item.sound_name == null || item.sound_name.equals("") || item.sound_name.equals("null"))) {
-                holder.sound_name.setText("original sound - " + item.first_name + " " + item.last_name);
-            } else {
-                holder.sound_name.setText(item.sound_name);
-            }
-            holder.sound_name.setSelected(true);
-
-
-            holder.desc_txt.setText(item.video_description);
             try {
                 Picasso.with(context).
                         load(item.profile_pic)
@@ -97,69 +115,81 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            if ((item.sound_name == null || item.sound_name.equals(""))
-                    || item.sound_name.equals("null")){
-
-                item.sound_pic=item.profile_pic;
-
-            }
-            else if(item.sound_pic.equals(""))
-                item.sound_pic="Null";
-
-
-            Picasso.with(context).
-                load(item.sound_pic)
-                .placeholder(context.getResources().getDrawable(R.drawable.ic_round_music))
-                .resize(100,100).into(holder.sound_image);
-
-
-
-        if(item.liked.equals("1")){
-            holder.like_image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_like_fill));
         }
-       else {
+
+
+        if ((item.sound_name == null || item.sound_name.equals("") || item.sound_name.equals("null"))) {
+            holder.sound_name.setText("original sound - " + item.first_name + " " + item.last_name);
+        } else {
+            holder.sound_name.setText(item.sound_name);
+        }
+        holder.sound_name.setSelected(true);
+
+
+        holder.desc_txt.setText(item.video_description);
+
+
+        if ((item.sound_name == null || item.sound_name.equals(""))
+                || item.sound_name.equals("null")) {
+
+            item.sound_pic = item.profile_pic;
+
+        } else if (item.sound_pic.equals(""))
+            item.sound_pic = "Null";
+        try {
+            Picasso.with(context).
+                    load(item.sound_pic)
+                    .placeholder(context.getResources().getDrawable(R.drawable.ic_round_music))
+                    .resize(100, 100).into(holder.sound_image);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        if (item.liked.equals("1")) {
+            holder.like_image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_like_fill));
+        } else {
             holder.like_image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_like));
         }
-
+        if (item.verified != null && item.verified.equalsIgnoreCase("1")) {
+            holder.varified_btn.setVisibility(View.VISIBLE);
+        } else {
+            holder.varified_btn.setVisibility(View.GONE);
+        }
 
         holder.like_txt.setText(item.like_count);
         holder.comment_txt.setText(item.video_comment_count);
 
-
-
-        }catch (Exception e){
-
-        }
-   }
-
+    }
 
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        TextView username,desc_txt,sound_name,name;
-        ImageView user_pic,sound_image,user_pic2,smallPlusButton;
+        TextView desc_txt, sound_name, name, pageName, pageVisit;
+        ImageView user_pic, sound_image, user_pic2, smallPlusButton, varified_btn;
 
-        LinearLayout like_layout,comment_layout,shared_layout,sound_image_layout;
-        ImageView like_image,comment_image;
-        TextView like_txt,comment_txt;
-
+        LinearLayout like_layout, comment_layout, shared_layout, sound_image_layout;
+        ImageView like_image, comment_image;
+        TextView like_txt, comment_txt;
+        CardView pageCard;
 
         public CustomViewHolder(View view) {
             super(view);
 
 
-            username=view.findViewById(R.id.username);
-            smallPlusButton=view.findViewById(R.id.smallPlusButton);
-            name=view.findViewById(R.id.name);
-            user_pic=view.findViewById(R.id.user_pic);
-            user_pic2=view.findViewById(R.id.user_pic2);
-            sound_name=view.findViewById(R.id.sound_name);
-            sound_image=view.findViewById(R.id.sound_image);
-
-            like_layout=view.findViewById(R.id.like_layout);
-            like_image=view.findViewById(R.id.like_image);
-            like_txt=view.findViewById(R.id.like_txt);
+            smallPlusButton = view.findViewById(R.id.smallPlusButton);
+            pageName = view.findViewById(R.id.pageName);
+            pageCard = view.findViewById(R.id.pageCard);
+            pageVisit = view.findViewById(R.id.pageVisit);
+            name = view.findViewById(R.id.name);
+            user_pic = view.findViewById(R.id.user_pic);
+            user_pic2 = view.findViewById(R.id.user_pic2);
+            sound_name = view.findViewById(R.id.sound_name);
+            sound_image = view.findViewById(R.id.sound_image);
+            varified_btn = view.findViewById(R.id.varified_btn);
+            like_layout = view.findViewById(R.id.like_layout);
+            like_image = view.findViewById(R.id.like_image);
+            like_txt = view.findViewById(R.id.like_txt);
 
 
             desc_txt=view.findViewById(R.id.desc_txt);
@@ -178,7 +208,13 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(postion,item,v);
+                    listener.onItemClick(postion, item, v);
+                }
+            });
+            pageVisit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(postion, item, v);
                 }
             });
 
@@ -187,24 +223,24 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
                 @Override
                 public void onClick(View v) {
 
-                    listener.onItemClick(postion,item,v);
+                    listener.onItemClick(postion, item, v);
                 }
             });
 
-            username.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    listener.onItemClick(postion,item,v);
-                }
-            });
+//            username.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                    listener.onItemClick(postion,item,v);
+//                }
+//            });
 
 
             like_layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    listener.onItemClick(postion,item,v);
+                    listener.onItemClick(postion, item, v);
                 }
             });
 
@@ -234,7 +270,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
             smallPlusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(postion,item,v);
+                    listener.onItemClick(postion, item, v);
                 }
             });
 
@@ -244,10 +280,12 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
 
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
-    public void Follow_unFollow_User(){
-
-
+    public void Follow_unFollow_User() {
 
 
     }

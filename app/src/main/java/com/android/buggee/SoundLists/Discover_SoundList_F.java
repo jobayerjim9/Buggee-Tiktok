@@ -23,8 +23,10 @@ import android.widget.Toast;
 
 import com.android.buggee.Main_Menu.RelateToFragment_OnBack.RootFragment;
 import com.android.buggee.R;
+import com.android.buggee.Settings.PrivacySettingsActivity;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.downloader.Error;
 import com.downloader.OnCancelListener;
@@ -72,7 +74,7 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
     View view;
     Context context;
 
-    IOSDialog iosDialog;
+    //    IOSDialog iosDialog;
     EditText searchSound;
 
     SwipeRefreshLayout swiperefresh;
@@ -120,17 +122,17 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
         });
         running_sound_id = "none";
 
-        iosDialog = new IOSDialog.Builder(context)
-                .setCancelable(false)
-                .setSpinnerClockwise(false)
-                .setMessageContentGravity(Gravity.END)
-                .build();
+//        iosDialog = new IOSDialog.Builder(context)
+//                .setCancelable(false)
+//                .setSpinnerClockwise(false)
+//                .setMessageContentGravity(Gravity.END)
+//                .build();
 
 
         PRDownloader.initialize(context);
 
 
-        datalist=new ArrayList<>();
+        datalist = new ArrayList<>();
 
         listview = view.findViewById(R.id.listview);
         listview.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
@@ -461,7 +463,7 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
 
     private void Call_Api_For_Fav_sound(int pos, final Sounds_GetSet item) {
 
-        iosDialog.show();
+        Functions.Show_loader(context, false, false);
 
        JSONObject parameters = new JSONObject();
         try {
@@ -479,7 +481,7 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
         ApiRequest.Call_Api(context, Variables.fav_sound, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+                Functions.cancel_loader();
 
                 if(item.fav.equals("1"))
                     item.fav="0";

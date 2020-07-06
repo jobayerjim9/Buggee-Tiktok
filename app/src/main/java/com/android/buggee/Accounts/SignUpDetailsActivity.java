@@ -27,6 +27,7 @@ import com.android.buggee.Main_Menu.MainMenuActivity;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.gmail.samehadar.iosdialog.IOSDialog;
 import com.google.android.material.textfield.TextInputLayout;
@@ -49,26 +50,26 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
     CardView spinnerCard;
     String fname,lname,password,username,dob,gender,email;
     SharedPreferences sharedPreferences;
-    IOSDialog iosDialog;
+    //    IOSDialog iosDialog;
     ImageView nextEmailSignUp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_details);
-        email=getIntent().getStringExtra("email");
-        sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
-        firstNameInput=findViewById(R.id.firstNameInput);
-        lastNameInput=findViewById(R.id.lastNameInput);
-        passwordInput=findViewById(R.id.passwordInput);
-        usernameInput=findViewById(R.id.usernameInput);
-        spinnerCard=findViewById(R.id.spinnerCard);
-        datePicker=findViewById(R.id.datePicker);
-        genderPicker=findViewById(R.id.genderPicker);
-        iosDialog = new IOSDialog.Builder(this)
-                .setCancelable(false)
-                .setSpinnerClockwise(false)
-                .setMessageContentGravity(Gravity.END)
-                .build();
+        email = getIntent().getStringExtra("email");
+        sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
+        firstNameInput = findViewById(R.id.firstNameInput);
+        lastNameInput = findViewById(R.id.lastNameInput);
+        passwordInput = findViewById(R.id.passwordInput);
+        usernameInput = findViewById(R.id.usernameInput);
+        spinnerCard = findViewById(R.id.spinnerCard);
+        datePicker = findViewById(R.id.datePicker);
+        genderPicker = findViewById(R.id.genderPicker);
+//        iosDialog = new IOSDialog.Builder(this)
+//                .setCancelable(false)
+//                .setSpinnerClockwise(false)
+//                .setMessageContentGravity(Gravity.END)
+//                .build();
         genderPicker.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.gender_array, R.layout.gender_spinner_item);
@@ -77,7 +78,7 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
         genderPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i==0) {
+                if (i == 0) {
                     Toast.makeText(SignUpDetailsActivity.this, "Select A Gender!", Toast.LENGTH_SHORT).show();
                     gender=null;
                 }
@@ -239,11 +240,11 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
             e.printStackTrace();
         }
 
-        iosDialog.show();
+        Functions.Show_loader(SignUpDetailsActivity.this, false, false);
         ApiRequest.Call_Api(this, Variables.signUpEmail, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+                Functions.cancel_loader();
                 Parse_signup_data(resp);
 
             }
@@ -368,14 +369,14 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
     }
     private void checkUsernameExist(final String username)
     {
-        iosDialog.show();
+        Functions.Show_loader(SignUpDetailsActivity.this, false, false);
         JSONObject parameters = new JSONObject();
         try {
             parameters.put("username", username);
 
         } catch (JSONException e) {
             e.printStackTrace();
-            iosDialog.cancel();
+            Functions.cancel_loader();
             Toast.makeText(SignUpDetailsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
         }
 
@@ -383,8 +384,8 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
         ApiRequest.Call_Api(SignUpDetailsActivity.this, Variables.checkUsernameExist, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
-                Log.d("SignUpExist",resp);
+                Functions.cancel_loader();
+                Log.d("SignUpExist", resp);
                 try {
                     JSONObject jsonObject=new JSONObject(resp);
                     boolean exist=jsonObject.optBoolean("success");

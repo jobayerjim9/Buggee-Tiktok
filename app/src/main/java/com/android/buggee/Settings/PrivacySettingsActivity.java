@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.gmail.samehadar.iosdialog.IOSDialog;
 
@@ -24,7 +25,7 @@ import org.json.JSONObject;
 public class PrivacySettingsActivity extends AppCompatActivity implements PrivacyChooserDialog.PrivacyDialogListener {
     TextView directMessagePrivacy, commentPrivacy, liveStreamPrivacy;
     Switch privateAccountSwitch;
-    IOSDialog iosDialog;
+//    IOSDialog iosDialog;
 
 
     @Override
@@ -38,11 +39,11 @@ public class PrivacySettingsActivity extends AppCompatActivity implements Privac
                 finish();
             }
         });
-        iosDialog = new IOSDialog.Builder(this)
-                .setCancelable(false)
-                .setSpinnerClockwise(false)
-                .setMessageContentGravity(Gravity.END)
-                .build();
+//        iosDialog = new IOSDialog.Builder(this)
+//                .setCancelable(false)
+//                .setSpinnerClockwise(false)
+//                .setMessageContentGravity(Gravity.END)
+//                .build();
         directMessagePrivacy = findViewById(R.id.directMessagePrivacy);
         privateAccountSwitch = findViewById(R.id.privateAccountSwitch);
         commentPrivacy = findViewById(R.id.commentPrivacy);
@@ -100,11 +101,11 @@ public class PrivacySettingsActivity extends AppCompatActivity implements Privac
             e.printStackTrace();
         }
 
-        iosDialog.show();
+        Functions.Show_loader(PrivacySettingsActivity.this, false, false);
         ApiRequest.Call_Api(PrivacySettingsActivity.this, Variables.changeAccountType, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                iosDialog.cancel();
+                Functions.cancel_loader();
                 try {
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");
@@ -131,12 +132,12 @@ public class PrivacySettingsActivity extends AppCompatActivity implements Privac
             e.printStackTrace();
         }
 
-        iosDialog.show();
+        Functions.Show_loader(PrivacySettingsActivity.this, false, false);
         ApiRequest.Call_Api(PrivacySettingsActivity.this, Variables.getPrivacy, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
                 Log.d("privacyResponse", resp);
-                iosDialog.cancel();
+                Functions.cancel_loader();
                 try {
                     JSONObject jsonObject = new JSONObject(resp);
                     String account_type = jsonObject.optString("account_type");

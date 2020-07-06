@@ -24,6 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.android.buggee.Comments.Comment_Get_Set;
 import com.android.buggee.R;
@@ -83,9 +84,6 @@ public class Functions {
         dialog.setContentView(R.layout.item_dialog_loading_view);
         dialog.getWindow().setBackgroundDrawable(context.getResources().getDrawable(R.drawable.d_round_white_background));
 
-
-        CamomileSpinner loader=dialog.findViewById(R.id.loader);
-        loader.start();
 
 
         if(!outside_touch)

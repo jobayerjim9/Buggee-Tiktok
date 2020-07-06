@@ -70,7 +70,7 @@ public class SoundList_F extends RootFragment  implements Player.EventListener  
 
     DownloadRequest prDownloader;
 
-    IOSDialog iosDialog;
+//    IOSDialog iosDialog;
     public static String running_sound_id;
     public SoundList_F(String type) {
         this.type=type;

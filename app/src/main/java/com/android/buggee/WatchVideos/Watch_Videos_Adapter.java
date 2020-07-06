@@ -59,7 +59,6 @@ public class Watch_Videos_Adapter extends RecyclerView.Adapter<Watch_Videos_Adap
     public void onBindViewHolder(final Watch_Videos_Adapter.CustomViewHolder holder, final int i) {
         final Home_Get_Set item= dataList.get(i);
 
-        try{
 
 
 
@@ -77,32 +76,34 @@ public class Watch_Videos_Adapter extends RecyclerView.Adapter<Watch_Videos_Adap
         holder.sound_name.setSelected(true);
 
         holder.desc_txt.setText(""+item.video_description);
+        try {
+            Picasso.with(context).
+                    load(item.profile_pic)
+                    .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
+                    .resize(100, 100).into(holder.user_pic);
 
-        Picasso.with(context).
-                load(item.profile_pic)
-                .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
-                .resize(100,100).into(holder.user_pic);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if ((item.sound_name == null || item.sound_name.equals(""))
+                || item.sound_name.equals("null")) {
 
+            item.sound_pic = item.profile_pic;
 
-            if((item.sound_name==null || item.sound_name.equals(""))
-                    || item.sound_name.equals("null")){
-
-                    item.sound_pic=item.profile_pic;
-
-            }
-            else if(item.sound_pic.equals(""))
-                item.sound_pic="Null";
-
+        } else if (item.sound_pic.equals(""))
+            item.sound_pic = "Null";
+        try {
             Picasso.with(context).
                     load(item.sound_pic)
                     .placeholder(context.getResources().getDrawable(R.drawable.ic_round_music))
-                    .resize(100,100).into(holder.sound_image);
-
-
-        if(item.liked.equals("1")){
-            holder.like_image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_like_fill));
+                    .resize(100, 100).into(holder.sound_image);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-       else {
+
+        if (item.liked.equals("1")) {
+            holder.like_image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_like_fill));
+        } else {
             holder.like_image.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_like));
         }
 
@@ -110,10 +111,6 @@ public class Watch_Videos_Adapter extends RecyclerView.Adapter<Watch_Videos_Adap
         holder.like_txt.setText(item.like_count);
         holder.comment_txt.setText(item.video_comment_count);
 
-
-        }catch (Exception e){
-
-        }
    }
 
 
