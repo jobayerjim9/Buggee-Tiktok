@@ -84,15 +84,16 @@
                 android:layout_gravity="center"/>
 
                 <TextView
+                    android:id="@+id/total_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="10dp"
+                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="5dp"
-                    android:layout_alignParentRight="true"
+                    android:fontFamily="@font/avenir_regular"
+                    android:text=""
                     android:textColor="@color/white"
-                    android:id="@+id/total_time"/>
+                    android:textSize="10dp" />
 
             </RelativeLayout>
 
@@ -100,16 +101,17 @@
         </LinearLayout>
 
         <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/audio_bubble"
-        android:textSize="10dp"
-        android:id="@+id/message_seen"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:textColor="@color/darkgray"
-        android:layout_marginRight="15dp"/>
+            android:id="@+id/message_seen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/audio_bubble"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="@font/avenir_regular"
+            android:textColor="@color/darkgray"
+            android:textSize="10dp" />
 
 
     </RelativeLayout>

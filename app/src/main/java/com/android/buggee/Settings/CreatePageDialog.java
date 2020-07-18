@@ -134,14 +134,15 @@ public class CreatePageDialog extends DialogFragment {
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");
                     if (success) {
-                        Variables.sharedPreferences.edit().putInt(Variables.page_have, 1).apply();
                         Toast.makeText(context, "You Can Now Post Video From Your Page By Following Regular Video Uploading", Toast.LENGTH_LONG).show();
+                        Variables.sharedPreferences.edit().putInt(Variables.page_have, 1).apply();
                         dismiss();
                     } else {
                         Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

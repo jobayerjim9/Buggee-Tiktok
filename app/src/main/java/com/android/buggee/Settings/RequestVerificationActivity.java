@@ -49,13 +49,14 @@ public class RequestVerificationActivity extends AppCompatActivity implements Vi
 
     EditText username_edit, fullname_edit;
     TextView file_name_txt;
-    String base_64;
+    String base_64, type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_varification);
         findViewById(R.id.Goback).setOnClickListener(this);
+        type = getIntent().getStringExtra("type");
         username_edit = findViewById(R.id.username_edit);
         fullname_edit = findViewById(R.id.fullname_edit);
 
@@ -347,6 +348,7 @@ public class RequestVerificationActivity extends AppCompatActivity implements Vi
             params.put("Full name", fullname_edit.getText().toString());
             params.put("Username", username_edit.getText().toString());
             params.put("attachment", base_64);
+            params.put("type", type);
         } catch (JSONException e) {
             e.printStackTrace();
         }

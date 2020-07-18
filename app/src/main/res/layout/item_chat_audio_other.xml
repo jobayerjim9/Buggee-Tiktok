@@ -21,16 +21,17 @@
         android:layout_toRightOf="@+id/not_send_messsage">
 
         <TextView
+            android:id="@+id/datetxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="@font/avenir_regular"
             android:gravity="center"
             android:padding="5dp"
-            android:textSize="12sp"
-            android:layout_marginBottom="5dp"
             android:textColor="@color/darkgray"
-            android:visibility="gone"
-            android:id="@+id/datetxt"/>
+            android:textSize="12sp"
+            android:visibility="gone" />
 
 
 
@@ -82,15 +83,16 @@
                     android:layout_gravity="center"/>
 
                 <TextView
+                    android:id="@+id/total_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="10dp"
+                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="5dp"
-                    android:layout_alignParentRight="true"
+                    android:fontFamily="@font/avenir_regular"
+                    android:text=""
                     android:textColor="@color/black"
-                    android:id="@+id/total_time"/>
+                    android:textSize="10dp" />
 
             </RelativeLayout>
 
@@ -98,16 +100,17 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/message_seen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_below="@+id/audio_bubble"
-            android:textSize="10dp"
-            android:id="@+id/message_seen"
+            android:layout_alignParentRight="true"
             android:layout_marginTop="5dp"
+            android:layout_marginRight="15dp"
             android:layout_marginBottom="5dp"
+            android:fontFamily="@font/avenir_regular"
             android:textColor="@color/darkgray"
-            android:layout_marginRight="15dp"/>
+            android:textSize="10dp" />
 
 
     </RelativeLayout>

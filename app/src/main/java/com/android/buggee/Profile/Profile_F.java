@@ -9,11 +9,14 @@ import android.os.Bundle;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
 import com.google.android.material.tabs.TabLayout;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
+
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -437,7 +440,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
 
     boolean is_run_first_time=false;
     private void Call_Api_For_get_Allvideos() {
-
+        Functions.Show_loader(context, false, false);
         if(bundle==null){
             user_id=Variables.sharedPreferences.getString(Variables.u_id,"0");
         }
@@ -449,6 +452,8 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Functions.cancel_loader();
+            Toast.makeText(context, "Failed To Load Profile!", Toast.LENGTH_SHORT).show();
         }
 
 
@@ -465,9 +470,10 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
     }
 
     public void Parse_data(String responce){
-
+        Functions.cancel_loader();
 
         try {
+            Log.d("profileResp", responce);
             JSONObject jsonObject=new JSONObject(responce);
             String code=jsonObject.optString("code");
             if(code.equals("200")) {

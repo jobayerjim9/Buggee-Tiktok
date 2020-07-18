@@ -65,7 +65,7 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
         urlEditText = findViewById(R.id.urlEditText);
         video_thumbnail = findViewById(R.id.video_thumbnail);
         int page_have = Variables.sharedPreferences.getInt(Variables.page_have, 0);
-        if (page_have == 1) {
+        if (page_have == 1 && !Variables.recordType.equals("story")) {
             pageSwitchLayout.setVisibility(View.VISIBLE);
         } else {
             pageSwitchLayout.setVisibility(View.GONE);
@@ -200,7 +200,7 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
 
             File outputfile2 = new File(Variables.outputfile2);
             outputfile2.delete();
-
+            Variables.recordType = null;
             File SelectedAudio_AAC = new File(Variables.output_audio);
             SelectedAudio_AAC.delete();
             Variables.audio_selected = false;

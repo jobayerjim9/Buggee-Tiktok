@@ -369,8 +369,8 @@ public class Functions {
                         for (int i=0;i<msgArray.length();i++) {
                             JSONObject itemdata = msgArray.optJSONObject(i);
                             Comment_Get_Set item=new Comment_Get_Set();
-                            item.fb_id=itemdata.optString("fb_id");
-
+                            item.fb_id = itemdata.optString("fb_id");
+                            item.id = itemdata.optString("id");
                             JSONObject user_info=itemdata.optJSONObject("user_info");
                             item.first_name=user_info.optString("first_name");
                             item.last_name=user_info.optString("last_name");

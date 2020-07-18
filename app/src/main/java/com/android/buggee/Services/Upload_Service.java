@@ -181,7 +181,7 @@ public class Upload_Service extends Service{
                 parameters.put("description", description);
                 parameters.put("uploadFrom", uploadFrom);
                 parameters.put("url", url);
-
+                parameters.put("type", Variables.recordType);
                 JSONObject vidoefiledata = new JSONObject();
                 vidoefiledata.put("file_data", video_base64);
                 parameters.put("videobase64", vidoefiledata);

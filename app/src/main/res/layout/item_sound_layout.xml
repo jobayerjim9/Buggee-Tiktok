@@ -65,11 +65,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="8dp"
         android:fontFamily="@font/avenir_regular"
         android:text="Name of the sounds"
         android:textColor="@color/white"
         android:textSize="14dp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/fav_btn"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/sound_image"
         app:layout_constraintTop_toTopOf="@+id/sound_image" />
 
@@ -79,11 +82,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginTop="5dp"
+        android:layout_marginEnd="8dp"
         android:fontFamily="@font/avenir_regular"
         android:text="Description"
         android:textColor="@color/gainsboro"
         android:textSize="14dp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/fav_btn"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/sound_image"
         app:layout_constraintTop_toBottomOf="@+id/sound_name" />
 

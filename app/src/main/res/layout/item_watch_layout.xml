@@ -226,13 +226,14 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginRight="5dp"
                 android:layout_marginBottom="70dp"
-                android:background="@drawable/ic_black_disk"
+                android:background="@drawable/ic_music_and_multimedia"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/sound_image"
                     android:layout_width="32dp"
+                    android:src="@drawable/ic_round_music"
                     android:layout_height="32dp" />
 
             </LinearLayout>

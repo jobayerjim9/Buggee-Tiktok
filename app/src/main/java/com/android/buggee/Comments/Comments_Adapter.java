@@ -1,15 +1,30 @@
 package com.android.buggee.Comments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.DialogInterface;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.buggee.R;
+import com.android.buggee.SimpleClasses.ApiRequest;
+import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
+import com.android.buggee.SimpleClasses.Variables;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -78,28 +93,46 @@ public class Comments_Adapter extends RecyclerView.Adapter<Comments_Adapter.Cust
    }
 
 
-
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
         TextView username,message;
         ImageView user_pic;
-
+        RelativeLayout mainlayout;
 
         public CustomViewHolder(View view) {
             super(view);
 
             username=view.findViewById(R.id.username);
             user_pic=view.findViewById(R.id.user_pic);
-            message=view.findViewById(R.id.message);
+            message = view.findViewById(R.id.message);
+            mainlayout = view.findViewById(R.id.mainlayout);
 
         }
 
-        public void bind(final int postion,final Comment_Get_Set item, final Comments_Adapter.OnItemClickListener listener) {
+        public void bind(final int postion, final Comment_Get_Set item, final Comments_Adapter.OnItemClickListener listener) {
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(postion,item,v);
+                    listener.onItemClick(postion, item, v);
+                }
+            });
+            mainlayout.setOnTouchListener(new View.OnTouchListener() {
+
+                private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+
+
+                    @Override
+                    public void onLongPress(MotionEvent e) {
+                        super.onLongPress(e);
+                        showReportOption(item);
+                    }
+                });
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    gestureDetector.onTouchEvent(event);
+                    return true;
                 }
             });
 
@@ -108,8 +141,87 @@ public class Comments_Adapter extends RecyclerView.Adapter<Comments_Adapter.Cust
 
     }
 
+    private void showReportOption(final Comment_Get_Set comment_get_set) {
+
+        final CharSequence[] options = {"Report Video", "Cancel"};
+
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.AlertDialogCustom);
+
+        builder.setTitle(null);
+
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+
+            @Override
+
+            public void onClick(DialogInterface dialog, int item) {
+                if (options[item].equals("Report Video")) {
+                    //dialog.dismiss();
+
+                    reportComment(comment_get_set);
+
+                } else if (options[item].equals("Cancel")) {
+
+                    dialog.dismiss();
+
+                }
+
+            }
+
+        });
+        if (!comment_get_set.fb_id.equals(Variables.sharedPreferences.getString(Variables.u_id, ""))) {
+            builder.show();
+        }
+
+    }
+
+    private void reportComment(final Comment_Get_Set comment_get_set) {
+        new AlertDialog.Builder(context)
+                .setTitle("Are You Sure?")
+                .setMessage("Action May Take Within 24 Hour!")
+                .setPositiveButton("Report!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        JSONObject parameters = new JSONObject();
+                        try {
+                            parameters.put("content_id", comment_get_set.id);
+                            parameters.put("reported_by", Variables.sharedPreferences.getString(Variables.u_id, ""));
+                            parameters.put("type", "comment");
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        Functions.Show_loader(context, false, false);
+                        ApiRequest.Call_Api(context, Variables.report, parameters, new Callback() {
+                            @Override
+                            public void Responce(String resp) {
+                                Functions.cancel_loader();
+                                try {
+                                    JSONObject jsonObject = new JSONObject(resp);
+                                    boolean success = jsonObject.optBoolean("success");
+                                    if (success) {
+                                        Toast.makeText(context, "Reported!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        String message = jsonObject.optString("msg");
+                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
 
 
+    }
 
 
 }

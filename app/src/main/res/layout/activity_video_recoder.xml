@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/linearLayout9"
+            android:id="@+id/secLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -20,7 +20,7 @@
             android:layout_marginBottom="8dp"
             android:elevation="1dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/divider5"
+            app:layout_constraintBottom_toTopOf="@+id/downDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -32,6 +32,7 @@
                 android:fontFamily="@font/avenir_regular"
                 android:padding="4dp"
                 android:text="15s"
+                android:textColor="#CCFFFFFF"
                 android:textSize="16sp" />
 
             <TextView
@@ -42,6 +43,7 @@
                 android:fontFamily="@font/avenir_regular"
                 android:padding="4dp"
                 android:text="30s"
+                android:textColor="#CCFFFFFF"
                 android:textSize="16sp" />
 
             <TextView
@@ -51,20 +53,21 @@
                 android:fontFamily="@font/avenir_regular"
                 android:padding="4dp"
                 android:text="60s"
+                android:textColor="#CCFFFFFF"
                 android:textSize="16sp" />
         </LinearLayout>
 
         <View
-            android:id="@+id/divider6"
+            android:id="@+id/upDivider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginBottom="8dp"
             android:background="#8037517E"
             android:elevation="1dp"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout9" />
+            app:layout_constraintBottom_toTopOf="@+id/secLayout" />
 
         <View
-            android:id="@+id/divider5"
+            android:id="@+id/downDivider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginBottom="8dp"
@@ -144,6 +147,7 @@
                 android:id="@+id/add_sound_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/avenir_bold"
                 android:padding="5dp"
                 android:text="Add Sound"
                 android:textColor="@color/white"

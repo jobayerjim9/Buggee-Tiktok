@@ -140,7 +140,9 @@ public class Comment_F extends RootFragment {
             adapter = new Comments_Adapter(context, data_list, new Comments_Adapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(int postion, Comment_Get_Set item, View view) {
-
+                    if (view.getId() == R.id.mainlayout) {
+                        reportComment(item);
+                    }
 
                 }
             });
@@ -243,6 +245,10 @@ public class Comment_F extends RootFragment {
             });
         }
         return view;
+    }
+
+    private void reportComment(Comment_Get_Set item) {
+
     }
 
 

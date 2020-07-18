@@ -82,8 +82,10 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
 
 
         if (item.upload_from.equals("page")) {
-            holder.name.setText(item.page_name);
+            // holder.name.setText(item.page_name);
+
             holder.pageCard.setVisibility(View.VISIBLE);
+            holder.sound_image_layout.setVisibility(View.GONE);
             Log.d("profilePic", item.page_pic);
             try {
                 Picasso.with(context).
@@ -91,27 +93,18 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
                         .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
                         .resize(100, 100).into(holder.user_pic);
 
-                Picasso.with(context).
-                        load(Variables.base_url + item.page_pic)
-                        .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
-                        .resize(100, 100).into(holder.user_pic2);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             holder.pageCard.setVisibility(View.GONE);
-            holder.name.setText(item.username);
+            //  holder.name.setText(item.username);
             try {
                 Picasso.with(context).
                         load(item.profile_pic)
                         .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
                         .resize(100, 100).into(holder.user_pic);
-
-                Picasso.with(context).
-                        load(item.profile_pic)
-                        .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
-                        .resize(100, 100).into(holder.user_pic2);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -165,8 +158,8 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        TextView desc_txt, sound_name, name, pageName, pageVisit;
-        ImageView user_pic, sound_image, user_pic2, smallPlusButton, varified_btn;
+        TextView desc_txt, sound_name, pageName, pageVisit;
+        ImageView user_pic, sound_image, smallPlusButton, varified_btn;
 
         LinearLayout like_layout, comment_layout, shared_layout, sound_image_layout;
         ImageView like_image, comment_image;
@@ -181,9 +174,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
             pageName = view.findViewById(R.id.pageName);
             pageCard = view.findViewById(R.id.pageCard);
             pageVisit = view.findViewById(R.id.pageVisit);
-            name = view.findViewById(R.id.name);
             user_pic = view.findViewById(R.id.user_pic);
-            user_pic2 = view.findViewById(R.id.user_pic2);
             sound_name = view.findViewById(R.id.sound_name);
             sound_image = view.findViewById(R.id.sound_image);
             varified_btn = view.findViewById(R.id.varified_btn);

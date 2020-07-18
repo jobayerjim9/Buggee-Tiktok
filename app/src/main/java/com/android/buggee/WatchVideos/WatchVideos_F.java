@@ -2,6 +2,7 @@ package com.android.buggee.WatchVideos;
 
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import androidx.annotation.Nullable;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SoundLists.VideoSound_A;
@@ -113,7 +115,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
     Watch_Videos_Adapter adapter;
 
-    ProgressBar p_bar;
+    LottieAnimationView p_bar;
 
     private KeyboardHeightProvider keyboardHeightProvider;
 
@@ -143,7 +145,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
             Variables.sharedPreferences=getSharedPreferences(Variables.pref_name,Context.MODE_PRIVATE);
         }
 
-        p_bar=findViewById(R.id.p_bar);
+        p_bar = findViewById(R.id.video_loader);
 
 
 
@@ -154,6 +156,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
             video_id=bundle.getStringExtra("video_id");
 
             if(video_id!=null){
+
                 Call_Api_For_get_Allvideos(video_id);
             }
             else if(appLinkData==null){
@@ -437,7 +440,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                                 public void Responce(Bundle bundle) {
 
                                     if (bundle.getString("action").equals("save")) {
-                                        Save_Video(item);
+                                        // Save_Video(item);
                                     }
                                     if (bundle.getString("action").equals("delete")) {
                                         Functions.Show_loader(WatchVideos_F.this, false, false);
@@ -955,7 +958,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
     CharSequence[] options;
     private void Show_video_option(final Home_Get_Set home_get_set) {
 
-         options = new CharSequence[]{ "Save Video","Cancel" };
+        options = new CharSequence[]{"Save Video", "Report Video", "Cancel"};
 
          if(home_get_set.fb_id.equals(Variables.sharedPreferences.getString(Variables.u_id,"")))
         options = new CharSequence[]{"Save Video", "Delete Video", "Cancel"};
@@ -970,10 +973,11 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
             public void onClick(DialogInterface dialog, int item) {
 
-                if (options[item].equals("Save Video"))
-                {
-                    if(Functions.Checkstoragepermision(WatchVideos_F.this))
-                        Save_Video(home_get_set);
+                if (options[item].equals("Save Video")) {
+                    if (Functions.Checkstoragepermision(WatchVideos_F.this)) {
+                        // Save_Video(home_get_set);
+                    }
+
 
                 }
 
@@ -1000,9 +1004,10 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                         }
                     });
 
-                }
-
-                else if (options[item].equals("Cancel")) {
+                } else if (options[item].equals("Report Video")) {
+                    //dialog.dismiss();
+                    reportVideo(home_get_set);
+                } else if (options[item].equals("Cancel")) {
 
                     dialog.dismiss();
 
@@ -1016,11 +1021,60 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
     }
 
-    public void Save_Video(final Home_Get_Set item){
+    private void reportVideo(final Home_Get_Set home_get_set) {
+        new AlertDialog.Builder(context)
+                .setTitle("Are You Sure?")
+                .setMessage("Action May Take Within 24 Hour!")
+                .setPositiveButton("Report!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        JSONObject parameters = new JSONObject();
+                        try {
+                            parameters.put("content_id", home_get_set.video_id);
+                            parameters.put("reported_by", Variables.sharedPreferences.getString(Variables.u_id, ""));
+                            parameters.put("type", "video");
 
-        Functions.Show_determinent_loader(context,false,false);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        Functions.Show_loader(context, false, false);
+                        ApiRequest.Call_Api(context, Variables.report, parameters, new Callback() {
+                            @Override
+                            public void Responce(String resp) {
+                                Functions.cancel_loader();
+                                try {
+                                    JSONObject jsonObject = new JSONObject(resp);
+                                    boolean success = jsonObject.optBoolean("success");
+                                    if (success) {
+                                        Toast.makeText(context, "Reported!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        String message = jsonObject.optString("msg");
+                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
+
+
+    }
+
+    public void Save_Video(final Home_Get_Set item) {
+
+        Functions.Show_determinent_loader(context, false, false);
         PRDownloader.initialize(getApplicationContext());
-        DownloadRequest prDownloader= PRDownloader.download(item.video_url, Environment.getExternalStorageDirectory() +"/Tittic/", item.video_id+"no_watermark"+".mp4")
+        DownloadRequest prDownloader = PRDownloader.download(item.video_url, Environment.getExternalStorageDirectory() + "/Tittic/", item.video_id + "no_watermark" + ".mp4")
                 .build()
                 .setOnStartOrResumeListener(new OnStartOrResumeListener() {
                     @Override
@@ -1201,14 +1255,99 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(privious_player!=null){
+        if (privious_player != null) {
             privious_player.release();
         }
 
         keyboardHeightProvider.close();
     }
 
+    private void getAllStory() {
 
+
+        Log.d(Variables.tag, MainMenuActivity.token);
+
+        JSONObject parameters = new JSONObject();
+        try {
+            parameters.put("fb_id", Variables.sharedPreferences.getString(Variables.u_id, "0"));
+            parameters.put("token", MainMenuActivity.token);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        ApiRequest.Call_Api(context, Variables.showAllStory, parameters, new Callback() {
+            @Override
+            public void Responce(String resp) {
+                Log.d("storyLoadResoponse", resp);
+                Parse_data_story(resp);
+
+            }
+        });
+
+
+    }
+
+    public void Parse_data_story(String responce) {
+
+        data_list = new ArrayList<>();
+
+        try {
+            JSONObject jsonObject = new JSONObject(responce);
+            String code = jsonObject.optString("code");
+            if (code.equals("200")) {
+                JSONArray msgArray = jsonObject.getJSONArray("msg");
+                for (int i = 0; i < msgArray.length(); i++) {
+                    JSONObject itemdata = msgArray.optJSONObject(i);
+                    Home_Get_Set item = new Home_Get_Set();
+                    item.fb_id = itemdata.optString("fb_id");
+                    item.upload_from = itemdata.optString("upload_from");
+                    item.url = itemdata.optString("url");
+                    item.page_name = itemdata.optString("page_name");
+                    item.page_pic = itemdata.optString("page_pic");
+
+                    JSONObject user_info = itemdata.optJSONObject("user_info");
+                    item.account_type = user_info.optString("account_type");
+                    item.isFriend = user_info.optBoolean("isFriend");
+                    item.message_privacy = user_info.optString("message_privacy");
+                    item.comment_privacy = user_info.optString("comment_privacy");
+                    item.live_privacy = user_info.optString("live_privacy");
+                    item.username = user_info.optString("username");
+                    item.verified = user_info.optString("verified");
+                    item.first_name = user_info.optString("first_name", context.getResources().getString(R.string.app_name));
+                    item.last_name = user_info.optString("last_name", "User");
+                    item.profile_pic = user_info.optString("profile_pic", "null");
+
+                    JSONObject sound_data = itemdata.optJSONObject("sound");
+                    item.sound_id = sound_data.optString("id");
+                    item.sound_name = sound_data.optString("sound_name");
+                    item.sound_pic = sound_data.optString("thum");
+
+                    JSONObject count = itemdata.optJSONObject("count");
+                    item.like_count = count.optString("like_count");
+                    item.video_comment_count = count.optString("video_comment_count");
+                    item.video_id = itemdata.optString("id");
+                    item.liked = itemdata.optString("liked");
+                    item.video_url = itemdata.optString("video");
+                    item.video_description = itemdata.optString("description");
+                    item.type = "story";
+                    item.thum = itemdata.optString("thum");
+                    item.created_date = itemdata.optString("created");
+                    data_list.add(item);
+
+                }
+
+                Set_Adapter();
+
+            } else {
+                Toast.makeText(context, "" + jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     // Bottom all the function and the Call back listener of the Expo player
     @Override
@@ -1232,8 +1371,18 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
         if(playbackState==Player.STATE_BUFFERING){
             p_bar.setVisibility(View.VISIBLE);
         }
-        else if(playbackState==Player.STATE_READY){
-             p_bar.setVisibility(View.GONE);
+        else if (playbackState == Player.STATE_READY) {
+            p_bar.setVisibility(View.GONE);
+        } else if (playbackState == Player.STATE_ENDED) {
+
+            if (data_list.size() > currentPage + 1) {
+                Log.d("play ended", "scrolled");
+                if (currentPage < 0) {
+                    currentPage = 0;
+                }
+                recyclerView.scrollToPosition(currentPage + 1);
+                // Set_Player(currentPage+1);
+            }
         }
 
     }

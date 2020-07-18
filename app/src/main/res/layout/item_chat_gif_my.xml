@@ -3,16 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <TextView
+        android:id="@+id/datetxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:fontFamily="@font/avenir_regular"
         android:gravity="center"
         android:padding="5dp"
-        android:textSize="12sp"
         android:textColor="@color/darkgray"
-        android:visibility="gone"
-        android:id="@+id/datetxt"/>
+        android:textSize="12sp"
+        android:visibility="gone" />
 
 
        <com.android.buggee.Chat.RoundCornersImageView
@@ -27,15 +29,17 @@
         android:src="@drawable/image_placeholder"
         android:layout_below="@+id/datetxt"
            />
+
     <TextView
+        android:id="@+id/message_seen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_below="@+id/chatimage"
-        android:textSize="10dp"
-        android:visibility="visible"
-        android:id="@+id/message_seen"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:fontFamily="@font/avenir_regular"
         android:textColor="@color/darkgray"
-        android:layout_marginRight="15dp"/>
+        android:textSize="10dp"
+        android:visibility="visible" />
 
 </RelativeLayout>

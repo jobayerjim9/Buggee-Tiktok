@@ -100,7 +100,7 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
 
     int sec_passed=0;
 
-
+    String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,8 +108,20 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
         Hide_navigation();
 
         setContentView(R.layout.activity_video_recoder);
+        View upDivider = findViewById(R.id.upDivider);
+        View downDivider = findViewById(R.id.downDivider);
 
-
+        type = getIntent().getStringExtra("type");
+        Variables.recordType = type;
+        LinearLayout secLayout = findViewById(R.id.secLayout);
+        if (type.equals("story")) {
+            secLayout.setVisibility(View.GONE);
+            upDivider.setVisibility(View.GONE);
+            downDivider.setVisibility(View.GONE);
+            Variables.recording_duration = 16000;
+            Variables.max_recording_duration = 16000;
+            initlize_Video_progress();
+        }
         Variables.Selected_sound_id = "null";
         Variables.recording_duration = Variables.max_recording_duration;
 
@@ -633,7 +645,7 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
 
                     } else {
                         try {
-                            startTrim(video_file, new File(Variables.gallery_trimed_video), 1000, 60000);
+                            startTrim(video_file, new File(Variables.gallery_trimed_video), 1000, 16000);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -666,7 +678,7 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
 
         Functions.Show_determinent_loader(this, false, false);
         new GPUMp4Composer(src_path, destination_path)
-                .size(540, 960)
+                .size(720, 1080)
                 .fillMode(FillMode.PRESERVE_ASPECT_CROP)
                 .videoBitrate((int) (0.25 * 16 * 540 * 960))
                 .listener(new GPUMp4Composer.Listener() {

@@ -54,6 +54,7 @@ public class Variables {
     public static String bio = "bio";
     public static String page_have = "page_have";
     public static String current = "device_id";
+    public static String recordType = "record";
 
 
     public static String tag = "musictok_";
@@ -142,6 +143,9 @@ public class Variables {
     public static String updatePageName = domain + "updatePageName";
     public static String updatePageDesc = domain + "updatePageDesc";
     public static String updatePagePic = domain + "updatePagePic";
+    public static String report = domain + "report";
+    public static String showAllStory = domain + "showAllStory";
+    public static String reportProblem = domain + "reportProblem";
 
 
 }

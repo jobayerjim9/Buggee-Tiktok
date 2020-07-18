@@ -57,22 +57,22 @@ public class Watch_Videos_Adapter extends RecyclerView.Adapter<Watch_Videos_Adap
 
     @Override
     public void onBindViewHolder(final Watch_Videos_Adapter.CustomViewHolder holder, final int i) {
-        final Home_Get_Set item= dataList.get(i);
+        final Home_Get_Set item = dataList.get(i);
 
 
+        holder.bind(i, item, listener);
+        if (item.type != null) {
+            holder.comment_layout.setVisibility(View.GONE);
+            holder.shared_layout.setVisibility(View.GONE);
+        }
+        holder.username.setText(item.first_name + " " + item.last_name);
 
 
-            holder.bind(i,item,listener);
-
-            holder.username.setText(item.first_name+" "+item.last_name);
-
-
-
-            if((item.sound_name==null || item.sound_name.equals("") || item.sound_name.equals("null"))){
-                holder.sound_name.setText("original sound - "+item.first_name+" "+item.last_name);
-            }else {
-                holder.sound_name.setText(item.sound_name);
-            }
+        if ((item.sound_name == null || item.sound_name.equals("") || item.sound_name.equals("null"))) {
+            holder.sound_name.setText("original sound - " + item.first_name + " " + item.last_name);
+        } else {
+            holder.sound_name.setText(item.sound_name);
+        }
         holder.sound_name.setSelected(true);
 
         holder.desc_txt.setText(""+item.video_description);

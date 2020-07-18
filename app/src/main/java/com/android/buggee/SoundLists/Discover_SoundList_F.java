@@ -406,11 +406,10 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
 
     public void Down_load_mp3(final String id,final String sound_name, String url){
 
-        final ProgressDialog progressDialog=new ProgressDialog(context);
-        progressDialog.setMessage("Please Wait...");
-        progressDialog.show();
 
-        prDownloader= PRDownloader.download(url, Variables.app_folder, Variables.SelectedAudio_AAC)
+        Functions.Show_loader(context, false, false);
+
+        prDownloader = PRDownloader.download(url, Variables.app_folder, Variables.SelectedAudio_AAC)
                 .build()
                 .setOnStartOrResumeListener(new OnStartOrResumeListener() {
                     @Override
@@ -440,7 +439,7 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
         prDownloader.start(new OnDownloadListener() {
             @Override
             public void onDownloadComplete() {
-                progressDialog.dismiss();
+                Functions.cancel_loader();
                 Intent output = new Intent();
                 Variables.audio_selected = true;
                 output.putExtra("isSelected", "yes");
@@ -453,7 +452,8 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
 
             @Override
             public void onError(Error error) {
-                progressDialog.dismiss();
+                Functions.cancel_loader();
+                Toast.makeText(context, error.getServerErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -181,19 +181,23 @@ public class Chat_Activity extends Fragment {
             senderid_for_check_notification = Receiverid;
 
             // these two method will get other datial of user like there profile pic link and username
-            Picasso.with(context).load(Receiver_pic)
-                    .resize(100, 100)
-                    .placeholder(R.drawable.profile_image_placeholder)
-                    .into(profileimage);
+            try {
+                Picasso.with(context).load(Receiver_pic)
+                        .resize(100, 100)
+                        .placeholder(R.drawable.profile_image_placeholder)
+                        .into(profileimage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
 
-            sendAudio =new SendAudio(context,message,rootref,Adduser_to_inbox,
-                    senderid,Receiverid,Receiver_name,Receiver_pic);
+            sendAudio = new SendAudio(context, message, rootref, Adduser_to_inbox,
+                    senderid, Receiverid, Receiver_name, Receiver_pic);
 
             rootref.child("Users").child(Receiverid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists())
+                    if (dataSnapshot.exists())
                     token=dataSnapshot.child("token").getValue().toString();
                 }
 

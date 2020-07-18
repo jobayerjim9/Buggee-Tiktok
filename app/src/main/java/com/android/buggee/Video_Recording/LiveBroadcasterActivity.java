@@ -156,13 +156,6 @@ public class LiveBroadcasterActivity extends AppCompatActivity {
         name.setText(getIntent().getStringExtra("liveName"));
         TextView details = findViewById(R.id.details);
         details.setText(getIntent().getStringExtra("liveDetails"));
-        TextView blackScreen = findViewById(R.id.blackScreen);
-        blackScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recreate();
-            }
-        });
         endLive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

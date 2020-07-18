@@ -31,6 +31,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/avenir_regular"
             android:textColor="@color/white"
             android:textColorHighlight="@color/white"
             android:textColorHint="@color/white"
@@ -58,6 +59,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/avenir_regular"
             android:inputType="textWebPassword"
             android:password="false"
             android:textColor="@color/white"
@@ -89,6 +91,7 @@
         android:drawableStart="@drawable/phone"
         android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
         android:drawablePadding="8sp"
+        android:fontFamily="@font/avenir_regular"
         android:gravity="center"
         android:text="Login Via Phone Number"
         android:textColor="@color/white"

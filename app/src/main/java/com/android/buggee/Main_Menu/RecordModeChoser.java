@@ -37,6 +37,7 @@ public class RecordModeChoser extends DialogFragment {
         View v = inflater.inflate(R.layout.record_mode_dialog, null);
         CardView recordChooser = v.findViewById(R.id.recordChooser);
         CardView liveChooser = v.findViewById(R.id.liveChooser);
+       //ardView storyCard = v.findViewById(R.id.storyCard);
 
         recordChooser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,6 +45,7 @@ public class RecordModeChoser extends DialogFragment {
                 if (Variables.sharedPreferences.getBoolean(Variables.islogin, false)) {
 
                     Intent intent = new Intent(getActivity(), Video_Recoder_A.class);
+                    intent.putExtra("type", "record");
                     startActivity(intent);
                     getActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
                 } else {
@@ -52,6 +54,21 @@ public class RecordModeChoser extends DialogFragment {
                 dismiss();
             }
         });
+//        storyCard.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (Variables.sharedPreferences.getBoolean(Variables.islogin, false)) {
+//
+//                    Intent intent = new Intent(getActivity(), Video_Recoder_A.class);
+//                    intent.putExtra("type","story");
+//                    startActivity(intent);
+//                    getActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
+//                } else {
+//                    Toast.makeText(context, "You have to login First", Toast.LENGTH_SHORT).show();
+//                }
+//                dismiss();
+//            }
+//        });
 
         liveChooser.setOnClickListener(new View.OnClickListener() {
             @Override

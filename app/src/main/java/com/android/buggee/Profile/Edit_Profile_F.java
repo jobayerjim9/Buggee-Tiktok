@@ -497,10 +497,10 @@ catch (Exception e) {
             parameters.put("last_name",lastname_edit.getText().toString());
 
             if(male_btn.isChecked()){
-                parameters.put("gender","Male");
+                parameters.put("gender", "m");
 
             }else if(female_btn.isChecked()){
-                parameters.put("gender","Female");
+                parameters.put("gender", "f");
             }
 
             parameters.put("bio",user_bio_edit.getText().toString());
@@ -516,10 +516,11 @@ catch (Exception e) {
                 try {
                     JSONObject response=new JSONObject(resp);
                     String code=response.optString("code");
+                    Toast.makeText(context, code + " COde", Toast.LENGTH_SHORT).show();
                     if(code.equals("200")) {
-
+                        Toast.makeText(context, "Profile Updated!", Toast.LENGTH_SHORT).show();
                         SharedPreferences.Editor editor = Variables.sharedPreferences.edit();
-
+                        Variables.sharedPreferences.edit().putString(Variables.bio, user_bio_edit.getText().toString()).apply();
                         editor.putString(Variables.f_name, firstname_edit.getText().toString());
                         editor.putString(Variables.l_name, lastname_edit.getText().toString());
                         editor.commit();
@@ -580,19 +581,20 @@ catch (Exception e) {
 
                 String picture = data.optString("profile_pic");
 
-                Picasso.with(context)
-                        .load(picture)
-                        .placeholder(R.drawable.profile_image_placeholder)
-                        .into(profile_image);
 
                 String gender = data.optString("gender");
-                if (gender.equals("Male")) {
+                if (gender.equals("m")) {
                     male_btn.setChecked(true);
                 } else {
                     female_btn.setChecked(true);
                 }
 
                 user_bio_edit.setText(data.optString("bio"));
+                Picasso.with(context)
+                        .load(picture)
+                        .placeholder(R.drawable.profile_image_placeholder)
+                        .into(profile_image);
+
             }
             else {
                 Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();

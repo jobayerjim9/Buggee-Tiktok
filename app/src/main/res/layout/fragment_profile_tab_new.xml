@@ -46,7 +46,6 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/avenir_bold"
                         android:gravity="center"
-                        android:text="UserName"
                         android:textColor="@color/white"
                         android:textSize="15dp"
                         android:textStyle="bold" />

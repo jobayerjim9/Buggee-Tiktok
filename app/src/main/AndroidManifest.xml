@@ -39,7 +39,7 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:replace="allowBackup,supportsRtl">
-        <activity android:name=".Accounts.PageActivity"></activity>
+        <activity android:name=".Accounts.PageActivity" />
         <activity android:name=".SimpleClasses.WebViewActivity" />
         <activity android:name=".Settings.RequestVerificationActivity" />
         <activity android:name=".WatchVideos.LiveWatchActivity" />
