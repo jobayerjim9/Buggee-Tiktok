@@ -149,7 +149,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
         } else {
             holder.varified_btn.setVisibility(View.GONE);
         }
-
+        holder.pageVisit.setText(item.button);
         holder.like_txt.setText(item.like_count);
         holder.comment_txt.setText(item.video_comment_count);
 
@@ -158,7 +158,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        TextView desc_txt, sound_name, pageName, pageVisit;
+        TextView desc_txt, sound_name, pageVisit;
         ImageView user_pic, sound_image, smallPlusButton, varified_btn;
 
         LinearLayout like_layout, comment_layout, shared_layout, sound_image_layout;
@@ -171,7 +171,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
 
 
             smallPlusButton = view.findViewById(R.id.smallPlusButton);
-            pageName = view.findViewById(R.id.pageName);
+            //pageName = view.findViewById(R.id.pageName);
             pageCard = view.findViewById(R.id.pageCard);
             pageVisit = view.findViewById(R.id.pageVisit);
             user_pic = view.findViewById(R.id.user_pic);

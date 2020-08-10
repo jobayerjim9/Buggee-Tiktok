@@ -420,7 +420,7 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
             final Fragment result;
             switch (position) {
                 case 0:
-                    result = new UserVideo_F(Variables.sharedPreferences.getString(Variables.u_id,""));
+                    result = new UserVideo_F(Variables.sharedPreferences.getString(Variables.u_id, ""), "profile");
                     break;
                 case 1:
                     result = new Liked_Video_F(Variables.sharedPreferences.getString(Variables.u_id,""));
@@ -489,8 +489,8 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         JSONObject parameters = new JSONObject();
         try {
             parameters.put("my_fb_id",Variables.sharedPreferences.getString(Variables.u_id,""));
-            parameters.put("fb_id", Variables.sharedPreferences.getString(Variables.u_id,""));
-
+            parameters.put("fb_id", Variables.sharedPreferences.getString(Variables.u_id, ""));
+            parameters.put("f_type", "profile");
         } catch (JSONException e) {
             e.printStackTrace();
         }

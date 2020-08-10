@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.android.buggee.Accounts.PageActivity;
 import com.android.buggee.Accounts.PageProfileDialog;
 import com.android.buggee.Comments.LiveCommentAdapter;
 import com.android.buggee.Comments.LiveCommentData;
@@ -138,7 +139,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     View view;
     Context context;
     private RtcEngine mRtcEngine;
-
+    ImageView addStoryButton;
     RecyclerView recyclerView, liveRecycler, liveComentRecycler;
     ArrayList<Home_Get_Set> data_list;
     ArrayList<LiveData> liveData = new ArrayList<>();
@@ -147,7 +148,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     LiveAdapter liveAdapter;
     //  ProgressBar p_bar, live_progress;
     LottieAnimationView p_bar, live_progress;
-
+    TextView storiesT;
     TextView noItem;
     SwipeRefreshLayout swiperefresh, liveSwipeRefresh;
     int active = 1;
@@ -176,7 +177,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
             context = getContext();
 
             initializeEngine();
-            ImageView addStoryButton = view.findViewById(R.id.addStoryButton);
+            addStoryButton = view.findViewById(R.id.addStoryButton);
             addStoryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -193,6 +194,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
             });
             p_bar = view.findViewById(R.id.video_loader);
             live_progress = view.findViewById(R.id.video_loader);
+            storiesT = view.findViewById(R.id.stories);
             liveComment = view.findViewById(R.id.liveComment);
             storyRecycler = view.findViewById(R.id.storyRecycler);
             LinearLayoutManager storyLayout = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -651,7 +653,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                                     public void Responce(Bundle bundle) {
 
                                         if (bundle.getString("action").equals("save")) {
-                                            // Save_Video(item);
+                                            Save_Video(item);
                                         } else if (bundle.getString("action").equals("delete")) {
                                             Functions.Show_loader(context, false, false);
                                             Functions.Call_Api_For_Delete_Video(getActivity(), item.video_id, new API_CallBack() {
@@ -874,9 +876,17 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                     item.liked = itemdata.optString("liked");
                     item.video_url = itemdata.optString("video");
                     item.video_description = itemdata.optString("description");
-
+                    if (item.upload_from.equals("page")) {
+                        storyRecycler.setVisibility(View.INVISIBLE);
+                        addStoryButton.setVisibility(View.INVISIBLE);
+                        storiesT.setVisibility(View.INVISIBLE);
+                    } else {
+                        storyRecycler.setVisibility(View.VISIBLE);
+                        addStoryButton.setVisibility(View.VISIBLE);
+                        storiesT.setVisibility(View.VISIBLE);
+                    }
                     item.thum = itemdata.optString("thum");
-                    item.created_date=itemdata.optString("created");
+                    item.created_date = itemdata.optString("created");
 
                     data_list.add(item);
                 }
@@ -927,46 +937,52 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
             if(code.equals("200")){
                 JSONArray msgArray=jsonObject.getJSONArray("msg");
                 for (int i=0;i<msgArray.length();i++) {
-                    JSONObject itemdata = msgArray.optJSONObject(i);
-                    Home_Get_Set item = new Home_Get_Set();
-                    item.fb_id = itemdata.optString("fb_id");
-                    item.upload_from = itemdata.optString("upload_from");
-                    item.url = itemdata.optString("url");
-                    item.page_name = itemdata.optString("page_name");
-                    item.page_pic = itemdata.optString("page_pic");
-                    JSONObject user_info = itemdata.optJSONObject("user_info");
-                    item.account_type = user_info.optString("account_type");
-                    item.isFriend = user_info.optBoolean("isFriend");
-                    item.message_privacy = user_info.optString("message_privacy");
-                    item.comment_privacy = user_info.optString("comment_privacy");
-                    item.live_privacy = user_info.optString("live_privacy");
-                    item.username = user_info.optString("username");
-                    item.first_name = user_info.optString("first_name", context.getResources().getString(R.string.app_name));
-                    item.last_name = user_info.optString("last_name", "User");
-                    item.profile_pic = user_info.optString("profile_pic", "null");
-                    item.verified = user_info.optString("verified");
-                    JSONObject sound_data = itemdata.optJSONObject("sound");
-                    item.sound_id = sound_data.optString("id");
-                    item.sound_name = sound_data.optString("sound_name");
-                    item.sound_pic = sound_data.optString("thum");
+                    try {
+                        JSONObject itemdata = msgArray.optJSONObject(i);
+                        Home_Get_Set item = new Home_Get_Set();
+                        item.fb_id = itemdata.optString("fb_id");
+                        item.upload_from = itemdata.optString("upload_from");
+                        item.url = itemdata.optString("url");
+                        item.page_name = itemdata.optString("page_name");
+                        item.page_pic = itemdata.optString("page_pic");
+                        item.category = itemdata.optString("category");
+                        item.button = itemdata.optString("button");
+                        JSONObject user_info = itemdata.optJSONObject("user_info");
+                        item.account_type = user_info.optString("account_type");
+                        item.isFriend = user_info.optBoolean("isFriend");
+                        item.message_privacy = user_info.optString("message_privacy");
+                        item.comment_privacy = user_info.optString("comment_privacy");
+                        item.live_privacy = user_info.optString("live_privacy");
+                        item.username = user_info.optString("username");
+                        item.first_name = user_info.optString("first_name", context.getResources().getString(R.string.app_name));
+                        item.last_name = user_info.optString("last_name", "User");
+                        item.profile_pic = user_info.optString("profile_pic", "null");
+                        item.verified = user_info.optString("verified");
+                        JSONObject sound_data = itemdata.optJSONObject("sound");
+                        item.sound_id = sound_data.optString("id");
+                        item.sound_name = sound_data.optString("sound_name");
+                        item.sound_pic = sound_data.optString("thum");
 
 
-                    JSONObject count = itemdata.optJSONObject("count");
-                    item.like_count = count.optString("like_count");
-                    item.video_comment_count = count.optString("video_comment_count");
+                        JSONObject count = itemdata.optJSONObject("count");
+                        item.like_count = count.optString("like_count");
+                        item.video_comment_count = count.optString("video_comment_count");
 
 
-                    item.video_id = itemdata.optString("id");
-                    item.liked = itemdata.optString("liked");
-                    item.video_url=itemdata.optString("video");
-                    item.video_description=itemdata.optString("description");
+                        item.video_id = itemdata.optString("id");
+                        item.liked = itemdata.optString("liked");
+                        item.video_url = itemdata.optString("video");
+                        item.video_description = itemdata.optString("description");
 
-                    item.thum=itemdata.optString("thum");
-                    item.created_date=itemdata.optString("created");
+                        item.thum = itemdata.optString("thum");
+                        item.created_date = itemdata.optString("created");
 
-                    data_list.remove(pos);
-                    data_list.add(pos,item);
-                    adapter.notifyDataSetChanged();
+                        data_list.remove(pos);
+                        data_list.add(pos, item);
+                        adapter.notifyDataSetChanged();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
 
 
@@ -987,19 +1003,27 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     // this will call when swipe for another video and
     // this function will set the player to the current video
-    public void Set_Player(final int currentPage){
+    public void Set_Player(final int currentPage) {
         Log.d("exoplayerCurrentPage", currentPage + "");
-            final Home_Get_Set item= data_list.get(currentPage);
-            DefaultTrackSelector trackSelector = new DefaultTrackSelector();
-             final SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
+        final Home_Get_Set item = data_list.get(currentPage);
+        DefaultTrackSelector trackSelector = new DefaultTrackSelector();
+        final SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
+        if (item.upload_from.equals("page")) {
+            storyRecycler.setVisibility(View.INVISIBLE);
+            addStoryButton.setVisibility(View.INVISIBLE);
+            storiesT.setVisibility(View.INVISIBLE);
+        } else {
+            storyRecycler.setVisibility(View.VISIBLE);
+            addStoryButton.setVisibility(View.VISIBLE);
+            storiesT.setVisibility(View.VISIBLE);
+        }
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
+                Util.getUserAgent(context, "TikTok"));
 
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
-                    Util.getUserAgent(context, "TikTok"));
+        MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(Uri.parse(item.video_url));
 
-            MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(Uri.parse(item.video_url));
-
-            Log.d("resp",item.video_url);
+        Log.d("resp", item.video_url);
 
 
         player.prepare(videoSource);
@@ -1362,8 +1386,10 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 transaction.replace(R.id.MainMenuFragment, profile_f).commit();
             }
         } else {
-            PageProfileDialog pageProfileDialog = new PageProfileDialog();
-            pageProfileDialog.show(getChildFragmentManager(), item.fb_id);
+
+            Intent intent = new Intent(context, PageActivity.class);
+            intent.putExtra("id", item.fb_id);
+            context.startActivity(intent);
         }
 
     }
@@ -1402,7 +1428,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
                 if (options[item].equals("Save Video")) {
                     if (Functions.Checkstoragepermision(getActivity())) {
-                        // Save_Video(home_get_set);
+                        Save_Video(home_get_set);
                     }
                 } else if (options[item].equals("Report Video")) {
                     //dialog.dismiss();
@@ -1474,7 +1500,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
         Functions.Show_determinent_loader(context, false, false);
         PRDownloader.initialize(getActivity().getApplicationContext());
-        DownloadRequest prDownloader = PRDownloader.download(item.video_url, Environment.getExternalStorageDirectory() + "/Tittic/", item.video_id + "no_watermark" + ".mp4")
+        DownloadRequest prDownloader = PRDownloader.download(item.video_url, Environment.getExternalStorageDirectory() + "/Buggee/", item.video_id + "no_watermark" + ".mp4")
                 .build()
                 .setOnStartOrResumeListener(new OnStartOrResumeListener() {
                     @Override
@@ -1508,8 +1534,9 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
               prDownloader.start(new OnDownloadListener() {
                 @Override
                 public void onDownloadComplete() {
-                    Applywatermark(item);
-                   }
+                    //Applywatermark(item);
+                    Functions.cancel_determinent_loader();
+                }
 
                 @Override
                 public void onError(Error error) {
@@ -1526,21 +1553,21 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     }
 
-    public void Applywatermark(final Home_Get_Set item){
+    public void Applywatermark(final Home_Get_Set item) {
 
-         Bitmap myLogo = ((BitmapDrawable)getResources().getDrawable(R.drawable.ic_watermark_image)).getBitmap();
-         Bitmap bitmap_resize=Bitmap.createScaledBitmap(myLogo, 50, 50, false);
-         GlWatermarkFilter filter=new GlWatermarkFilter(bitmap_resize, GlWatermarkFilter.Position.LEFT_TOP);
-         new GPUMp4Composer(Environment.getExternalStorageDirectory() +"/Tittic/"+item.video_id+"no_watermark"+".mp4",
-                Environment.getExternalStorageDirectory() +"/Tittic/"+item.video_id+".mp4")
+        Bitmap myLogo = ((BitmapDrawable) getResources().getDrawable(R.drawable.buggee_expand_logo)).getBitmap();
+        Bitmap bitmap_resize = Bitmap.createScaledBitmap(myLogo, 50, 50, false);
+        GlWatermarkFilter filter = new GlWatermarkFilter(bitmap_resize, GlWatermarkFilter.Position.RIGHT_TOP);
+        new GPUMp4Composer(Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + "no_watermark" + ".mp4",
+                Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + ".mp4")
                 .filter(filter)
-
+                .mute(false)
                 .listener(new GPUMp4Composer.Listener() {
                     @Override
                     public void onProgress(double progress) {
 
-                        Log.d("resp",""+(int) (progress*100));
-                        Functions.Show_loading_progress((int)((progress*100)/2)+50);
+                        Log.d("resp", "" + (int) (progress * 100));
+                        Functions.Show_loading_progress((int) ((progress * 100) / 2) + 50);
 
                     }
 
@@ -1593,7 +1620,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
 
     public void Delete_file_no_watermark(Home_Get_Set item){
-        File file=new File(Environment.getExternalStorageDirectory() +"/Tittic/"+item.video_id+"no_watermark"+".mp4");
+        File file = new File(Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + "no_watermark" + ".mp4");
         if(file.exists()){
             file.delete();
         }
@@ -1601,7 +1628,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     public void Scan_file(Home_Get_Set item){
         MediaScannerConnection.scanFile(getActivity(),
-                new String[] { Environment.getExternalStorageDirectory() +"/Tittic/"+item.video_id+".mp4" },
+                new String[]{Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + ".mp4"},
                 null,
                 new MediaScannerConnection.OnScanCompletedListener() {
 

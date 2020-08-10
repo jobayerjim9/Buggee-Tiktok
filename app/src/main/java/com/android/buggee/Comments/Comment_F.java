@@ -29,6 +29,7 @@ import com.android.buggee.Main_Menu.RelateToFragment_OnBack.RootFragment;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.API_CallBack;
 import com.android.buggee.SimpleClasses.ApiRequest;
+import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Fragment_Data_Send;
 import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
@@ -248,7 +249,36 @@ public class Comment_F extends RootFragment {
     }
 
     private void reportComment(Comment_Get_Set item) {
+        JSONObject parameters = new JSONObject();
+        try {
+            parameters.put("content_id", item.id);
+            parameters.put("reported_by", Variables.sharedPreferences.getString(Variables.u_id, ""));
+            parameters.put("type", "comment");
 
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Functions.Show_loader(context, false, false);
+        ApiRequest.Call_Api(context, Variables.report, parameters, new Callback() {
+            @Override
+            public void Responce(String resp) {
+                Functions.cancel_loader();
+                try {
+                    JSONObject jsonObject = new JSONObject(resp);
+                    boolean success = jsonObject.optBoolean("success");
+                    if (success) {
+                        Toast.makeText(context, "Reported!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        String message = jsonObject.optString("msg");
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
 

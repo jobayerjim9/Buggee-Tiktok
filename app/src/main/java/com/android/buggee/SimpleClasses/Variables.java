@@ -57,7 +57,7 @@ public class Variables {
     public static String recordType = "record";
 
 
-    public static String tag = "musictok_";
+    public static String tag = "buggee_";
 
     public static String Selected_sound_id = "null";
 
@@ -90,62 +90,61 @@ public class Variables {
     public static String privacy_policy = "https://www.privacypolicygenerator.info/live.php?";
 
 
+    //    public static String base_url="https://api.buggee.app/API/";
+    public static final String base_url = "https://edge.buggee.app/";
+    public static final String domain = base_url + "index.php?p=";
 
-    
-
-
-    public static String base_url="https://api.buggee.app/API/";
-    public static String domain=base_url+"index.php?p=";
-
-    public static String SignUp =domain+"signup";
-    public static String uploadVideo =domain+"uploadVideo";
-    public static String showAllVideos =domain+"showAllVideos";
-    public static String showMyAllVideos=domain+"showMyAllVideos";
-    public static String likeDislikeVideo=domain+"likeDislikeVideo";
-    public static String updateVideoView=domain+"updateVideoView";
-    public static String allSounds=domain+"allSounds";
-    public static String fav_sound=domain+"fav_sound";
-    public static String my_FavSound=domain+"my_FavSound";
-    public static String my_liked_video=domain+"my_liked_video";
-    public static String follow_users = domain + "follow_users";
-    public static String discover = domain + "discover";
-    public static String showVideoComments = domain + "showVideoComments";
-    public static String postComment = domain + "postComment";
-    public static String edit_profile = domain + "edit_profile";
-    public static String get_user_data = domain + "get_user_data";
-    public static String get_followers = domain + "get_followers";
-    public static String get_followings = domain + "get_followings";
-    public static String SearchByHashTag = domain + "SearchByHashTag";
-    public static String sendPushNotification = domain + "sendPushNotification";
-    public static String uploadImage = domain + "uploadImage";
-    public static String DeleteVideo = domain + "DeleteVideo";
-    public static String search = domain + "search";
-    public static String checkExist = domain + "userexist";
-    public static String checkUsernameExist = domain + "usernameexist";
-    public static String signUpEmail = domain + "signupemail";
-    public static String loginEmail = domain + "loginemail";
-    public static String loginUsername = domain + "loginusername";
-    public static String checkphoneExist = domain + "checkphoneexist";
-    public static String loginPhone = domain + "loginphone";
-    public static String changeAccountType = domain + "changeAccountType";
-    public static String messagePrivacy = domain + "messagePrivacy";
-    public static String commentPrivacy = domain + "commentPrivacy";
-    public static String livePrivacy = domain + "livePrivacy";
-    public static String getPrivacy = domain + "getPrivacy";
-    public static String createLive = domain + "createLive";
-    public static String deleteLive = domain + "deleteLive";
-    public static String getAllLive = domain + "getAllLive";
+    public static final String SignUp = domain + "signup";
+    public static final String uploadVideo = domain + "uploadVideo";
+    public static final String showAllVideos = domain + "showAllVideos";
+    public static final String showMyAllVideos = domain + "showMyAllVideos";
+    public static final String likeDislikeVideo = domain + "likeDislikeVideo";
+    public static final String updateVideoView = domain + "updateVideoView";
+    public static final String allSounds = domain + "allSounds";
+    public static final String fav_sound = domain + "fav_sound";
+    public static final String my_FavSound = domain + "my_FavSound";
+    public static final String my_liked_video = domain + "my_liked_video";
+    public static final String follow_users = domain + "follow_users";
+    public static final String discover = domain + "discover";
+    public static final String showVideoComments = domain + "showVideoComments";
+    public static final String postComment = domain + "postComment";
+    public static final String edit_profile = domain + "edit_profile";
+    public static final String get_user_data = domain + "get_user_data";
+    public static final String get_followers = domain + "get_followers";
+    public static final String get_followings = domain + "get_followings";
+    public static final String SearchByHashTag = domain + "SearchByHashTag";
+    public static final String sendPushNotification = domain + "sendPushNotification";
+    public static final String uploadImage = domain + "uploadImage";
+    public static final String DeleteVideo = domain + "DeleteVideo";
+    public static final String search = domain + "search";
+    public static final String checkExist = domain + "userexist";
+    public static final String checkUsernameExist = domain + "usernameexist";
+    public static final String signUpEmail = domain + "signupemail";
+    public static final String loginEmail = domain + "loginemail";
+    public static final String loginUsername = domain + "loginusername";
+    public static final String checkphoneExist = domain + "checkphoneexist";
+    public static final String loginPhone = domain + "loginphone";
+    public static final String changeAccountType = domain + "changeAccountType";
+    public static final String messagePrivacy = domain + "messagePrivacy";
+    public static final String commentPrivacy = domain + "commentPrivacy";
+    public static final String livePrivacy = domain + "livePrivacy";
+    public static final String getPrivacy = domain + "getPrivacy";
+    public static final String createLive = domain + "createLive";
+    public static final String deleteLive = domain + "deleteLive";
+    public static final String getAllLive = domain + "getAllLive";
     public static final String getVerified = domain + "getVerified";
     public static final String updateBio = domain + "updateBio";
     public static final String createPage = domain + "createPage";
-    public static String getNotifications = domain + "getNotifications";
-    public static String getPageInfo = domain + "getPageInfo";
-    public static String updatePageName = domain + "updatePageName";
-    public static String updatePageDesc = domain + "updatePageDesc";
-    public static String updatePagePic = domain + "updatePagePic";
-    public static String report = domain + "report";
-    public static String showAllStory = domain + "showAllStory";
-    public static String reportProblem = domain + "reportProblem";
+    public static final String getNotifications = domain + "getNotifications";
+    public static final String getPageInfo = domain + "getPageInfo";
+    public static final String updatePageName = domain + "updatePageName";
+    public static final String updatePageDesc = domain + "updatePageDesc";
+    public static final String updatePagePic = domain + "updatePagePic";
+    public static final String report = domain + "report";
+    public static final String showAllStory = domain + "showAllStory";
+    public static final String reportProblem = domain + "reportProblem";
+    public static final String updatePageCategory = domain + "updatePageCategory";
+    public static final String updatePageButton = domain + "updatePageButton";
 
 
 }

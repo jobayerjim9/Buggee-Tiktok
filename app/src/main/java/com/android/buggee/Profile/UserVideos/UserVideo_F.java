@@ -40,7 +40,7 @@ public class UserVideo_F extends Fragment {
      View view;
      Context context;
      String user_id;
-
+    String type;
     RelativeLayout no_data_layout;
      public static int myvideo_count=0;
 
@@ -50,9 +50,9 @@ public class UserVideo_F extends Fragment {
 
 
     @SuppressLint("ValidFragment")
-    public UserVideo_F(String user_id) {
-
-        this.user_id=user_id;
+    public UserVideo_F(String user_id, String type) {
+        this.user_id = user_id;
+        this.type = type;
     }
 
 
@@ -124,6 +124,7 @@ public class UserVideo_F extends Fragment {
         try {
             parameters.put("my_fb_id",Variables.sharedPreferences.getString(Variables.u_id,""));
             parameters.put("fb_id", user_id);
+            parameters.put("f_type", type);
 
         } catch (JSONException e) {
             e.printStackTrace();

@@ -374,7 +374,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
             final Fragment result;
             switch (position) {
                 case 0:
-                    result = new UserVideo_F(user_id);
+                    result = new UserVideo_F(user_id, "profile");
 
                     break;
                 case 1:
@@ -449,6 +449,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         try {
             parameters.put("my_fb_id",Variables.sharedPreferences.getString(Variables.u_id,""));
             parameters.put("fb_id", user_id);
+            parameters.put("f_type", "profile");
 
         } catch (JSONException e) {
             e.printStackTrace();

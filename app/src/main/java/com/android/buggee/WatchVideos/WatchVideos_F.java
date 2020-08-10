@@ -440,7 +440,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                                 public void Responce(Bundle bundle) {
 
                                     if (bundle.getString("action").equals("save")) {
-                                        // Save_Video(item);
+                                         Save_Video(item);
                                     }
                                     if (bundle.getString("action").equals("delete")) {
                                         Functions.Show_loader(WatchVideos_F.this, false, false);
@@ -975,7 +975,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
                 if (options[item].equals("Save Video")) {
                     if (Functions.Checkstoragepermision(WatchVideos_F.this)) {
-                        // Save_Video(home_get_set);
+                        Save_Video(home_get_set);
                     }
 
 

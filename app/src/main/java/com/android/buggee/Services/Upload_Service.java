@@ -211,9 +211,9 @@ public class Upload_Service extends Service{
                         @Override
                         public void onResponse(JSONObject response) {
                             String respo=response.toString();
-
+                            Log.d("VidUpresponce", respo);
                             if(!Variables.is_secure_info)
-                            Log.d("responce",respo);
+                                Log.d("VidUpresponce", respo);
 
                             Callback.ShowResponce("Your Video is uploaded Successfully");
                             stopForeground(true);
@@ -224,9 +224,9 @@ public class Upload_Service extends Service{
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-
+                            Log.d("VidUpresponce", error.toString());
                             if(!Variables.is_secure_info)
-                            Log.d("respo",error.toString());
+                                Log.d("VidUpresponce", error.toString());
 
                             Callback.ShowResponce("Their is some kind of problem from Server side Please Try Later");
                             stopForeground(true);

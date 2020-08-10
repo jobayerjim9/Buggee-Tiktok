@@ -40,7 +40,6 @@
                 android:visibility="visible"
                 app:cardBackgroundColor="@color/colorPrimaryDark"
                 app:cardCornerRadius="8dp"
-                app:contentPadding="8dp"
                 app:layout_constraintBottom_toTopOf="@+id/guideline4"
                 app:layout_constraintEnd_toStartOf="@+id/sound_image_layout"
                 app:layout_constraintStart_toStartOf="parent">
@@ -49,17 +48,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/pageName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/avenir_regular"
-                        android:gravity="center"
-                        android:text="Check The Link For Furthure Details"
-                        android:textColor="@color/white" />
 
                     <TextView
                         android:id="@+id/pageVisit"
