@@ -48,7 +48,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="D:\Downloads\Compressed\flag\drawable-xxxhdpi\flag.png" />
+                                                <entry key="imagePath" value="D:\Downloads\Compressed\watermark\drawable-xxxhdpi\watermark.png" />
                                                 <entry key="opacityPercent" value="80" />
                                               </map>
                                             </option>
@@ -82,10 +82,10 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="D:\Downloads\Compressed\flag\drawable-xxxhdpi\flag.png" />
-                                      <entry key="outputName" value="ic_flag_blue" />
+                                      <entry key="imageAsset" value="D:\Downloads\Compressed\watermark\drawable-xxxhdpi\watermark.png" />
+                                      <entry key="outputName" value="ic_watermark" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="00b9ff" />
+                                      <entry key="themeColor" value="ffffff" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -113,6 +113,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
+                                                <entry key="imagePath" value="D:\Downloads\Compressed\ic_launcher\ic_launcher\drawable-xxxhdpi\ic_launcher.png" />
+                                                <entry key="scalingPercent" value="60" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -140,6 +142,11 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="backgroundAssetType" value="COLOR" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -224,12 +231,26 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="color" value="000000" />
+                                                <entry key="imagePath" value="D:\Downloads\Compressed\watermark\drawable-xxxhdpi\watermark.png" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                       <entry key="text">
                                         <value>
                                           <PersistentState>
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
+                                                <entry key="fontFamily" value="Fira Code Medium" />
+                                                <entry key="text" value="Buggee" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -241,11 +262,20 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
+                                                <entry key="fontFamily" value="Fira Code Medium" />
+                                                <entry key="text" value="Buggee" />
                                               </map>
                                             </option>
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="D:\Downloads\Compressed\watermark\drawable-xxxhdpi\watermark.png" />
+                                      <entry key="outputName" value="ic_notification" />
                                     </map>
                                   </option>
                                 </PersistentState>

@@ -139,6 +139,7 @@ public class SignInActivity extends AppCompatActivity {
                 editor.putString(Variables.gender, userdata.optString("gender"));
                 editor.putString(Variables.bio, userdata.optString("bio"));
                 editor.putInt(Variables.page_have, userdata.optInt("page_have"));
+                editor.putInt(Variables.id_page, userdata.optInt("id_as_page"));
                 editor.putString(Variables.u_pic, userdata.optString("profile_pic"));
                 editor.putString(Variables.api_token, userdata.optString("tokon"));
                 editor.putBoolean(Variables.islogin, true);

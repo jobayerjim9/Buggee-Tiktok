@@ -28,7 +28,12 @@ import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.WebViewActivity;
 import com.android.buggee.SoundLists.VideoSound_A;
+import com.android.buggee.Video_Recording.StoryModeChooser;
 import com.android.buggee.Video_Recording.Video_Recoder_A;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
@@ -141,7 +146,9 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     private RtcEngine mRtcEngine;
     ImageView addStoryButton;
     RecyclerView recyclerView, liveRecycler, liveComentRecycler;
-    ArrayList<Home_Get_Set> data_list;
+    ArrayList<Home_Get_Set> data_list = new ArrayList<>();
+    ArrayList<Home_Get_Set> stories = new ArrayList<>();
+    ArrayList<ImageStoryData> imageStory = new ArrayList<>();
     ArrayList<LiveData> liveData = new ArrayList<>();
     int currentPage = -1, liveCurrentPage = -1;
     LinearLayoutManager layoutManager, liveLayoutManager;
@@ -152,6 +159,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     TextView noItem;
     SwipeRefreshLayout swiperefresh, liveSwipeRefresh;
     int active = 1;
+    private TabLayout homeTab;
     boolean is_user_stop_video = false;
     EditText message_edit;
     ImageButton send_btn;
@@ -159,7 +167,6 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     CardView liveComment;
     RecyclerView storyRecycler;
     StoryAdapter storyAdapter;
-    private ArrayList<Home_Get_Set> stories = new ArrayList<>();
 
     public Home_F() {
         // Required empty public constructor
@@ -182,11 +189,9 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 @Override
                 public void onClick(View view) {
                     if (Variables.sharedPreferences.getBoolean(Variables.islogin, false)) {
+                        StoryModeChooser storyModeChooser = new StoryModeChooser();
+                        storyModeChooser.show(getChildFragmentManager(), "story_chooser");
 
-                        Intent intent = new Intent(getActivity(), Video_Recoder_A.class);
-                        intent.putExtra("type", "story");
-                        startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
                     } else {
                         Toast.makeText(context, "You have to login First", Toast.LENGTH_SHORT).show();
                     }
@@ -199,7 +204,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
             storyRecycler = view.findViewById(R.id.storyRecycler);
             LinearLayoutManager storyLayout = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
             storyRecycler.setLayoutManager(storyLayout);
-            storyAdapter = new StoryAdapter(context, stories);
+            storyAdapter = new StoryAdapter(context, stories, imageStory);
             storyRecycler.setAdapter(storyAdapter);
             liveComentRecycler = view.findViewById(R.id.liveComentRecycler);
             message_edit = view.findViewById(R.id.message_edit);
@@ -228,7 +233,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 }
             });
             noItem = view.findViewById(R.id.noItem);
-            TabLayout homeTab = view.findViewById(R.id.homeTab);
+            homeTab = view.findViewById(R.id.homeTab);
             homeTab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                 @Override
                 public void onTabSelected(TabLayout.Tab tab) {
@@ -333,6 +338,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 public void onRefresh() {
                     currentPage = -1;
                     Call_Api_For_get_Allvideos();
+                    getAllStory();
                 }
             });
 
@@ -716,6 +722,53 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     }
 
+    private void getAllImageStory() {
+
+        Log.d(Variables.tag, MainMenuActivity.token);
+
+        ApiRequest.Call_Api(context, Variables.getImageStory, null, new Callback() {
+            @Override
+            public void Responce(String resp) {
+                swiperefresh.setRefreshing(false);
+                Log.d("storyLoadResoponse", resp);
+                Parse_data_image_story(resp);
+            }
+        });
+    }
+
+    public void Parse_data_image_story(String responce) {
+
+        imageStory = new ArrayList<>();
+
+        try {
+            JSONObject jsonObject = new JSONObject(responce);
+            String code = jsonObject.optString("code");
+            if (code.equals("200")) {
+                JSONArray msgArray = jsonObject.getJSONArray("msg");
+                for (int i = 0; i < msgArray.length(); i++) {
+                    JSONObject itemdata = msgArray.optJSONObject(i);
+                    ImageStoryData item = new ImageStoryData();
+                    item.url = itemdata.optString("pic_url");
+                    item.owner_id = itemdata.optString("uploaded_by");
+                    imageStory.add(item);
+                    storyAdapter.notifyDataSetChanged();
+
+                }
+                storyAdapter = new StoryAdapter(context, stories, imageStory);
+                storyRecycler.setAdapter(storyAdapter);
+                storyAdapter.notifyDataSetChanged();
+                // Set_Adapter();
+
+            } else {
+                Toast.makeText(context, "" + jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void getAllStory() {
 
 
@@ -743,8 +796,6 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     }
 
     public void Parse_data_story(String responce) {
-
-        data_list = new ArrayList<>();
 
         try {
             JSONObject jsonObject = new JSONObject(responce);
@@ -792,6 +843,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                     storyAdapter.notifyDataSetChanged();
 
                 }
+                getAllImageStory();
 
                 // Set_Adapter();
 
@@ -880,10 +932,15 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                         storyRecycler.setVisibility(View.INVISIBLE);
                         addStoryButton.setVisibility(View.INVISIBLE);
                         storiesT.setVisibility(View.INVISIBLE);
+                        homeTab.setVisibility(View.INVISIBLE);
+                        MainMenuFragment.showHidePlus(false);
+
                     } else {
                         storyRecycler.setVisibility(View.VISIBLE);
                         addStoryButton.setVisibility(View.VISIBLE);
                         storiesT.setVisibility(View.VISIBLE);
+                        homeTab.setVisibility(View.VISIBLE);
+                        MainMenuFragment.showHidePlus(true);
                     }
                     item.thum = itemdata.optString("thum");
                     item.created_date = itemdata.optString("created");
@@ -1007,15 +1064,27 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
         Log.d("exoplayerCurrentPage", currentPage + "");
         final Home_Get_Set item = data_list.get(currentPage);
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
-        final SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
+        DefaultLoadControl defaultLoadControl = new DefaultLoadControl();
+        DefaultLoadControl.Builder builder = new DefaultLoadControl.Builder();
+        final int loadControlStartBufferMs = 1500;
+        builder.setBufferDurationsMs(DefaultLoadControl.DEFAULT_MIN_BUFFER_MS, DefaultLoadControl.DEFAULT_MAX_BUFFER_MS, loadControlStartBufferMs, DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS);
+        /* Build the actual DefaultLoadControl instance */
+        DefaultLoadControl loadControl = builder.createDefaultLoadControl();
+        DefaultRenderersFactory defaultRenderersFactory = new DefaultRenderersFactory(context);
+        final SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(defaultRenderersFactory, trackSelector, loadControl);
         if (item.upload_from.equals("page")) {
             storyRecycler.setVisibility(View.INVISIBLE);
             addStoryButton.setVisibility(View.INVISIBLE);
             storiesT.setVisibility(View.INVISIBLE);
+            homeTab.setVisibility(View.INVISIBLE);
+            MainMenuFragment.showHidePlus(false);
+
         } else {
             storyRecycler.setVisibility(View.VISIBLE);
             addStoryButton.setVisibility(View.VISIBLE);
             storiesT.setVisibility(View.VISIBLE);
+            homeTab.setVisibility(View.VISIBLE);
+            MainMenuFragment.showHidePlus(true);
         }
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, "TikTok"));
@@ -1028,14 +1097,14 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
         player.prepare(videoSource);
         player.setRepeatMode(Player.REPEAT_MODE_OFF);
-
-             player.addListener(this);
+        player.addListener(this);
 
 
          View layout=layoutManager.findViewByPosition(currentPage);
          final PlayerView playerView=layout.findViewById(R.id.playerview);
+        player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
         playerView.setPlayer(player);
-
+        playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
         player.setPlayWhenReady(is_visible_to_user);
         privious_player=player;
 
@@ -1124,19 +1193,18 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
         }).handle(desc_txt);
 
 
+//        LinearLayout soundimage = (LinearLayout)layout.findViewById(R.id.sound_image_layout);
+//        Animation sound_animation = AnimationUtils.loadAnimation(context,R.anim.d_clockwise_rotation);
+//        soundimage.startAnimation(sound_animation);
 
-        LinearLayout soundimage = (LinearLayout)layout.findViewById(R.id.sound_image_layout);
-        Animation sound_animation = AnimationUtils.loadAnimation(context,R.anim.d_clockwise_rotation);
-        soundimage.startAnimation(sound_animation);
-
-        if(Variables.sharedPreferences.getBoolean(Variables.islogin,false))
-        Functions.Call_Api_For_update_view(getActivity(),item.video_id);
+        if (Variables.sharedPreferences.getBoolean(Variables.islogin, false))
+            Functions.Call_Api_For_update_view(getActivity(), item.video_id);
 
 
         swipe_count++;
-        if(swipe_count>4){
+        if (swipe_count > 4) {
             Show_add();
-            swipe_count=0;
+            swipe_count = 0;
         }
 
 
@@ -1497,7 +1565,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     }
 
     public void Save_Video(final Home_Get_Set item) {
-
+        privious_player.setPlayWhenReady(false);
         Functions.Show_determinent_loader(context, false, false);
         PRDownloader.initialize(getActivity().getApplicationContext());
         DownloadRequest prDownloader = PRDownloader.download(item.video_url, Environment.getExternalStorageDirectory() + "/Buggee/", item.video_id + "no_watermark" + ".mp4")
@@ -1534,8 +1602,9 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
               prDownloader.start(new OnDownloadListener() {
                 @Override
                 public void onDownloadComplete() {
-                    //Applywatermark(item);
                     Functions.cancel_determinent_loader();
+                    Applywatermark(item);
+
                 }
 
                 @Override
@@ -1555,13 +1624,12 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     public void Applywatermark(final Home_Get_Set item) {
 
-        Bitmap myLogo = ((BitmapDrawable) getResources().getDrawable(R.drawable.buggee_expand_logo)).getBitmap();
+        Bitmap myLogo = ((BitmapDrawable) getResources().getDrawable(R.drawable.ic_watermark)).getBitmap();
         Bitmap bitmap_resize = Bitmap.createScaledBitmap(myLogo, 50, 50, false);
-        GlWatermarkFilter filter = new GlWatermarkFilter(bitmap_resize, GlWatermarkFilter.Position.RIGHT_TOP);
+        GlWatermarkFilter filter = new GlWatermarkFilter(bitmap_resize, GlWatermarkFilter.Position.LEFT_TOP);
         new GPUMp4Composer(Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + "no_watermark" + ".mp4",
                 Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + ".mp4")
                 .filter(filter)
-                .mute(false)
                 .listener(new GPUMp4Composer.Listener() {
                     @Override
                     public void onProgress(double progress) {
@@ -1580,7 +1648,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
                                 Functions.cancel_determinent_loader();
                                 Delete_file_no_watermark(item);
-                                Scan_file(item);
+
 
                             }
                         });
@@ -1620,10 +1688,12 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
 
     public void Delete_file_no_watermark(Home_Get_Set item){
+        Toast.makeText(context, "Video Saved!", Toast.LENGTH_SHORT).show();
         File file = new File(Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + "no_watermark" + ".mp4");
         if(file.exists()){
             file.delete();
         }
+        Scan_file(item);
     }
 
     public void Scan_file(Home_Get_Set item){

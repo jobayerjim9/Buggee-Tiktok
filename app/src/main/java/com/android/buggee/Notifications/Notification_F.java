@@ -151,11 +151,15 @@ public class Notification_F extends RootFragment implements View.OnClickListener
                     item.type=data.optString("type");
 
                     if(item.type.equalsIgnoreCase("comment_video") || item.type.equalsIgnoreCase("video_like")) {
+                        try {
+                            item.id = value_data.optString("id");
+                            item.video = value_data.optString("video");
+                            item.thum = value_data.optString("thum");
+                            item.gif = value_data.optString("gif");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-                        item.id = value_data.optString("id");
-                        item.video = value_data.optString("video");
-                        item.thum = value_data.optString("thum");
-                        item.gif = value_data.optString("gif");
 
                     }
 

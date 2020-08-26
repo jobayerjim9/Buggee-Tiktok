@@ -70,7 +70,10 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
         } else {
             pageSwitchLayout.setVisibility(View.GONE);
         }
-
+        if (Variables.sharedPreferences.getInt(Variables.id_page, 0) == 1) {
+            pageSwitch.setChecked(true);
+            pageSwitch.setClickable(false);
+        }
         pageSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

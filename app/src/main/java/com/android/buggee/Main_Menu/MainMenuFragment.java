@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 
+import com.android.buggee.Accounts.PageActivity;
 import com.android.buggee.Chat.Chat_Activity;
 import com.android.buggee.Notifications.Notification_F;
 import com.android.buggee.SimpleClasses.StaticViewPagerAdapter;
@@ -59,18 +60,26 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
     private BottomNavigationView bottomNav;
     Context context;
     private StaticViewPagerAdapter viewPagerAdapter;
+    private static ImageView cameraButton;
 
     public MainMenuFragment() {
 
     }
 
+    public static void showHidePlus(boolean show) {
+        if (show) {
+            cameraButton.setVisibility(View.VISIBLE);
+        } else {
+            cameraButton.setVisibility(View.INVISIBLE);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_main_menu, container, false);
-        context=getContext();
+        context = getContext();
 
 //        tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         adapter = new ViewPagerAdapter(getResources(), getChildFragmentManager());
@@ -80,7 +89,7 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
         pager.setPagingEnabled(false);
         pager.setCurrentItem(0);
         bottomNav = view.findViewById(R.id.bottomNav);
-        ImageView cameraButton = view.findViewById(R.id.cameraButton);
+        cameraButton = view.findViewById(R.id.cameraButton);
 
 
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -123,10 +132,14 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
                     }
                 }
                 else if (menuItem.getItemId()==R.id.profile) {
-                    if(Variables.sharedPreferences.getBoolean(Variables.islogin,false)){
-                       // lp.setMargins(0,0,0,200);
-                        pager.setCurrentItem(3);
-                        return true;
+                    if(Variables.sharedPreferences.getBoolean(Variables.islogin,false)) {
+                        // lp.setMargins(0,0,0,200);
+                        if (Variables.sharedPreferences.getInt(Variables.id_page, 0) == 1) {
+                            startActivity(new Intent(context, PageActivity.class));
+                        } else {
+                            pager.setCurrentItem(3);
+                            return true;
+                        }
 
                     }else {
 

@@ -25,15 +25,12 @@ public class SettingsActivity extends AppCompatActivity {
         TextView privacySettings = findViewById(R.id.privacySettings);
         TextView privacyPolicy = findViewById(R.id.privacyPolicy);
         TextView termsOfUse = findViewById(R.id.termsOfUse);
-        TextView verifiedPage = findViewById(R.id.verifiedPage);
         TextView reportAProblem = findViewById(R.id.reportAProblem);
         createPage = findViewById(R.id.createPage);
         int pageHave = Variables.sharedPreferences.getInt(Variables.page_have, 0);
         if (pageHave == 1) {
             createPage.setVisibility(View.GONE);
-            verifiedPage.setVisibility(View.VISIBLE);
-        } else {
-            verifiedPage.setVisibility(View.GONE);
+
         }
         createPage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,14 +72,6 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-            }
-        });
-        verifiedPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SettingsActivity.this, RequestVerificationActivity.class);
-                intent.putExtra("type", "page");
-                startActivity(intent);
             }
         });
         try {

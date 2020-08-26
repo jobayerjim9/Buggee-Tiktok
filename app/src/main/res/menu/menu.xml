@@ -2,6 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group>
         <item
+            android:id="@+id/idPage"
+            android:title="Use This ID As Page" />
+        <item
             android:id="@+id/manage_page"
             android:title="Manage Page" />
         <item

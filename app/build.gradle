@@ -90,7 +90,7 @@ dependencies {
     implementation 'com.airbnb.android:lottie:2.7.0'
 
     //Do not Update this library their is a camera issue with new version
-    implementation 'com.wonderkiln:camerakit:0.13.0'
+    implementation 'com.wonderkiln:camerakit:0.13.4'
 
 
     //You will change the versions at your own risk.
@@ -135,6 +135,6 @@ dependencies {
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.3'
     implementation "com.airbnb.android:lottie:3.0.6"
     implementation 'com.hbb20:ccp:2.4.0'
-
+    implementation 'com.github.stfalcon:stfalcon-imageviewer:1.0.0'
 }
 apply plugin: 'com.google.gms.google-services'

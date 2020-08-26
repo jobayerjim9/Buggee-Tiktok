@@ -74,7 +74,6 @@
                 android:backgroundTintMode="screen"
                 android:padding="0dp"
                 app:controller_layout_id="@layout/item_player_controler"
-                app:resize_mode="fill"
                 app:show_timeout="1000">
 
             </com.google.android.exoplayer2.ui.PlayerView>
@@ -271,7 +270,7 @@
 
                     <TextView
                         android:id="@+id/sound_name"
-                        android:layout_width="100dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="7dp"
                         android:ellipsize="marquee"

@@ -53,6 +53,7 @@ public class Variables {
     public static String device_id = "device_id";
     public static String bio = "bio";
     public static String page_have = "page_have";
+    public static String id_page = "id_page";
     public static String current = "device_id";
     public static String recordType = "record";
 
@@ -145,6 +146,9 @@ public class Variables {
     public static final String reportProblem = domain + "reportProblem";
     public static final String updatePageCategory = domain + "updatePageCategory";
     public static final String updatePageButton = domain + "updatePageButton";
+    public static final String useThisIdAsPage = domain + "useThisIdAsPage";
+    public static final String getImageStory = domain + "getImageStory";
+    public static final String createImageStory = domain + "createImageStory";
 
 
 }

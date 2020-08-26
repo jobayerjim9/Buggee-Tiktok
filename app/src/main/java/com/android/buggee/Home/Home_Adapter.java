@@ -116,7 +116,9 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
         } else {
             holder.sound_name.setText(item.sound_name);
         }
-        holder.sound_name.setSelected(true);
+        if (!item.upload_from.equals("page")) {
+            holder.sound_name.setSelected(true);
+        }
 
 
         holder.desc_txt.setText(item.video_description);

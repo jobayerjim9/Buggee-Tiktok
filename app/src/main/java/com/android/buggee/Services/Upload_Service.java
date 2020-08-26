@@ -137,9 +137,9 @@ public class Upload_Service extends Service{
                     bmThumbnail = ThumbnailUtils.createVideoThumbnail(uri.getPath(),
                             MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
 
-                    Bitmap bmThumbnail_resized = Bitmap.createScaledBitmap(bmThumbnail,(int)(bmThumbnail.getWidth()*0.4), (int)(bmThumbnail.getHeight()*0.4), true);
+                   // Bitmap bmThumbnail_resized = Bitmap.createScaledBitmap(bmThumbnail,(int)(bmThumbnail.getWidth()*0.4), (int)(bmThumbnail.getHeight()*0.4), true);
 
-                    thumb_base_64 = Bitmap_to_base64( bmThumbnail_resized);
+                    thumb_base_64 = Bitmap_to_base64(bmThumbnail);
 
             try {
 

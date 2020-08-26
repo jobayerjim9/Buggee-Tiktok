@@ -360,12 +360,16 @@ public class RequestVerificationActivity extends AppCompatActivity implements Vi
                 try {
                     JSONObject jsonObject = new JSONObject(resp);
                     String code = jsonObject.optString("code");
-                    if (code.equalsIgnoreCase("200")) {
-                        Toast.makeText(RequestVerificationActivity.this, "Request Sent Successfully", Toast.LENGTH_SHORT).show();
-                        onBackPressed();
+                    if (code.equals("200")) {
+                        Toast.makeText(RequestVerificationActivity.this, "Request Sent Successfully!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(RequestVerificationActivity.this, "Request Failed!", Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(RequestVerificationActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }

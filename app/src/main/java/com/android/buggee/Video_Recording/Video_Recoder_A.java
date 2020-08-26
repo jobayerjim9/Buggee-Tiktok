@@ -678,8 +678,8 @@ public class Video_Recoder_A extends AppCompatActivity implements View.OnClickLi
 
         Functions.Show_determinent_loader(this, false, false);
         new GPUMp4Composer(src_path, destination_path)
-                .size(1080, 1920)
-                .fillMode(FillMode.PRESERVE_ASPECT_CROP)
+                .size(720, 1080)
+//                .fillMode(FillMode.PRESERVE_ASPECT_CROP)
                 .videoBitrate((int) (0.25 * 16 * 540 * 960))
                 .listener(new GPUMp4Composer.Listener() {
                     @Override

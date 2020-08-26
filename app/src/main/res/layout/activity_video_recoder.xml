@@ -84,7 +84,7 @@
             android:adjustViewBounds="true"
             app:ckFacing="back"
             app:ckLockVideoAspectRatio="true"
-            app:ckVideoQuality="max480p"
+            app:ckVideoQuality="max720p"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

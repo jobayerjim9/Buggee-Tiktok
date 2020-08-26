@@ -1,9 +1,13 @@
 package com.android.buggee.Accounts;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -12,13 +16,18 @@ import androidx.viewpager.widget.ViewPager;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.util.SparseArray;
@@ -48,11 +57,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import static com.android.buggee.Main_Menu.MainMenuFragment.hasPermissions;
 
 public class PageActivity extends AppCompatActivity {
-    private TextView nameView, descriptionView;
+    private TextView nameView, descriptionView, pageCategory;
     //    private EditText nameEditText, descriptionEditText;
     private ImageView circleImageView, nameSubmit, descSubmit;
     //    private LinearLayout nameEditLayout, descriptionEditLayout;
@@ -74,6 +90,7 @@ public class PageActivity extends AppCompatActivity {
         }
         getPageInfo();
         nameView = findViewById(R.id.pageName);
+        pageCategory = findViewById(R.id.pageCategory);
         //descriptionView = findViewById(R.id.descriptionView);
         // nameEditText = findViewById(R.id.nameEditText);
         //descriptionEditText = findViewById(R.id.descriptionEditText);
@@ -94,15 +111,7 @@ public class PageActivity extends AppCompatActivity {
             circleImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (ContextCompat.checkSelfPermission(PageActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(PageActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        // Permission is not granted
-                        ActivityCompat.requestPermissions(PageActivity.this, permissions, 1);
-                    } else {
-                        pickImage();
-                    }
-
+                    selectImage();
 
                 }
             });
@@ -187,6 +196,8 @@ public class PageActivity extends AppCompatActivity {
                         String name = jsonObject.optString("name");
                         String profile_pic = jsonObject.optString("profile_pic");
                         String description = jsonObject.optString("description");
+                        String category = jsonObject.optString("category");
+                        pageCategory.setText(category);
                         Picasso.with(PageActivity.this).load(Variables.base_url + profile_pic).placeholder(R.drawable.profile_image_placeholder).into(circleImageView);
                         nameView.setText(name);
                         //nameEditText.setText(name);
@@ -276,23 +287,65 @@ public class PageActivity extends AppCompatActivity {
     public void pickImage() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
-        startActivityForResult(intent, 1);
+        startActivityForResult(intent, 2);
     }
 
+    byte[] image_byte_array;
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                //Display an error
-                return;
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == 2) {
+                if (data == null) {
+                    //Display an error
+                    return;
+                }
+                Uri uri = data.getData();
+                String fileType = getMimeType(uri);
+                String[] splitedType = fileType.split("/", 2);
+                Log.d("SplitedType", splitedType[0] + " " + splitedType[1]);
+                storeImage(uri, splitedType[1]);
             }
-            Uri uri = data.getData();
-            String fileType = getMimeType(uri);
-            String[] splitedType = fileType.split("/", 2);
-            Log.d("SplitedType", splitedType[0] + " " + splitedType[1]);
-            storeImage(uri, splitedType[1]);
+            if (requestCode == 1) {
+                Matrix matrix = new Matrix();
+                try {
+                    ExifInterface exif = new ExifInterface(imageFilePath);
+                    int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                    switch (orientation) {
+                        case ExifInterface.ORIENTATION_ROTATE_90:
+                            matrix.postRotate(90);
+                            break;
+                        case ExifInterface.ORIENTATION_ROTATE_180:
+                            matrix.postRotate(180);
+                            break;
+                        case ExifInterface.ORIENTATION_ROTATE_270:
+                            matrix.postRotate(270);
+                            break;
+                    }
 
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Uri selectedImage = (Uri.fromFile(new File(imageFilePath)));
+
+                InputStream imageStream = null;
+                try {
+                    imageStream = getContentResolver().openInputStream(selectedImage);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                final Bitmap imagebitmap = BitmapFactory.decodeStream(imageStream);
+                Bitmap rotatedBitmap = Bitmap.createBitmap(imagebitmap, 0, 0, imagebitmap.getWidth(), imagebitmap.getHeight(), matrix, true);
+
+                Bitmap resized = Bitmap.createScaledBitmap(rotatedBitmap, (int) (rotatedBitmap.getWidth() * 0.7), (int) (rotatedBitmap.getHeight() * 0.7), true);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                resized.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+
+                image_byte_array = baos.toByteArray();
+                String encImage = Base64.encodeToString(image_byte_array, Base64.DEFAULT);
+                uploadImageForPage(encImage);
+
+            }
             //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
         }
     }
@@ -313,6 +366,24 @@ public class PageActivity extends AppCompatActivity {
         return encImage;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public boolean check_permissions() {
+
+        String[] PERMISSIONS = {
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA
+        };
+
+        if (!hasPermissions(PageActivity.this, PERMISSIONS)) {
+            requestPermissions(PERMISSIONS, 2);
+        } else {
+
+            return true;
+        }
+
+        return false;
+    }
     public String getMimeType(Uri uri) {
         String mimeType = null;
         try {
@@ -329,6 +400,88 @@ public class PageActivity extends AppCompatActivity {
         } catch (Exception e) {
             return "image/jpeg";
         }
+    }
+
+    private void selectImage() {
+
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this, R.style.AlertDialogCustom);
+
+        builder.setTitle("Add Photo!");
+
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+
+            @Override
+
+            public void onClick(DialogInterface dialog, int item) {
+
+                if (options[item].equals("Take Photo")) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (check_permissions())
+                            openCameraIntent();
+                    }
+
+                } else if (options[item].equals("Choose from Gallery")) {
+                    if (ContextCompat.checkSelfPermission(PageActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(PageActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // Permission is not granted
+                        ActivityCompat.requestPermissions(PageActivity.this, permissions, 1);
+                    } else {
+                        pickImage();
+                    }
+                } else if (options[item].equals("Cancel")) {
+                    dialog.dismiss();
+
+                }
+
+            }
+
+        });
+
+        builder.show();
+
+    }
+
+    private void openCameraIntent() {
+        Intent pictureIntent = new Intent(
+                MediaStore.ACTION_IMAGE_CAPTURE);
+        if (pictureIntent.resolveActivity(getPackageManager()) != null) {
+            //Create a file to store the image
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".fileprovider", photoFile);
+                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(pictureIntent, 1);
+            }
+        }
+    }
+
+    String imageFilePath;
+
+    private File createImageFile() throws IOException {
+        String timeStamp =
+                new SimpleDateFormat("yyyyMMdd_HHmmss",
+                        Locale.getDefault()).format(new Date());
+        String imageFileName = "IMG_" + timeStamp + "_";
+        File storageDir =
+                getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        imageFilePath = image.getAbsolutePath();
+        return image;
     }
 
     private void storeImage(Uri uri, String type) {
@@ -443,4 +596,6 @@ public class PageActivity extends AppCompatActivity {
 
 
     }
+
+
 }

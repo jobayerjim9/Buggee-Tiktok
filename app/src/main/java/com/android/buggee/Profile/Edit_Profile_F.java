@@ -516,7 +516,7 @@ catch (Exception e) {
                 try {
                     JSONObject response=new JSONObject(resp);
                     String code=response.optString("code");
-                    Toast.makeText(context, code + " COde", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, code + " COde", Toast.LENGTH_SHORT).show();
                     if(code.equals("200")) {
                         Toast.makeText(context, "Profile Updated!", Toast.LENGTH_SHORT).show();
                         SharedPreferences.Editor editor = Variables.sharedPreferences.edit();
@@ -597,7 +597,7 @@ catch (Exception e) {
 
             }
             else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
 
             }
         } catch (JSONException e) {

@@ -230,11 +230,19 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/sound_image"
-                    android:layout_width="32dp"
-                    android:src="@drawable/ic_round_music"
-                    android:layout_height="32dp" />
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/video_loader2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:elevation="1dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.51"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="music_spectrum.json"
+                    app:lottie_loop="true" />
 
             </LinearLayout>
 
