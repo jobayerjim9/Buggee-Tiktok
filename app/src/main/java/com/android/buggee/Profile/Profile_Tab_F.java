@@ -611,8 +611,6 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         }
         if (Variables.sharedPreferences.getInt(Variables.page_have, 0) == 0) {
             popup.getMenu().removeItem(R.id.manage_page);
-
-        } else {
             popup.getMenu().removeItem(R.id.idPage);
         }
         popup.show();
@@ -647,34 +645,38 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
     }
 
     private void useThisIdAsPage() {
-        JSONObject parameters = new JSONObject();
-        try {
-            parameters.put("id", Variables.user_id);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        Functions.Show_loader(context, false, false);
-        ApiRequest.Call_Api(context, Variables.useThisIdAsPage, parameters, new Callback() {
-            @Override
-            public void Responce(String resp) {
-                Functions.cancel_loader();
-                try {
-                    JSONObject jsonObject = new JSONObject(resp);
-                    boolean success = jsonObject.optBoolean("success");
-                    if (success) {
-                        Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
-                        Variables.sharedPreferences.edit().putInt(Variables.page_have, 1).apply();
-                        Variables.sharedPreferences.edit().putInt(Variables.id_page, 1).apply();
-                    } else {
-                        Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
+        if (Variables.sharedPreferences.getInt(Variables.id_page, 0) == 0) {
+            JSONObject parameters = new JSONObject();
+            try {
+                parameters.put("id", Variables.user_id);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        });
+
+            Functions.Show_loader(context, false, false);
+            ApiRequest.Call_Api(context, Variables.useThisIdAsPage, parameters, new Callback() {
+                @Override
+                public void Responce(String resp) {
+                    Functions.cancel_loader();
+                    try {
+                        JSONObject jsonObject = new JSONObject(resp);
+                        boolean success = jsonObject.optBoolean("success");
+                        if (success) {
+                            Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
+                            Variables.sharedPreferences.edit().putInt(Variables.page_have, 1).apply();
+                            Variables.sharedPreferences.edit().putInt(Variables.id_page, 1).apply();
+                        } else {
+                            Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+        } else {
+            Variables.sharedPreferences.edit().putInt(Variables.id_page, 1).apply();
+        }
 
     }
 

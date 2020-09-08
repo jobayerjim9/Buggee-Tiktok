@@ -9,9 +9,12 @@
         <item name="android:windowDisablePreview">true</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <item name="android:actionMenuTextColor">@color/text</item>
     </style>
 
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="white_status" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -104,15 +107,20 @@
         <item name="android:textSize">40sp</item>
         <item name="android:labelTextSize">40sp</item>
     </style>
+
     <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxStrokeColor">#fff</item>
         <item name="boxStrokeWidth">2dp</item>
         <item name="fontFamily">@font/avenir_regular</item>
         <item name="colorAccent">@color/white</item>
     </style>
+
     <style name="spinnerTheme">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="SwitchTheme" parent="Theme.AppCompat.Light">
+        <item name="android:colorControlActivated">@color/text</item>
+    </style>
 </resources>

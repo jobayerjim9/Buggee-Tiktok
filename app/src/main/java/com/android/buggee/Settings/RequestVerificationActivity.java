@@ -57,11 +57,15 @@ public class RequestVerificationActivity extends AppCompatActivity implements Vi
         setContentView(R.layout.activity_request_varification);
         findViewById(R.id.Goback).setOnClickListener(this);
         type = getIntent().getStringExtra("type");
+
         username_edit = findViewById(R.id.username_edit);
         fullname_edit = findViewById(R.id.fullname_edit);
-
+        if (type.equals("page")) {
+            fullname_edit.setText(Variables.sharedPreferences.getString(Variables.page_name, ""));
+        } else {
+            fullname_edit.setText(Variables.sharedPreferences.getString(Variables.f_name, "") + " " + Variables.sharedPreferences.getString(Variables.l_name, ""));
+        }
         username_edit.setText(Variables.sharedPreferences.getString(Variables.u_name, ""));
-        fullname_edit.setText(Variables.sharedPreferences.getString(Variables.f_name, "") + " " + Variables.sharedPreferences.getString(Variables.l_name, ""));
 
         file_name_txt = findViewById(R.id.file_name_txt);
 
@@ -344,7 +348,11 @@ public class RequestVerificationActivity extends AppCompatActivity implements Vi
     public void Call_api() {
         JSONObject params = new JSONObject();
         try {
-            params.put("fb_id", Variables.user_id);
+            if (type.equals("page")) {
+                params.put("fb_id", Variables.sharedPreferences.getString(Variables.p_id, ""));
+            } else {
+                params.put("fb_id", Variables.user_id);
+            }
             params.put("Full name", fullname_edit.getText().toString());
             params.put("Username", username_edit.getText().toString());
             params.put("attachment", base_64);

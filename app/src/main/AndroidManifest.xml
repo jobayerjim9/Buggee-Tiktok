@@ -39,6 +39,7 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:replace="allowBackup,supportsRtl">
+        <activity android:name=".Video_Recording.ImageEditingActivity"></activity>
         <activity android:name=".Accounts.PageActivity" />
         <activity android:name=".SimpleClasses.WebViewActivity" />
         <activity android:name=".Settings.RequestVerificationActivity" />
@@ -67,8 +68,9 @@
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".Splash_A"
-            android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
+            <!--            android:screenOrientation="portrait"-->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

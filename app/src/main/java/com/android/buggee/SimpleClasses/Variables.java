@@ -34,6 +34,7 @@ public class Variables {
     public static String output_filter_file = app_folder + "output-filtered.mp4";
     public static String output_filter_file_final = app_folder + "output-filtered-final.mp4";
     public static String output_audio = app_folder + "SelectedAudio.aac";
+    public static String output_story = app_folder + "tempStory.jpg";
 
     public static String gallery_trimed_video = app_folder + "gallery_trimed_video.mp4";
     public static String gallery_resize_video = app_folder + "gallery_resize_video.mp4";
@@ -42,6 +43,7 @@ public class Variables {
     public static SharedPreferences sharedPreferences;
     public static String pref_name = "pref_name";
     public static String u_id = "u_id";
+    public static String p_id = "p_id";
     public static String u_name = "u_name";
     public static String u_pic = "u_pic";
     public static String f_name = "f_name";
@@ -56,6 +58,9 @@ public class Variables {
     public static String id_page = "id_page";
     public static String current = "device_id";
     public static String recordType = "record";
+    public static String push_on_off = "push_on_off";
+    public static String page_name = "page_name";
+    public static String page_published = "page_published";
 
 
     public static String tag = "buggee_";
@@ -149,6 +154,7 @@ public class Variables {
     public static final String useThisIdAsPage = domain + "useThisIdAsPage";
     public static final String getImageStory = domain + "getImageStory";
     public static final String createImageStory = domain + "createImageStory";
+    public static final String publishUnpublishPage = domain + "publishUnpublishPage";
 
 
 }

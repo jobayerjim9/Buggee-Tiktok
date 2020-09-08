@@ -75,7 +75,11 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
 
 
         holder.bind(i, item, listener);
-
+        if ((item.sound_name == null || item.sound_name.equals("") || item.sound_name.equals("null"))) {
+            holder.sound_name.setText("original sound - " + item.first_name + " " + item.last_name);
+        } else {
+            holder.sound_name.setText(item.sound_name);
+        }
         if (item.isFriend || item.fb_id.equals(Variables.sharedPreferences.getString(Variables.u_id, ""))) {
             holder.smallPlusButton.setVisibility(View.GONE);
         }
@@ -89,7 +93,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
             Log.d("profilePic", item.page_pic);
             try {
                 Picasso.with(context).
-                        load(Variables.base_url + item.page_pic)
+                        load(item.page_pic)
                         .placeholder(context.getResources().getDrawable(R.drawable.profile_image_placeholder))
                         .resize(100, 100).into(holder.user_pic);
 
@@ -98,6 +102,7 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
                 e.printStackTrace();
             }
         } else {
+            holder.sound_name.setSelected(true);
             holder.pageCard.setVisibility(View.GONE);
             //  holder.name.setText(item.username);
             try {
@@ -108,16 +113,6 @@ public class Home_Adapter extends RecyclerView.Adapter<Home_Adapter.CustomViewHo
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-
-
-        if ((item.sound_name == null || item.sound_name.equals("") || item.sound_name.equals("null"))) {
-            holder.sound_name.setText("original sound - " + item.first_name + " " + item.last_name);
-        } else {
-            holder.sound_name.setText(item.sound_name);
-        }
-        if (!item.upload_from.equals("page")) {
-            holder.sound_name.setSelected(true);
         }
 
 

@@ -79,6 +79,7 @@ public class PageActivity extends AppCompatActivity {
     protected ViewPager pager;
     private String id;
     private ViewPagerAdapter adapter;
+    private String pageId, pageName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,7 +174,6 @@ public class PageActivity extends AppCompatActivity {
 
 
     }
-
     private void getPageInfo() {
         Functions.Show_loader(this, false, false);
         JSONObject parameters = new JSONObject();
@@ -194,11 +194,16 @@ public class PageActivity extends AppCompatActivity {
                     boolean success = jsonObject.optBoolean("success");
                     if (success) {
                         String name = jsonObject.optString("name");
+                        Variables.sharedPreferences.edit().putString(Variables.page_name, name).apply();
+                        String id = jsonObject.optString("id");
+                        Variables.sharedPreferences.edit().putString(Variables.p_id, id).apply();
                         String profile_pic = jsonObject.optString("profile_pic");
                         String description = jsonObject.optString("description");
                         String category = jsonObject.optString("category");
+                        int published = jsonObject.optInt("published");
+                        Variables.sharedPreferences.edit().putInt(Variables.page_published, published).apply();
                         pageCategory.setText(category);
-                        Picasso.with(PageActivity.this).load(Variables.base_url + profile_pic).placeholder(R.drawable.profile_image_placeholder).into(circleImageView);
+                        Picasso.with(PageActivity.this).load(profile_pic).placeholder(R.drawable.profile_image_placeholder).into(circleImageView);
                         nameView.setText(name);
                         //nameEditText.setText(name);
 //                        if (!description.toLowerCase().equals("null")) {

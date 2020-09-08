@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "166533631192",
+    "firebase_url": "https://buggee-1610c.firebaseio.com",
+    "project_id": "buggee-1610c",
+    "storage_bucket": "buggee-1610c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166533631192:android:ab17610f828ebfe7f21bad",
+        "android_client_info": {
+          "package_name": "com.andriod.buggee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "166533631192-idd5o3fv5eq3men258pusgv315deatpt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDds7Lwb6c87PTA_KOO5soOhur23Cwf_jw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "166533631192-idd5o3fv5eq3men258pusgv315deatpt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166533631192:android:bda3dd82bdfbadb4f21bad",
+        "android_client_info": {
+          "package_name": "com.android.buggee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "166533631192-6mnk8prk6k6e87ej9mu2kqnpftq4p9o2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.buggee",
+            "certificate_hash": "5dcbe1a5676d54fe76a8bdd61a4c7e3a58a7c03d"
+          }
+        },
+        {
+          "client_id": "166533631192-idd5o3fv5eq3men258pusgv315deatpt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDds7Lwb6c87PTA_KOO5soOhur23Cwf_jw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "166533631192-idd5o3fv5eq3men258pusgv315deatpt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

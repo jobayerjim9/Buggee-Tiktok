@@ -5,8 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.android.buggee.Main_Menu.MainMenuActivity;
@@ -26,6 +29,16 @@ public class SettingsActivity extends AppCompatActivity {
         TextView privacyPolicy = findViewById(R.id.privacyPolicy);
         TextView termsOfUse = findViewById(R.id.termsOfUse);
         TextView reportAProblem = findViewById(R.id.reportAProblem);
+        Switch pushNotification = findViewById(R.id.pushNotification);
+        boolean noti = Variables.sharedPreferences.getBoolean(Variables.push_on_off, true);
+        pushNotification.setChecked(noti);
+        pushNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                Log.d("pushOnOff", b + "");
+                Variables.sharedPreferences.edit().putBoolean(Variables.push_on_off, b).apply();
+            }
+        });
         createPage = findViewById(R.id.createPage);
         int pageHave = Variables.sharedPreferences.getInt(Variables.page_have, 0);
         if (pageHave == 1) {

@@ -50,6 +50,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -220,14 +221,51 @@ public class StoryModeChooser extends DialogFragment {
             Bitmap rotatedBitmap = Bitmap.createBitmap(imagebitmap, 0, 0, imagebitmap.getWidth(), imagebitmap.getHeight(), matrix, true);
 
             Bitmap resized = Bitmap.createScaledBitmap(rotatedBitmap, (int) (rotatedBitmap.getWidth() * 0.7), (int) (rotatedBitmap.getHeight() * 0.7), true);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            resized.compress(Bitmap.CompressFormat.JPEG, 20, baos);
 
-            image_byte_array = baos.toByteArray();
 
-            Save_Image();
+            saveImageToStorage(resized);
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            resized.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//
+//            image_byte_array = baos.toByteArray();
+//            Save_Image();
 
         }
+    }
+
+    private void saveImageToStorage(Bitmap finalBitmap) {
+        Functions.Show_loader(context, false, false);
+        String root = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(root + "/Buggee/");
+        myDir.mkdirs();
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fname = "temp" + timeStamp + ".jpg";
+
+        File file = new File(myDir, fname);
+        if (file.exists()) file.delete();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            Variables.output_story = fname;
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+            Toast.makeText(context, "Opening Picture For Editing!", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(context, ImageEditingActivity.class));
+            Functions.cancel_loader();
+            dismiss();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
     }
 
     public void Save_Image() {

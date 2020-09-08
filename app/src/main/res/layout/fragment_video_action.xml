@@ -61,7 +61,7 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_save_round" />
+                        android:src="@drawable/save_video" />
 
 
                     <TextView
@@ -87,7 +87,7 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_copy_clipboard" />
+                        android:src="@drawable/copy_link" />
 
 
                     <TextView

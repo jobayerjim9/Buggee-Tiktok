@@ -10,9 +10,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 
@@ -26,6 +29,7 @@ import com.android.buggee.Comments.LiveCommentAdapter;
 import com.android.buggee.Comments.LiveCommentData;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.GlWatermarkFilterCustom;
 import com.android.buggee.SimpleClasses.WebViewActivity;
 import com.android.buggee.SoundLists.VideoSound_A;
 import com.android.buggee.Video_Recording.StoryModeChooser;
@@ -41,6 +45,8 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -296,8 +302,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
             SnapHelper snapHelper1 = new PagerSnapHelper();
             snapHelper1.attachToRecyclerView(liveRecycler);
-            getAllStory();
-            getAllLiveVideo();
+
 
 
             // this is the scroll listener of recycler view which will tell the current item number
@@ -339,6 +344,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                     currentPage = -1;
                     Call_Api_For_get_Allvideos();
                     getAllStory();
+
                 }
             });
 
@@ -351,11 +357,13 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 public void onRefresh() {
                     liveCurrentPage = -1;
                     getAllLiveVideo();
+
                 }
             });
 
-            Call_Api_For_get_Allvideos();
-
+//            Call_Api_For_get_Allvideos();
+//            getAllStory();
+            getAllLiveVideo();
             Load_add();
         } catch (Exception e) {
             e.printStackTrace();
@@ -857,10 +865,10 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     }
 
-
+    private boolean alreadyLoading = true;
     // Bottom two function will call the api and get all the videos form api and parse the json data
     private void Call_Api_For_get_Allvideos() {
-
+        alreadyLoading = true;
 
         Log.d(Variables.tag, MainMenuActivity.token);
 
@@ -1624,16 +1632,15 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     public void Applywatermark(final Home_Get_Set item) {
 
-        Bitmap myLogo = ((BitmapDrawable) getResources().getDrawable(R.drawable.ic_watermark)).getBitmap();
-        Bitmap bitmap_resize = Bitmap.createScaledBitmap(myLogo, 50, 50, false);
-        GlWatermarkFilter filter = new GlWatermarkFilter(bitmap_resize, GlWatermarkFilter.Position.LEFT_TOP);
+        Bitmap myLogo = getBitmapFromVectorDrawable(context, R.drawable.ic_buggee_watermark);
+        Bitmap bitmap_resize = Bitmap.createScaledBitmap(myLogo, 344, 167, false);
+        GlWatermarkFilterCustom filter = new GlWatermarkFilterCustom(bitmap_resize, GlWatermarkFilter.Position.RIGHT_BOTTOM);
         new GPUMp4Composer(Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + "no_watermark" + ".mp4",
                 Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + ".mp4")
                 .filter(filter)
                 .listener(new GPUMp4Composer.Listener() {
                     @Override
                     public void onProgress(double progress) {
-
                         Log.d("resp", "" + (int) (progress * 100));
                         Functions.Show_loading_progress((int) ((progress * 100) / 2) + 50);
 
@@ -1726,9 +1733,13 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     @Override
     public void onResume() {
         super.onResume();
-        if((privious_player!=null && (is_visible_to_user && !is_user_stop_video)) && !is_fragment_exits() ){
+        if ((privious_player != null && (is_visible_to_user && !is_user_stop_video)) && !is_fragment_exits()) {
             privious_player.setPlayWhenReady(true);
         }
+        currentPage = -1;
+        Call_Api_For_get_Allvideos();
+        getAllStory();
+
     }
 
 
@@ -2118,5 +2129,20 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
         public void onSwipeBottom() {
         }
+    }
+
+    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
     }
 }

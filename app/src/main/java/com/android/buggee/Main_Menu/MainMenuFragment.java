@@ -57,10 +57,11 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
     protected Custom_ViewPager pager;
 
     private ViewPagerAdapter adapter;
-    private BottomNavigationView bottomNav;
+    private static BottomNavigationView bottomNav;
     Context context;
     private StaticViewPagerAdapter viewPagerAdapter;
     private static ImageView cameraButton;
+    static int bottomL, bottomR, bottomU, bottomD;
 
     public MainMenuFragment() {
 
@@ -68,8 +69,10 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
 
     public static void showHidePlus(boolean show) {
         if (show) {
+            bottomNav.setPadding(bottomL, bottomU, bottomR, bottomU);
             cameraButton.setVisibility(View.VISIBLE);
         } else {
+            bottomNav.setPadding(bottomR, bottomU, bottomR, bottomU);
             cameraButton.setVisibility(View.INVISIBLE);
         }
     }
@@ -80,6 +83,11 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
 
         View view = inflater.inflate(R.layout.fragment_main_menu, container, false);
         context = getContext();
+        float scale = getResources().getDisplayMetrics().density;
+        bottomL = (int) (70 * scale + 0.5f);
+        bottomR = (int) (2 * scale + 0.5f);
+        bottomU = (int) (16 * scale + 0.5f);
+
 
 //        tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         adapter = new ViewPagerAdapter(getResources(), getChildFragmentManager());
