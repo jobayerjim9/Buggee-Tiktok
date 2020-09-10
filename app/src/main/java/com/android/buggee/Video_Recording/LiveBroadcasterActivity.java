@@ -192,11 +192,16 @@ public class LiveBroadcasterActivity extends AppCompatActivity {
                                     SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.live_file), Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.clear().apply();
-                                    mRtcEngine.leaveChannel();
-                                    RtcEngine.destroy();
-                                    mRtcEngine = null;
-                                    finish();
-                                    startActivity(new Intent(LiveBroadcasterActivity.this, MainMenuActivity.class));
+                                    try {
+                                        mRtcEngine.leaveChannel();
+                                        RtcEngine.destroy();
+                                        mRtcEngine = null;
+                                        finish();
+                                        startActivity(new Intent(LiveBroadcasterActivity.this, MainMenuActivity.class));
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
                                 } else {
                                     Toast.makeText(LiveBroadcasterActivity.this, "Check Your Network!", Toast.LENGTH_SHORT).show();
                                 }

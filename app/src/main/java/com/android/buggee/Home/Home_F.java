@@ -1768,9 +1768,13 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
             privious_player.release();
         }
         if (mRtcEngine != null) {
-            mRtcEngine.leaveChannel();
-            RtcEngine.destroy();
-            mRtcEngine = null;
+            try {
+                mRtcEngine.leaveChannel();
+                RtcEngine.destroy();
+                mRtcEngine = null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -2019,9 +2023,14 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     private void removePreviousRemoteView() {
         if (previousFrame != null) {
-            mRtcEngine.leaveChannel();
-            previousFrame.removeAllViews();
-            localFrame.removeAllViews();
+            try {
+                mRtcEngine.leaveChannel();
+                previousFrame.removeAllViews();
+                localFrame.removeAllViews();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
