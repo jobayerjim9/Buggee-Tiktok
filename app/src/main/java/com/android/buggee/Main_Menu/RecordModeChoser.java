@@ -76,9 +76,11 @@ public class RecordModeChoser extends DialogFragment {
                 if (Variables.sharedPreferences.getBoolean(Variables.islogin, false)) {
                     LiveDetailsDialog liveDetailsDialog = new LiveDetailsDialog();
                     liveDetailsDialog.show(getChildFragmentManager(), "liveDetails");
+
                 } else {
                     Toast.makeText(context, "You have to login First", Toast.LENGTH_SHORT).show();
                 }
+
 
             }
         });
@@ -91,6 +93,12 @@ public class RecordModeChoser extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        dismiss();
     }
 
     @Override

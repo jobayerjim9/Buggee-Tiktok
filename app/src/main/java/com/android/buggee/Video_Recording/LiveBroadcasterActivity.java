@@ -2,6 +2,7 @@ package com.android.buggee.Video_Recording;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
@@ -90,6 +91,7 @@ public class LiveBroadcasterActivity extends AppCompatActivity {
 
         final LottieAnimationView liveAnimation = findViewById(R.id.liveAnimation);
         final LottieAnimationView liveCountDown = findViewById(R.id.liveCountDown);
+        final CardView liveCountDownWrap = findViewById(R.id.liveCountDownWrap);
         new CountDownTimer(5000, 1000) {
             @Override
             public void onTick(long l) {
@@ -109,6 +111,7 @@ public class LiveBroadcasterActivity extends AppCompatActivity {
 
                 liveCountDown.cancelAnimation();
                 liveCountDown.setVisibility(View.GONE);
+                liveCountDownWrap.setVisibility(View.GONE);
             }
         }.start();
 

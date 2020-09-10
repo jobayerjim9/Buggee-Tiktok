@@ -5,19 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/liveCountDown"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/liveCountDownWrap"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:elevation="5dp"
+        app:cardBackgroundColor="@color/colorPrimaryDark"
+        app:cardElevation="16dp"
+        app:cardMaxElevation="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.52"
+        app:layout_constraintEnd_toEndOf="@+id/liveComment"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:lottie_autoPlay="true"
-        app:lottie_fileName="live_start_animation.json"
-        app:lottie_loop="false" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/liveCountDown"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="4dp"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="live_start_animation.json"
+            app:lottie_loop="false" />
+    </androidx.cardview.widget.CardView>
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/liveAnimation"
