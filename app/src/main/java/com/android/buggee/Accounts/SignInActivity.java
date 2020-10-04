@@ -1,5 +1,6 @@
 package com.android.buggee.Accounts;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -18,14 +19,18 @@ import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.gmail.samehadar.iosdialog.IOSDialog;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SignInActivity extends AppCompatActivity {
-    TextInputLayout emailUsernameInput,passwordInput;
+    TextInputLayout emailUsernameInput, passwordInput;
     SharedPreferences sharedPreferences;
 
     //    IOSDialog iosDialog;
@@ -53,26 +58,34 @@ public class SignInActivity extends AppCompatActivity {
                 finish();
             }
         });
-        ImageView loginButtonEmail=findViewById(R.id.loginButtonEmail);
+        ImageView loginButtonEmail = findViewById(R.id.loginButtonEmail);
         loginButtonEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String emailusername=emailUsernameInput.getEditText().getText().toString().trim();
-                String password=passwordInput.getEditText().getText().toString().trim();
-                if (emailusername.isEmpty())
-                {
+                final String emailusername = emailUsernameInput.getEditText().getText().toString().trim();
+                final String password = passwordInput.getEditText().getText().toString().trim();
+                if (emailusername.isEmpty()) {
                     emailUsernameInput.setErrorEnabled(true);
                     emailUsernameInput.setError("Cannot Be Empty");
-                }
-                else if (password.isEmpty()) {
+                } else if (password.isEmpty()) {
                     passwordInput.setErrorEnabled(true);
                     passwordInput.setError("Cannot Be Empty");
-                }
-                else if (emailusername.contains("@") && emailusername.contains(".")) {
-                    signInViaEmail(emailusername,password);
-                }
-                else {
-                    signInViaUsername(emailusername,password);
+                } else if (emailusername.contains("@") && emailusername.contains(".")) {
+                    Functions.Show_loader(SignInActivity.this, false, true);
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(emailusername, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                signInViaEmail(emailusername, password);
+                            } else {
+                                Functions.cancel_loader();
+                                Toast.makeText(SignInActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+                } else {
+                    signInViaUsername(emailusername, password);
                 }
             }
         });
@@ -80,7 +93,7 @@ public class SignInActivity extends AppCompatActivity {
 
     }
 
-    private void signInViaUsername(String emailusername, String password) {
+    private void signInViaUsername(String emailusername, final String password) {
 
         JSONObject parameters = new JSONObject();
         try {
@@ -89,13 +102,13 @@ public class SignInActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Functions.Show_loader(SignInActivity.this, false, true);
+
 //        iosDialog.show();
         ApiRequest.Call_Api(this, Variables.loginUsername, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
                 Functions.cancel_loader();
-                Parse_signup_data(resp);
+                Parse_signup_data(resp, password);
 
             }
         });
@@ -117,20 +130,20 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void Responce(String resp) {
                 Functions.cancel_loader();
-                Parse_signup_data(resp);
+                Parse_signup_data_email(resp);
 
             }
         });
     }
 
-    public void Parse_signup_data(String loginData){
+    public void Parse_signup_data_email(String loginData) {
         try {
             Log.d("signInData", loginData);
-            JSONObject jsonObject=new JSONObject(loginData);
-            String code=jsonObject.optString("code");
-            if(code.equals("200")) {
+            JSONObject jsonObject = new JSONObject(loginData);
+            String code = jsonObject.optString("code");
+            if (code.equals("200")) {
                 JSONArray jsonArray = jsonObject.getJSONArray("msg");
-                JSONObject userdata = jsonArray.getJSONObject(0);
+                final JSONObject userdata = jsonArray.getJSONObject(0);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(Variables.u_id, userdata.optString("fb_id"));
                 editor.putString(Variables.f_name, userdata.optString("first_name"));
@@ -148,13 +161,59 @@ public class SignInActivity extends AppCompatActivity {
                 Variables.sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
                 Variables.user_id = Variables.sharedPreferences.getString(Variables.u_id, "");
 
-                Toast.makeText(this, "Sign In Successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignInActivity.this, "Sign In Successful", Toast.LENGTH_SHORT).show();
                 finish();
 
+            } else {
+                Toast.makeText(this, "" + jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void Parse_signup_data(String loginData, String password) {
+        try {
+            Log.d("signInData", loginData);
+            JSONObject jsonObject = new JSONObject(loginData);
+            String code = jsonObject.optString("code");
+            if (code.equals("200")) {
+                JSONArray jsonArray = jsonObject.getJSONArray("msg");
+                final JSONObject userdata = jsonArray.getJSONObject(0);
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(userdata.optString("fb_id"), password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(Variables.u_id, userdata.optString("fb_id"));
+                            editor.putString(Variables.f_name, userdata.optString("first_name"));
+                            editor.putString(Variables.l_name, userdata.optString("last_name"));
+                            editor.putString(Variables.u_name, userdata.optString("first_name") + " " + userdata.optString("last_name"));
+                            editor.putString(Variables.gender, userdata.optString("gender"));
+                            editor.putString(Variables.bio, userdata.optString("bio"));
+                            editor.putInt(Variables.page_have, userdata.optInt("page_have"));
+                            editor.putInt(Variables.id_page, userdata.optInt("id_as_page"));
+                            editor.putString(Variables.u_pic, userdata.optString("profile_pic"));
+                            editor.putString(Variables.api_token, userdata.optString("tokon"));
+                            editor.putBoolean(Variables.islogin, true);
+                            editor.commit();
+
+                            Variables.sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
+                            Variables.user_id = Variables.sharedPreferences.getString(Variables.u_id, "");
+
+                            Toast.makeText(SignInActivity.this, "Sign In Successful", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Toast.makeText(SignInActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
 
-            }else {
-                Toast.makeText(this, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "" + jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
             }
 
         } catch (JSONException e) {

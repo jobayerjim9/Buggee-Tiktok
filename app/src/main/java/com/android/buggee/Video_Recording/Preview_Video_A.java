@@ -83,8 +83,10 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
         findViewById(R.id.next_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Variables.output_filter_file = Variables.outputfile2;
+                GotopostScreen();
+                //Save_Video(Variables.outputfile2,Variables.output_filter_file);
 
-                Save_Video(Variables.outputfile2,Variables.output_filter_file);
             }
         });
 
@@ -92,18 +94,18 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
         Set_Player(video_url);
 
 
-        recylerview=findViewById(R.id.recylerview);
-
-        adapter = new Filter_Adapter(this, filterTypes, new Filter_Adapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int postion, FilterType item) {
-                select_postion=postion;
-                gpuPlayerView.setGlFilter(FilterType.createGlFilter(filterTypes.get(postion), getApplicationContext()));
-                adapter.notifyDataSetChanged();
-            }
-        });
-        recylerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        recylerview.setAdapter(adapter);
+//        recylerview=findViewById(R.id.recylerview);
+//
+//        adapter = new Filter_Adapter(this, filterTypes, new Filter_Adapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int postion, FilterType item) {
+//                select_postion=postion;
+//                gpuPlayerView.setGlFilter(FilterType.createGlFilter(filterTypes.get(postion), getApplicationContext()));
+//                adapter.notifyDataSetChanged();
+//            }
+//        });
+//        recylerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+//        recylerview.setAdapter(adapter);
 
 
     }
@@ -118,7 +120,7 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
          player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this,
-                Util.getUserAgent(this, "TikTok"));
+                Util.getUserAgent(this, "Buggee"));
 
         MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                 .createMediaSource(Uri.parse(path));

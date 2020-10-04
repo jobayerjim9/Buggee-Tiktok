@@ -99,7 +99,8 @@ public class EmailSignUpFragment extends Fragment {
                         emailSignUp.setError("Email is already exist");
                     } else {
                         Intent intent = new Intent(context, SignUpDetailsActivity.class);
-                        intent.putExtra("email",email);
+                        intent.putExtra("email", email);
+                        intent.putExtra("type", "email");
                         context.startActivity(intent);
                         getActivity().finish();
                     }

@@ -136,10 +136,17 @@ public class PhoneSignUpFragment extends Fragment {
                 otpSignUp.getEditText().setText(code);
                 phoneInputLayout.setVisibility(View.GONE);
                 otpSignUp.setVisibility(View.VISIBLE);
-                Intent intent=new Intent(getContext(),SignUpDetailsActivity.class);
-                intent.putExtra("email",phoneNumber);
-                getContext().startActivity(intent);
-                getActivity().finish();
+                FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Intent intent = new Intent(getContext(), SignUpDetailsActivity.class);
+                        intent.putExtra("email", phoneNumber);
+                        intent.putExtra("type", "phone");
+                        getContext().startActivity(intent);
+                        getActivity().finish();
+                    }
+                });
+
                 // signInWithPhoneAuthCredential(credential);
 
             }

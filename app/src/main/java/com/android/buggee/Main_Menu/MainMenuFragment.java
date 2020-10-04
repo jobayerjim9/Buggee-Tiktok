@@ -7,10 +7,13 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 
+import com.android.buggee.Accounts.EmailVerificationDialog;
 import com.android.buggee.Accounts.PageActivity;
 import com.android.buggee.Chat.Chat_Activity;
 import com.android.buggee.Notifications.Notification_F;
 import com.android.buggee.SimpleClasses.StaticViewPagerAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -46,6 +49,7 @@ import com.android.buggee.Profile.Profile_Tab_F;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.Variables;
 import com.android.buggee.Video_Recording.Video_Recoder_A;
+import com.google.firebase.auth.FirebaseAuth;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -105,8 +109,28 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
             public void onClick(View v) {
                 if (check_permissions()) {
 
-                    RecordModeChoser recordModeChoser = new RecordModeChoser();
-                    recordModeChoser.show(getChildFragmentManager(), "chooser");
+                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                        FirebaseAuth.getInstance().getCurrentUser().reload().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    if (FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()) {
+                                        RecordModeChoser recordModeChoser = new RecordModeChoser();
+                                        recordModeChoser.show(getChildFragmentManager(), "chooser");
+                                    } else {
+                                        EmailVerificationDialog emailVerificationDialog = new EmailVerificationDialog();
+                                        emailVerificationDialog.show(getChildFragmentManager(), "emailVerification");
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Try Again Later!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                    } else {
+                        RecordModeChoser recordModeChoser = new RecordModeChoser();
+                        recordModeChoser.show(getChildFragmentManager(), "chooser");
+                    }
 
                 }
             }

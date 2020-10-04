@@ -133,6 +133,8 @@ public class LiveAdapter extends RecyclerView.Adapter<LiveAdapter.LiveViewHolder
                         super.onLongPress(e);
                         showReportOption(item);
                     }
+
+
                 });
 
                 @Override

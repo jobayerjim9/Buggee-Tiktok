@@ -16,6 +16,8 @@ import com.android.buggee.SimpleClasses.Variables;
 import com.android.buggee.Video_Recording.LiveBroadcasterActivity;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import ai.deepar.ar.DeepAR;
+
 
 public class MainMenuActivity extends AppCompatActivity {
     public static MainMenuActivity mainMenuActivity;

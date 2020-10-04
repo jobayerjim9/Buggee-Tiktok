@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.android.buggee">
-    <!-- <uses-feature android:name="android.hardware.camera.autofocus" /> -->
+     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -52,6 +52,10 @@
         <activity android:name=".Accounts.SignUpActivity" />
         <activity android:name=".Accounts.SignInActivity" />
         <activity android:name=".SoundLists.VideoSound_A" />
+        <activity
+            android:name=".customAudioViews.AudioTrimmerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".Video_Recording.GalleryVideos.GalleryVideos_A"
             android:screenOrientation="portrait"

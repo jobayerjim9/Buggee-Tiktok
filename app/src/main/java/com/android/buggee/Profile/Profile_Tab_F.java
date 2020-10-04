@@ -54,6 +54,7 @@ import com.android.buggee.R;
 import com.android.buggee.See_Full_Image_F;
 import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
@@ -617,7 +618,6 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-
                 switch (item.getItemId()) {
                     case R.id.idPage:
                         useThisIdAsPage();
@@ -722,12 +722,15 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
     }
 
     // this will erase all the user info store in locally and logout the user
-    public void Logout(){
-        SharedPreferences.Editor editor= Variables.sharedPreferences.edit();
-        editor.putString(Variables.u_id,"");
-        editor.putString(Variables.u_name,"");
-        editor.putString(Variables.u_pic,"");
-        editor.putBoolean(Variables.islogin,false);
+    public void Logout() {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            FirebaseAuth.getInstance().signOut();
+        }
+        SharedPreferences.Editor editor = Variables.sharedPreferences.edit();
+        editor.putString(Variables.u_id, "");
+        editor.putString(Variables.u_name, "");
+        editor.putString(Variables.u_pic, "");
+        editor.putBoolean(Variables.islogin, false);
         editor.commit();
         getActivity().finish();
         startActivity(new Intent(getActivity(), MainMenuActivity.class));

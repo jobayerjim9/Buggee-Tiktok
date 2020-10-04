@@ -77,6 +77,7 @@
     <string name="filter_normal">Normal</string>
     <string name="action_save">SAVE</string>
     <string name="action_open">OPEN</string>
+    <string name="deep_ar_key">b0c37db0527389a918a1e7c9845652d186dc0faa09c0e5714699cc6bb010cac1dad9c41bc574c427</string>
     <!-- Obtain a temp Access Token at https://dashboard.agora.io -->
     <!-- You will need to deploy your own token server for production release -->
     <!-- Leave this value empty if Security keys/Token is not enabled for your project -->

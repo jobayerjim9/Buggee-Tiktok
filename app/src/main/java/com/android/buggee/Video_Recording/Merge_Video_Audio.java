@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.coremedia.iso.IsoFile;
 import com.coremedia.iso.boxes.Container;
@@ -146,24 +147,26 @@ public class Merge_Video_Audio extends AsyncTask<String, String, String> {
             try {
 
                 Movie m = MovieCreator.build(video);
+                Movie videos = MovieCreator.build(new File(video).getAbsolutePath());
+                Track videoTrack = videos.getTracks().get(0);
+                Movie audios = MovieCreator.build(new File(audio).getAbsolutePath()); // here
+                Track audioTrack = audios.getTracks().get(0);
+                m.addTrack(audioTrack);
+//                List nuTracks = new ArrayList<>();
+//
+//                for (Track t : m.getTracks()) {
+//                    if (!"soun".equals(t.getHandler())) {
+//                        nuTracks.add(t);
+//                    }
+//                }
+//                Log.d("AudioPathMergeAudio", audio);
+//
+//                 Track nuAudio = new AACTrackImpl(new FileDataSourceImpl(audio));
+//
+//                 Track crop_track= CropAudio(video,nuAudio);
+//                 nuTracks.add(crop_track);
 
-
-                List nuTracks = new ArrayList<>();
-
-                for (Track t : m.getTracks()) {
-                    if (!"soun".equals(t.getHandler())) {
-                        nuTracks.add(t);
-                    }
-                }
-                Log.d("AudioPathMergeAudio", audio);
-
-                 Track nuAudio = new AACTrackImpl(new FileDataSourceImpl(audio));
-
-                 Track crop_track= CropAudio(video,nuAudio);
-
-                 nuTracks.add(crop_track);
-
-                 m.setTracks(nuTracks);
+                //  m.setTracks(nuTracks);
 
                 Container mp4file = new DefaultMp4Builder().build(m);
 
@@ -186,8 +189,13 @@ public class Merge_Video_Audio extends AsyncTask<String, String, String> {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.d("resp",e.toString());
+                progressDialog.dismiss();
+                // Toast.makeText(context, "Cannot Process!", Toast.LENGTH_SHORT).show();
+                Log.d("resp", e.toString());
 
+            } catch (Exception e) {
+                progressDialog.dismiss();
+                e.printStackTrace();
             }
 
         }

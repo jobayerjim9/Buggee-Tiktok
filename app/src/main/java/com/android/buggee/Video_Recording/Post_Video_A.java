@@ -55,11 +55,8 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_video);
         Log.d("isAudioSelected?", Variables.audio_selected + "");
-        if (Variables.audio_selected) {
-            video_path = Variables.output_filter_file_final;
-        } else {
-            video_path = Variables.output_filter_file;
-        }
+
+        video_path = Variables.output_filter_file;
         pageSwitchLayout = findViewById(R.id.pageSwitchLayout);
         pageSwitch = findViewById(R.id.pageSwitch);
         urlEditText = findViewById(R.id.urlEditText);
@@ -192,11 +189,14 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
 
 
         if (responce.equalsIgnoreCase("Your Video is uploaded Successfully")) {
-            File output_filter_file_final = new File(Variables.output_filter_file_final);
-            output_filter_file_final.delete();
+//            File output_filter_file_final = new File(Variables.output_filter_file_final);
+//            output_filter_file_final.delete();
 
             File output_filter_file = new File(Variables.output_filter_file);
             output_filter_file.delete();
+
+            File mainfile = new File(Variables.app_folder + "myvideo1.mp4");
+            mainfile.delete();
 
             File outputfile = new File(Variables.outputfile);
             outputfile.delete();

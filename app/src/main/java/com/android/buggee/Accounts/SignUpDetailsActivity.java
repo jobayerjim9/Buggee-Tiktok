@@ -1,5 +1,6 @@
 package com.android.buggee.Accounts;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -30,7 +31,11 @@ import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.gmail.samehadar.iosdialog.IOSDialog;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,23 +45,26 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class SignUpDetailsActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
-    int activeView=1;
-    TextInputLayout firstNameInput,lastNameInput,passwordInput,usernameInput;
+    int activeView = 1;
+    TextInputLayout firstNameInput, lastNameInput, passwordInput, usernameInput;
     Button datePicker;
     Spinner genderPicker;
     CardView spinnerCard;
-    String fname,lname,password,username,dob,gender,email;
+    String fname, lname, password, username, dob, gender, email, type;
     SharedPreferences sharedPreferences;
     //    IOSDialog iosDialog;
     ImageView nextEmailSignUp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_details);
         email = getIntent().getStringExtra("email");
+        type = getIntent().getStringExtra("type");
         sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
         firstNameInput = findViewById(R.id.firstNameInput);
         lastNameInput = findViewById(R.id.lastNameInput);
@@ -202,7 +210,29 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
         }
         else if (activeView==5) {
             if (gender!=null) {
-                signUp();
+                if (type.equals("email")) {
+                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).sendEmailVerification();
+                                            signUp();
+                                        }
+
+                                    }
+                                });
+
+                            }
+                        }
+                    });
+                } else {
+                    signUp();
+                }
+
             }
             else {
                 Toast.makeText(this, "Choose Yor Gender!", Toast.LENGTH_SHORT).show();
