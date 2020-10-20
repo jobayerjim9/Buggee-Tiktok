@@ -166,9 +166,9 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
                         bioEditText.setVisibility(View.GONE);
                         bioSubmit.setVisibility(View.GONE);
                         Variables.sharedPreferences.edit().putString(Variables.bio, bio).apply();
-                        Toast.makeText(context, "Bio Updated", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Bio Updated");
                     } else {
-                        Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Failed!");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -551,7 +551,8 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
 
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
+
             }
 
         } catch (JSONException e) {
@@ -662,11 +663,11 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
                         JSONObject jsonObject = new JSONObject(resp);
                         boolean success = jsonObject.optBoolean("success");
                         if (success) {
-                            Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(getActivity(), "Updated!");
                             Variables.sharedPreferences.edit().putInt(Variables.page_have, 1).apply();
                             Variables.sharedPreferences.edit().putInt(Variables.id_page, 1).apply();
                         } else {
-                            Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(getActivity(), "Failed!");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -733,6 +734,7 @@ public class Profile_Tab_F extends RootFragment implements View.OnClickListener 
         editor.putBoolean(Variables.islogin, false);
         editor.commit();
         getActivity().finish();
+        FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(getActivity(), MainMenuActivity.class));
     }
 

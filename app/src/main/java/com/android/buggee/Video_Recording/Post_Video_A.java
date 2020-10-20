@@ -152,7 +152,7 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
 
         }
         else {
-            Toast.makeText(this, "Please wait video already in uploading progress", Toast.LENGTH_LONG).show();
+            Functions.showToast(this, "Please wait video already in uploading progress");
         }
 
 
@@ -183,8 +183,7 @@ public class Post_Video_A extends AppCompatActivity implements ServiceCallback {
         if (mConnection != null)
             unbindService(mConnection);
 
-
-        Toast.makeText(Post_Video_A.this, responce, Toast.LENGTH_LONG).show();
+        Functions.showToast(Post_Video_A.this, responce);
         progressDialog.dismiss();
 
 

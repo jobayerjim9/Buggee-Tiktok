@@ -129,7 +129,8 @@ public class VideoAction_F extends BottomSheetDialogFragment implements View.OnC
                  adapter=new VideoSharingApps_Adapter(context, launchables, new VideoSharingApps_Adapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(int positon, ResolveInfo item, View view) {
-                        Toast.makeText(context, ""+item.activityInfo.name, Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "" + item.activityInfo.name);
+
                         Open_App(item);
                     }
                 });
@@ -197,8 +198,8 @@ public class VideoAction_F extends BottomSheetDialogFragment implements View.OnC
                 ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("Copied Text", "https://api.buggee.app/API/view.php?id=" + video_id);
                 clipboard.setPrimaryClip(clip);
+                Functions.showToast(getActivity(), "Link Copy in clipboard");
 
-                Toast.makeText(context, "Link Copy in clipboard", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.delete_layout:

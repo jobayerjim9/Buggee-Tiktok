@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,16 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.DialogFragment;
 
 import com.android.buggee.R;
+import com.android.buggee.SimpleClasses.ApiRequest;
+import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.android.buggee.Video_Recording.LiveBroadcasterActivity;
 import com.android.buggee.Video_Recording.Video_Recoder_A;
 import com.android.buggee.WatchVideos.LiveDetailsDialog;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Objects;
 
@@ -49,7 +56,7 @@ public class RecordModeChoser extends DialogFragment {
                     startActivity(intent);
                     getActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
                 } else {
-                    Toast.makeText(context, "You have to login First", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), "You have to login First");
                 }
                 dismiss();
             }
@@ -64,7 +71,6 @@ public class RecordModeChoser extends DialogFragment {
 //                    startActivity(intent);
 //                    getActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
 //                } else {
-//                    Toast.makeText(context, "You have to login First", Toast.LENGTH_SHORT).show();
 //                }
 //                dismiss();
 //            }
@@ -74,11 +80,48 @@ public class RecordModeChoser extends DialogFragment {
             @Override
             public void onClick(View view) {
                 if (Variables.sharedPreferences.getBoolean(Variables.islogin, false)) {
-                    LiveDetailsDialog liveDetailsDialog = new LiveDetailsDialog();
-                    liveDetailsDialog.show(getChildFragmentManager(), "liveDetails");
+                    JSONObject parameters = new JSONObject();
+                    try {
+                        parameters.put("id", Variables.user_id);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    Functions.Show_loader(context, false, false);
+                    ApiRequest.Call_Api(context, Variables.getUserLiveStatus, parameters, new Callback() {
+                        @Override
+                        public void Responce(String resp) {
+                            Functions.cancel_loader();
+                            try {
+                                JSONObject jsonObject = new JSONObject(resp);
+                                boolean success = jsonObject.optBoolean("success");
+                                Log.d("livePermitted", success + "");
+                                if (success) {
+                                    int status = jsonObject.optInt("status");
+                                    Log.d("livePermitted", status + "");
+                                    if (status == 0) {
+                                        Functions.showToast(getActivity(), "You are not permitted to start live!");
+                                    } else {
+                                        LiveDetailsDialog liveDetailsDialog = new LiveDetailsDialog();
+                                        liveDetailsDialog.show(getChildFragmentManager(), "liveDetails");
+                                    }
+
+                                } else {
+                                    String message = jsonObject.optString("message");
+                                    Functions.showToast(getActivity(), message);
+
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
+
 
                 } else {
-                    Toast.makeText(context, "You have to login First", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), "You have to login First");
                 }
 
 

@@ -81,7 +81,7 @@ public class EmailSignUpFragment extends Fragment {
             e.printStackTrace();
 //            iosDialog.cancel();
             Functions.cancel_loader();
-            Toast.makeText(context, "Server Error", Toast.LENGTH_SHORT).show();
+            Functions.showToast(getActivity(), "Server Error");
         }
 
 
@@ -107,7 +107,8 @@ public class EmailSignUpFragment extends Fragment {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), e.getLocalizedMessage());
+
                 }
 
 

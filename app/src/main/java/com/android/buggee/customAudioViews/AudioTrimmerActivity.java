@@ -15,6 +15,7 @@
 package com.android.buggee.customAudioViews;
 
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.buggee.R;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.android.buggee.utils.Utility;
 
@@ -272,9 +274,9 @@ public class AudioTrimmerActivity extends AppCompatActivity implements View.OnCl
             double difference = endTime - startTime;
 
             if (difference <= 0) {
-                Toast.makeText(AudioTrimmerActivity.this, "Trim seconds should be greater than 0 seconds", Toast.LENGTH_SHORT).show();
+                Functions.showToast(AudioTrimmerActivity.this, "Trim seconds should be greater than 0 seconds");
             } else if (difference > 60) {
-                Toast.makeText(AudioTrimmerActivity.this, "Trim seconds should be less than 1 minute", Toast.LENGTH_SHORT).show();
+                Functions.showToast(AudioTrimmerActivity.this, "Trim seconds should be less than 1 minute");
             } else {
                 if (mIsPlaying) {
                     handlePause();

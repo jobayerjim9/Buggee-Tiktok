@@ -250,7 +250,7 @@ public class StoryModeChooser extends DialogFragment {
             finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
             out.close();
-            Toast.makeText(context, "Opening Picture For Editing!", Toast.LENGTH_SHORT).show();
+            Functions.showToast(getActivity(), "Opening Picture For Editing!");
             startActivity(new Intent(context, ImageEditingActivity.class));
             Functions.cancel_loader();
             dismiss();
@@ -317,7 +317,7 @@ public class StoryModeChooser extends DialogFragment {
                     JSONObject response = new JSONObject(resp);
                     boolean success = response.optBoolean("success");
                     if (success) {
-                        Toast.makeText(context, "Story Added!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Story Added!");
 
                     }
                 } catch (JSONException e) {

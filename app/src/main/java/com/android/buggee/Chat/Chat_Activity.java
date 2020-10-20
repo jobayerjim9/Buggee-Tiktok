@@ -44,6 +44,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.buggee.Accounts.SignUpDetailsActivity;
 import com.android.buggee.Chat.Audio.Play_Audio_F;
 import com.android.buggee.Chat.Audio.SendAudio;
 import com.android.buggee.R;
@@ -433,16 +434,16 @@ public class Chat_Activity extends Fragment {
                         if(check_Recordpermission() && check_writeStoragepermission()) {
                             touchtime[0] = System.currentTimeMillis();
                             sendAudio.Runbeep("start");
-                            Toast.makeText(context, "Recording...", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(getActivity(), "Recording...");
                         }
 
                        } else if (event.getAction() == MotionEvent.ACTION_UP) {
                         if (touchtime[0] + 4000 > System.currentTimeMillis()) {
                             sendAudio.stop_timer();
-                            Toast.makeText(context, "Hold Mic Button to Record", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(getActivity(), "Hold Mic Button to Record");
                         } else {
                             sendAudio.stopRecording();
-                            Toast.makeText(context, "Stop Recording...", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(getActivity(), "Stop Recording...");
                     }
 
                 }
@@ -1170,7 +1171,7 @@ public class Chat_Activity extends Fragment {
         rootref.child("Inbox")
                 .child(Receiverid)
                 .child(uid).child("block").setValue("1");
-        Toast.makeText(context, "User Blocked", Toast.LENGTH_SHORT).show();
+        Functions.showToast(getActivity(), "User Blocked");
 
     }
 
@@ -1179,7 +1180,7 @@ public class Chat_Activity extends Fragment {
         rootref.child("Inbox")
                 .child(Receiverid)
                 .child(uid).child("block").setValue("0");
-        Toast.makeText(context, "User UnBlocked", Toast.LENGTH_SHORT).show();
+        Functions.showToast(getActivity(), "User UnBlocked");
 
     }
 
@@ -1347,11 +1348,10 @@ public class Chat_Activity extends Fragment {
         if (requestCode == Variables.permission_camera_code) {
 
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context, "Tap again", Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "Tap again");
 
             } else {
-
-                Toast.makeText(context, "camera permission denied", Toast.LENGTH_LONG).show();
+                Functions.showToast(getActivity(), "camera permission denied");
 
             }
         }
@@ -1359,14 +1359,14 @@ public class Chat_Activity extends Fragment {
         if (requestCode == Variables.permission_Read_data) {
 
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context, "Tap again", Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "Tap again");
             }
         }
 
         if (requestCode == Variables.permission_write_data) {
 
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context, "Tap Again", Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "Tap Again");
             }
         }
 
@@ -1374,7 +1374,7 @@ public class Chat_Activity extends Fragment {
         if (requestCode == Variables.permission_Recording_audio) {
 
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context, "Tap Again", Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "Tap Again");
             }
         }
 

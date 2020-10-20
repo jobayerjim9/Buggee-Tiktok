@@ -165,17 +165,17 @@ public class PhoneSignUpFragment extends Fragment {
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     // Invalid request
                     // [START_EXCLUDE]
-                    Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), "Invalid phone number");
                     // [END_EXCLUDE]
                 } else if (e instanceof FirebaseTooManyRequestsException) {
                     // The SMS quota for the project has been exceeded
                     // [START_EXCLUDE]
-                    Toast.makeText(getContext(), "Quota exceeded", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), "Quota exceeded");
                     // [END_EXCLUDE]
                 }
                 else if (e instanceof FirebaseNetworkException)
                 {
-                    Toast.makeText(getContext(), "Network Error!", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), "Network Error!");
                 }
 
                 // Show a message and update the UI
@@ -223,7 +223,7 @@ public class PhoneSignUpFragment extends Fragment {
             e.printStackTrace();
 //            iosDialog.cancel();
             Functions.cancel_loader();
-            Toast.makeText(getContext(), "Server Error", Toast.LENGTH_SHORT).show();
+            Functions.showToast(getActivity(), "Server Error");
         }
 
 
@@ -245,7 +245,7 @@ public class PhoneSignUpFragment extends Fragment {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), e.getLocalizedMessage());
                 }
 
 
@@ -263,7 +263,7 @@ public class PhoneSignUpFragment extends Fragment {
             signInWithPhoneAuthCredential(credential);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), "Something Wrong With Server! Try Again Later", Toast.LENGTH_SHORT).show();
+            Functions.showToast(getActivity(), "Something Wrong With Server! Try Again Later");
         }
     }
 
@@ -289,8 +289,7 @@ public class PhoneSignUpFragment extends Fragment {
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 message = "Invalid code entered...";
                             }
-
-                            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                            Functions.showToast(getActivity(), message);
                         }
                     }
                 });

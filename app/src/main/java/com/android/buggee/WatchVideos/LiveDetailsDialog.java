@@ -77,7 +77,13 @@ public class LiveDetailsDialog extends DialogFragment {
                 if (!name.isEmpty() && !details.isEmpty()) {
                     liveDetails.setErrorEnabled(false);
                     liveName.setErrorEnabled(false);
-                    uploadToServer(name, details);
+                    int fans = Integer.parseInt(Variables.sharedPreferences.getString(Variables.fan_count, "0"));
+                    if (fans < 100) {
+                        Functions.showToast(getActivity(), "You are not eligible to start live");
+                        dismiss();
+                    } else {
+                        uploadToServer(name, details);
+                    }
                 } else if (name.isEmpty()) {
                     liveDetails.setErrorEnabled(false);
                     liveName.setErrorEnabled(true);
@@ -150,7 +156,7 @@ public class LiveDetailsDialog extends DialogFragment {
                         });
 
                     } else {
-                        Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Failed!");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

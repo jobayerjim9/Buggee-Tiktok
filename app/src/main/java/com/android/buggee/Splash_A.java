@@ -7,6 +7,7 @@ import android.os.CountDownTimer;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -28,7 +29,6 @@ public class Splash_A extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash);
 
-
         Variables.sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
 
         countDownTimer = new CountDownTimer(2500, 500) {
@@ -42,6 +42,7 @@ public class Splash_A extends AppCompatActivity {
                 Intent intent=new Intent(Splash_A.this, MainMenuActivity.class);
 
                 if(getIntent().getExtras()!=null) {
+
                     intent.putExtras(getIntent().getExtras());
                     setIntent(null);
                 }

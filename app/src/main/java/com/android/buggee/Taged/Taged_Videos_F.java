@@ -29,6 +29,7 @@ import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
+import com.android.buggee.SoundLists.VideoSound_A;
 import com.android.buggee.WatchVideos.WatchVideos_F;
 
 import org.json.JSONArray;
@@ -275,7 +276,7 @@ public class Taged_Videos_F extends RootFragment {
 
             }else {
                 progress_bar.setVisibility(View.GONE);
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {

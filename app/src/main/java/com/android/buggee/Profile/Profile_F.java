@@ -143,7 +143,8 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
                         Follow_unFollow_User();
                     }
                 else
-                    Toast.makeText(context, "Please login in to app", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), "Please login in to app");
+
 
                 break;
 
@@ -264,14 +265,18 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         view.findViewById(R.id.fans_layout).setOnClickListener(this);
 
         isdataload = true;
-        if (message_privacy.equals("friend")) {
-            if (isFriend) {
-                setting_btn.setVisibility(View.VISIBLE);
-            } else {
+        try {
+            if (message_privacy.equals("friend")) {
+                if (isFriend) {
+                    setting_btn.setVisibility(View.VISIBLE);
+                } else {
+                    setting_btn.setVisibility(View.GONE);
+                }
+            } else if (message_privacy.equals("only me")) {
                 setting_btn.setVisibility(View.GONE);
             }
-        } else if (message_privacy.equals("only me")) {
-            setting_btn.setVisibility(View.GONE);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         Call_Api_For_get_Allvideos();
@@ -454,7 +459,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         } catch (JSONException e) {
             e.printStackTrace();
             Functions.cancel_loader();
-            Toast.makeText(context, "Failed To Load Profile!", Toast.LENGTH_SHORT).show();
+            Functions.showToast(getActivity(), "Failed To Load Profile!");
         }
 
 
@@ -495,6 +500,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
                 }
                 follow_count_txt.setText(data.optString("total_following"));
                 fans_count_txt.setText(data.optString("total_fans"));
+                Variables.sharedPreferences.edit().putString(Variables.fan_count, data.optString("total_fans")).apply();
                 heart_count_txt.setText(data.optString("total_heart"));
 
 
@@ -517,7 +523,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
 
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {

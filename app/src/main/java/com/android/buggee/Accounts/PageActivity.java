@@ -213,7 +213,7 @@ public class PageActivity extends AppCompatActivity {
 //                            descriptionView.setText("Add Your Description!");
 //                        }
                     } else {
-                        Toast.makeText(PageActivity.this, "Something Wrong With Your Page", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(PageActivity.this, "Something Wrong With Your Page");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -532,9 +532,9 @@ public class PageActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");
                     if (success) {
-                        Toast.makeText(PageActivity.this, "Profile Pic Updated Successfully", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(PageActivity.this, "Profile Pic Updated Successfully");
                     } else {
-                        Toast.makeText(PageActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(PageActivity.this, "Failed To Upload!");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -1,6 +1,7 @@
 package com.android.buggee.Main_Menu;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,6 +12,7 @@ import com.android.buggee.Accounts.EmailVerificationDialog;
 import com.android.buggee.Accounts.PageActivity;
 import com.android.buggee.Chat.Chat_Activity;
 import com.android.buggee.Notifications.Notification_F;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.StaticViewPagerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -58,7 +60,7 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
 
     public static TabLayout tabLayout;
 
-    protected Custom_ViewPager pager;
+    public static Custom_ViewPager pager;
 
     private ViewPagerAdapter adapter;
     private static BottomNavigationView bottomNav;
@@ -109,7 +111,7 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
             public void onClick(View v) {
                 if (check_permissions()) {
 
-                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    if (FirebaseAuth.getInstance().getCurrentUser() != null && !Variables.sharedPreferences.getString(Variables.signUpType, "email").equals("phone")) {
                         FirebaseAuth.getInstance().getCurrentUser().reload().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -122,14 +124,20 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
                                         emailVerificationDialog.show(getChildFragmentManager(), "emailVerification");
                                     }
                                 } else {
-                                    Toast.makeText(context, "Try Again Later!", Toast.LENGTH_SHORT).show();
+                                    Functions.showToast(getActivity(), "Try Again Later!");
                                 }
                             }
                         });
 
                     } else {
-                        RecordModeChoser recordModeChoser = new RecordModeChoser();
-                        recordModeChoser.show(getChildFragmentManager(), "chooser");
+                        if (Variables.sharedPreferences.getBoolean(Variables.islogin, false)) {
+
+                            RecordModeChoser recordModeChoser = new RecordModeChoser();
+                            recordModeChoser.show(getChildFragmentManager(), "chooser");
+                        } else {
+                            Functions.showToast(getActivity(), "You have to login First");
+                        }
+
                     }
 
                 }
@@ -192,11 +200,14 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
         return view;
     }
 
+    public void moveToNotification() {
+        pager.setCurrentItem(2);
+    }
 
     @Override
     public void onClick(View v) {
-        int id=v.getId();
-        switch (id){
+        int id = v.getId();
+        switch (id) {
         }
 
     }
@@ -370,7 +381,7 @@ public class MainMenuFragment extends RootFragment implements View.OnClickListen
                         getActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
                     }
                     else {
-                        Toast.makeText(context, "You have to login First", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "You have to login First");
                     }
                 }
 

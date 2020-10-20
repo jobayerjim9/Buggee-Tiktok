@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.buggee.SimpleClasses.Functions;
 import com.coremedia.iso.boxes.Container;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.Variables;
@@ -399,8 +400,7 @@ public class GallerySelectedVideo_A extends AppCompatActivity implements View.On
 
     @Override
     public void onRepeatModeChanged(int repeatMode) {
-
-        Toast.makeText(this, "Repeat mode change", Toast.LENGTH_SHORT).show();
+        Functions.showToast(GallerySelectedVideo_A.this, "Repeat mode change");
 
     }
 

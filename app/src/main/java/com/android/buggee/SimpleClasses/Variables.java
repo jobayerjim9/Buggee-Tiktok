@@ -61,6 +61,8 @@ public class Variables {
     public static String push_on_off = "push_on_off";
     public static String page_name = "page_name";
     public static String page_published = "page_published";
+    public static String fan_count = "fan_count";
+    public static String signUpType = "signUpType";
 
 
     public static String tag = "buggee_";
@@ -155,6 +157,8 @@ public class Variables {
     public static final String getImageStory = domain + "getImageStory";
     public static final String createImageStory = domain + "createImageStory";
     public static final String publishUnpublishPage = domain + "publishUnpublishPage";
+    public static final String getUserLiveStatus = domain + "getUserLiveStatus";
+    public static final String updateToken = domain + "updateToken";
 
 
 }

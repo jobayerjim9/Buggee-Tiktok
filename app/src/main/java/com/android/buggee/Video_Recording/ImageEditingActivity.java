@@ -33,6 +33,7 @@ import com.android.buggee.SimpleClasses.BitmapUtils;
 import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
+import com.android.buggee.Video_Recording.GalleryVideos.GalleryVideos_A;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -345,7 +346,7 @@ public class ImageEditingActivity extends AppCompatActivity implements FiltersLi
                     JSONObject response = new JSONObject(resp);
                     boolean success = response.optBoolean("success");
                     if (success) {
-                        Toast.makeText(ImageEditingActivity.this, "Story Added!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(ImageEditingActivity.this, "Story Added!");
 
                         finish();
                     }
@@ -391,7 +392,7 @@ public class ImageEditingActivity extends AppCompatActivity implements FiltersLi
                             intent.setType("image/*");
                             startActivityForResult(intent, SELECT_GALLERY_IMAGE);
                         } else {
-                            Toast.makeText(getApplicationContext(), "Permissions are not granted!", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(ImageEditingActivity.this, "Permissions are not granted!");
                         }
                     }
 
@@ -436,7 +437,7 @@ public class ImageEditingActivity extends AppCompatActivity implements FiltersLi
                                 snackbar.show();
                             }
                         } else {
-                            Toast.makeText(getApplicationContext(), "Permissions are not granted!", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(ImageEditingActivity.this, "Permissions are not granted!");
                         }
                     }
 

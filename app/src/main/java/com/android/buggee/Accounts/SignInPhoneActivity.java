@@ -104,7 +104,7 @@ public class SignInPhoneActivity extends AppCompatActivity {
                     phoneSignUp.setErrorEnabled(false);
                     phoneNumber = "+" + ccp.getFullNumber();
                     checkPhoneExist(phoneNumber);
-                    startPhoneNumberVerification(phoneNumber);
+
                 } else {
                     phoneSignUp.setErrorEnabled(true);
                     phoneSignUp.setError("Phone Number is not valid");
@@ -155,15 +155,15 @@ public class SignInPhoneActivity extends AppCompatActivity {
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     // Invalid request
                     // [START_EXCLUDE]
-                    Toast.makeText(SignInPhoneActivity.this, "Invalid phone number", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(SignInPhoneActivity.this, "Invalid phone number");
                     // [END_EXCLUDE]
                 } else if (e instanceof FirebaseTooManyRequestsException) {
                     // The SMS quota for the project has been exceeded
                     // [START_EXCLUDE]
-                    Toast.makeText(SignInPhoneActivity.this, "Quota exceeded", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(SignInPhoneActivity.this, "Quota exceeded");
                     // [END_EXCLUDE]
                 } else if (e instanceof FirebaseNetworkException) {
-                    Toast.makeText(SignInPhoneActivity.this, "Network Error!", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(SignInPhoneActivity.this, "Network Error!");
                 }
 
                 // Show a message and update the UI
@@ -211,7 +211,7 @@ public class SignInPhoneActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
             Functions.cancel_loader();
-            Toast.makeText(this, "Server Error", Toast.LENGTH_SHORT).show();
+            Functions.showToast(SignInPhoneActivity.this, "Server Error");
         }
 
 
@@ -224,8 +224,9 @@ public class SignInPhoneActivity extends AppCompatActivity {
                     JSONObject jsonObject=new JSONObject(resp);
                     boolean exist=jsonObject.optBoolean("success");
                     if (exist) {
-                        startPhoneNumberVerification(phoneNumber);
                         phoneSignUp.setErrorEnabled(false);
+                        startPhoneNumberVerification(phoneNumber);
+
                     }
                     else {
                         phoneSignUp.setErrorEnabled(true);
@@ -234,7 +235,8 @@ public class SignInPhoneActivity extends AppCompatActivity {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(SignInPhoneActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    Functions.showToast(SignInPhoneActivity.this, e.getLocalizedMessage());
+
                 }
 
 
@@ -280,19 +282,19 @@ public class SignInPhoneActivity extends AppCompatActivity {
                 editor.putInt(Variables.id_page, userdata.optInt("id_as_page"));
                 editor.putString(Variables.u_pic, userdata.optString("profile_pic"));
                 editor.putString(Variables.api_token, userdata.optString("tokon"));
+                editor.putString(Variables.signUpType, userdata.optString("signup_type"));
                 editor.putBoolean(Variables.islogin, true);
                 editor.commit();
 
                 Variables.sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
                 Variables.user_id = Variables.sharedPreferences.getString(Variables.u_id, "");
-
-                Toast.makeText(this, "Sign In Successful", Toast.LENGTH_SHORT).show();
+                Functions.showToast(SignInPhoneActivity.this, "Sign In Successful");
                 finish();
 
 
 
             }else {
-                Toast.makeText(this, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(SignInPhoneActivity.this, "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {
@@ -324,7 +326,7 @@ public class SignInPhoneActivity extends AppCompatActivity {
             signInWithPhoneAuthCredential(credential);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "Something Wrong With Server! Try Again Later", Toast.LENGTH_SHORT).show();
+            Functions.showToast(SignInPhoneActivity.this, "" + "Something Wrong With Server! Try Again Later");
         }
     }
 
@@ -348,8 +350,7 @@ public class SignInPhoneActivity extends AppCompatActivity {
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 message = "Invalid code entered...";
                             }
-
-                            Toast.makeText(SignInPhoneActivity.this, message, Toast.LENGTH_LONG).show();
+                            Functions.showToast(SignInPhoneActivity.this, message);
                         }
                     }
                 });

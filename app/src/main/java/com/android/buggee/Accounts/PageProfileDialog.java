@@ -89,7 +89,8 @@ public class PageProfileDialog extends DialogFragment {
                             descriptionView.setVisibility(View.GONE);
                         }
                     } else {
-                        Toast.makeText(context, "Something Wrong With that Page", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Something Wrong With that Page");
+
                         dismiss();
                     }
                 } catch (JSONException e) {

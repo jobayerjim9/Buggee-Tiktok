@@ -17,6 +17,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.DialogFragment;
 
 import com.android.buggee.R;
+import com.android.buggee.SimpleClasses.Functions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,7 +44,10 @@ public class EmailVerificationDialog extends DialogFragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(context, "Check You Email To Verify!", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(getActivity(), "Check You Email To Verify!");
+                            dismiss();
+                        } else {
+                            Functions.showToast(getActivity(), task.getException().getLocalizedMessage());
                             dismiss();
                         }
                     }

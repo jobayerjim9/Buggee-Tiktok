@@ -20,6 +20,7 @@ import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.Adapter_Click_Listener;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.android.buggee.SoundLists.Sounds_GetSet;
 import com.downloader.Error;
@@ -197,11 +198,11 @@ public class SoundList_F extends RootFragment  implements Player.EventListener  
                adapter.notifyDataSetChanged();
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {
-
+            Functions.showToast(getActivity(), e.getLocalizedMessage());
             e.printStackTrace();
         }
     }
@@ -356,7 +357,7 @@ public class SoundList_F extends RootFragment  implements Player.EventListener  
             @Override
             public void onDownloadComplete() {
                 progressDialog.dismiss();
-                Toast.makeText(context, "audio saved into your phone", Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "Audio saved into your phone");
             }
 
             @Override

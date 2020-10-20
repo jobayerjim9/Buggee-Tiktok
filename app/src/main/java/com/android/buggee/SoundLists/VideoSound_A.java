@@ -114,11 +114,12 @@ public class VideoSound_A extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.save_btn:
                 try {
-                    copyFile(new File(Variables.app_folder+Variables.SelectedAudio_MP3),
-                            new File(Variables.app_folder+item.video_id+".mp3"));
-                    Toast.makeText(this, "Audio Saved", Toast.LENGTH_SHORT).show();
+                    copyFile(new File(Variables.app_folder + Variables.SelectedAudio_MP3),
+                            new File(Variables.app_folder + item.video_id + ".mp3"));
+                    Functions.showToast(VideoSound_A.this, "Audio Saved");
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Functions.showToast(VideoSound_A.this, e.getLocalizedMessage());
                 }
 
                 break;

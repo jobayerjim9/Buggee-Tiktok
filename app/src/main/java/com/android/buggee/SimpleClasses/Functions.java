@@ -10,24 +10,34 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.PorterDuff;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 
 import androidx.core.content.ContextCompat;
+
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.android.buggee.Comments.Comment_Get_Set;
 import com.android.buggee.R;
+import com.github.johnpersano.supertoasts.library.Style;
+import com.github.johnpersano.supertoasts.library.SuperActivityToast;
+import com.github.johnpersano.supertoasts.library.utils.PaletteUtils;
 import com.gmail.samehadar.iosdialog.CamomileSpinner;
 import com.googlecode.mp4parser.authoring.Track;
 
@@ -42,6 +52,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Created by AQEEL on 2/20/2019.
@@ -49,6 +60,32 @@ import java.util.Arrays;
 
 public class Functions {
 
+
+    public static void showToast(Activity context, String message) {
+//        LayoutInflater inflater = context.getLayoutInflater();
+//        View layout = inflater.inflate(R.layout.custom_toast,
+//                (ViewGroup) context.findViewById(R.id.custom_toast_container));
+//        TextView text = (TextView) layout.findViewById(R.id.text);
+//        text.setText(message);
+//        Toast toast = new Toast(context.getApplicationContext());
+//        toast.setDuration(Toast.LENGTH_LONG);
+//        toast.setView(layout);
+//        toast.show();
+        ArrayList<Integer> animations = new ArrayList<>();
+        animations.add(Style.ANIMATIONS_FADE);
+        animations.add(Style.ANIMATIONS_FLY);
+        animations.add(Style.ANIMATIONS_SCALE);
+        animations.add(Style.ANIMATIONS_POP);
+        int selectedAnimation = new Random().nextInt(4);
+
+        SuperActivityToast.create(context, new Style(), Style.TYPE_STANDARD)
+                .setText(message)
+                .setDuration(Style.DURATION_LONG)
+                .setFrame(Style.FRAME_LOLLIPOP)
+                .setColor(PaletteUtils.getSolidColor(PaletteUtils.MATERIAL_BLUE))
+                .setAnimations(animations.get(selectedAnimation)).show();
+
+    }
 
 
     public static void hideSoftKeyboard(Activity activity) {

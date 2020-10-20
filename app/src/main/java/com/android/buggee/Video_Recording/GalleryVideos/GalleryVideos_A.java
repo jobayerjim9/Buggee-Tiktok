@@ -217,8 +217,7 @@ public class GalleryVideos_A extends AppCompatActivity {
                                 try {
 
                                     Functions.cancel_determinent_loader();
-
-                                    Toast.makeText(GalleryVideos_A.this, "Try Again", Toast.LENGTH_SHORT).show();
+                                    Functions.showToast(GalleryVideos_A.this, "Try Again");
                                 }catch (Exception e){
 
                                 }
@@ -310,7 +309,7 @@ public class GalleryVideos_A extends AppCompatActivity {
             @Override
             protected void onPostExecute(String result) {
                 if(result.equals("error")){
-                    Toast.makeText(GalleryVideos_A.this, "Try Again", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(GalleryVideos_A.this, "Try Again");
                 }else {
                     Functions.cancel_indeterminent_loader();
                     Chnage_Video_size(Variables.gallery_trimed_video, Variables.gallery_resize_video);

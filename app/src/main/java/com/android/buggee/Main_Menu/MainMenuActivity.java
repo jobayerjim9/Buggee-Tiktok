@@ -3,18 +3,32 @@ package com.android.buggee.Main_Menu;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.android.buggee.R;
+import com.android.buggee.SimpleClasses.ApiRequest;
+import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.android.buggee.Video_Recording.LiveBroadcasterActivity;
+import com.android.buggee.WatchVideos.WatchVideos_F;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import ai.deepar.ar.DeepAR;
 
@@ -35,7 +49,21 @@ public class MainMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_menu);
         SharedPreferences preferences = getSharedPreferences(getString(R.string.live_file), Context.MODE_PRIVATE);
         boolean liveExist = preferences.getBoolean(getString(R.string.live_exist), false);
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
 
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+                        Log.d("tokenUpdating", token);
+                        updateToken(token);
+                        // Log and toast
+                    }
+                });
 
         mainMenuActivity = this;
 
@@ -57,7 +85,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
         token= FirebaseInstanceId.getInstance().getToken();
         if(token==null || (token.equals("")||token.equals("null")))
-            token=Variables.sharedPreferences.getString(Variables.device_token,"null");
+            token = Variables.sharedPreferences.getString(Variables.device_token, "null");
 
 
         if (savedInstanceState == null) {
@@ -67,7 +95,30 @@ public class MainMenuActivity extends AppCompatActivity {
         } else {
             mainMenuFragment = (MainMenuFragment) getSupportFragmentManager().getFragments().get(0);
         }
-
+        try {
+            Bundle bundle = intent.getExtras();
+            String action_type = bundle.getString("action_type");
+            if (action_type != null) {
+                if (action_type.toLowerCase().equals("comment")) {
+                    Intent intent = new Intent(this, WatchVideos_F.class);
+                    bundle.putString("video_id", bundle.getString("tag"));
+                    bundle.putBoolean("openComment", true);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    finish();
+                } else if (action_type.toLowerCase().equals("video_like")) {
+                    Intent intent = new Intent(this, WatchVideos_F.class);
+                    bundle.putString("video_id", bundle.getString("tag"));
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    mainMenuFragment.moveToNotification();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (liveExist) {
             Intent intent = new Intent(this, LiveBroadcasterActivity.class);
             intent.putExtra("liveName", preferences.getString(getString(R.string.live_name), "No"));
@@ -79,8 +130,32 @@ public class MainMenuActivity extends AppCompatActivity {
 
     }
 
+    private void updateToken(String s) {
+        Log.d("updatingToken", s);
+        JSONObject parameters = new JSONObject();
+        try {
+            parameters.put("id", Variables.user_id);
+            parameters.put("token", s);
 
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        ApiRequest.Call_Api(getBaseContext(), Variables.updateToken, parameters, new Callback() {
+            @Override
+            public void Responce(String resp) {
+                try {
+                    JSONObject jsonObject = new JSONObject(resp);
+                    Log.d("tokenUpdated", resp);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
     private void initScreen() {
+
         mainMenuFragment = new MainMenuFragment();
         final FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -108,7 +183,7 @@ public class MainMenuActivity extends AppCompatActivity {
                     super.onBackPressed();
                     return;
                 } else {
-                    Toast.makeText(getBaseContext(), "Tap Again To Exit", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(this, "Tap Again To Exit");
                     mBackPressed = System.currentTimeMillis();
 
                 }

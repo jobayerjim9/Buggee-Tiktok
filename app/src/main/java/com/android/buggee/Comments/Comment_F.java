@@ -163,7 +163,7 @@ public class Comment_F extends RootFragment {
                             send_progress.setVisibility(View.VISIBLE);
                             send_btn.setVisibility(View.GONE);
                         } else {
-                            Toast.makeText(context, "Please Login into the app", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(getActivity(), "Please Login into the app");
                         }
                     }
 
@@ -231,7 +231,7 @@ public class Comment_F extends RootFragment {
                                     send_progress.setVisibility(View.GONE);
                                     send_btn.setVisibility(View.VISIBLE);
                                     if (!task.isSuccessful()) {
-                                        Toast.makeText(context, "Failed To Post Comment!", Toast.LENGTH_SHORT).show();
+                                        Functions.showToast(getActivity(), "Failed To Post Comment!");
                                     } else {
                                         message_edit.setText("");
                                         recyclerView.scrollToPosition(liveCommentData.size() - 1);
@@ -240,7 +240,7 @@ public class Comment_F extends RootFragment {
                             });
                         }
                     } else {
-                        Toast.makeText(context, "You Have To Login!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "You Have To Login!");
                     }
                 }
             });
@@ -268,10 +268,10 @@ public class Comment_F extends RootFragment {
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");
                     if (success) {
-                        Toast.makeText(context, "Reported!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Reported!");
                     } else {
                         String message = jsonObject.optString("msg");
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), message);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -318,23 +318,21 @@ public class Comment_F extends RootFragment {
     }
 
 
-
-
     // this function will call an api to upload your comment
-    public void Send_Comments(String video_id, final String comment){
+    public void Send_Comments(final String video_id, final String comment) {
 
-        Functions.Call_Api_For_Send_Comment(getActivity(), video_id,comment ,new API_CallBack() {
+        Functions.Call_Api_For_Send_Comment(getActivity(), video_id, comment, new API_CallBack() {
             @Override
             public void ArrayData(ArrayList arrayList) {
                 send_progress.setVisibility(View.GONE);
                 send_btn.setVisibility(View.VISIBLE);
 
-                ArrayList<Comment_Get_Set> arrayList1=arrayList;
-                for(Comment_Get_Set item:arrayList1){
-                    data_list.add(0,item);
+                ArrayList<Comment_Get_Set> arrayList1 = arrayList;
+                for (Comment_Get_Set item : arrayList1) {
+                    data_list.add(0, item);
                     comment_count++;
 
-                    SendPushNotification(getActivity(),user_id,comment);
+                    // SendPushNotification(getActivity(),user_id,comment,video_id);
 
                     comment_count_txt.setText(comment_count+" comments");
 
@@ -360,17 +358,17 @@ public class Comment_F extends RootFragment {
     }
 
 
+    public void SendPushNotification(Activity activity, String user_id, String comment, String video_id) {
 
-    public  void SendPushNotification(Activity activity,String user_id,String comment){
-
-        JSONObject notimap= new JSONObject();
+        JSONObject notimap = new JSONObject();
         try {
-            notimap.put("title",Variables.sharedPreferences.getString(Variables.u_name,"")+" Comment on your video");
-            notimap.put("message",comment);
-            notimap.put("icon",Variables.sharedPreferences.getString(Variables.u_pic,""));
-            notimap.put("senderid",Variables.sharedPreferences.getString(Variables.u_id,""));
+            notimap.put("title", Variables.sharedPreferences.getString(Variables.u_name, "") + " Comment on your video");
+            notimap.put("message", comment);
+            notimap.put("icon", Variables.sharedPreferences.getString(Variables.u_pic, ""));
+            notimap.put("senderid", Variables.sharedPreferences.getString(Variables.u_id, ""));
             notimap.put("receiverid", user_id);
-            notimap.put("action_type","comment");
+            notimap.put("action_type", "comment");
+            notimap.put("videoId", video_id);
         } catch (JSONException e) {
             e.printStackTrace();
         }

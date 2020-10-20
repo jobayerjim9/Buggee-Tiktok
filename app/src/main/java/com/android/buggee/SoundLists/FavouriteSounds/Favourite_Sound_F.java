@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.android.buggee.Main_Menu.RelateToFragment_OnBack.RootFragment;
 import com.android.buggee.R;
+import com.android.buggee.Settings.RequestVerificationActivity;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Functions;
@@ -223,7 +224,7 @@ public class Favourite_Sound_F extends RootFragment implements Player.EventListe
 
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {

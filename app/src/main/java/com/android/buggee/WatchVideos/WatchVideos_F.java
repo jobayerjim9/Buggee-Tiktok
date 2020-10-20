@@ -153,18 +153,19 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
         if(bundle!=null){
 
             Uri appLinkData = bundle.getData();
-            video_id=bundle.getStringExtra("video_id");
-
-            if(video_id!=null){
+            video_id = bundle.getStringExtra("video_id");
+            boolean openComment = bundle.getBooleanExtra("openComment", false);
+            if (openComment) {
+                openCommentForce(video_id);
+            }
+            if (video_id != null) {
 
                 Call_Api_For_get_Allvideos(video_id);
-            }
-            else if(appLinkData==null){
+            } else if (appLinkData == null) {
                 data_list = (ArrayList<Home_Get_Set>) bundle.getSerializableExtra("arraylist");
-                 position=bundle.getIntExtra("position",0);
-                 Set_Adapter();
-            }
-            else {
+                position = bundle.getIntExtra("position", 0);
+                Set_Adapter();
+            } else {
                  link=appLinkData.toString();
                 String[] parts = link.split("=");
                 video_id=parts[1];
@@ -299,7 +300,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                 Set_Adapter();
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(WatchVideos_F.this, "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {
@@ -388,7 +389,8 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(WatchVideos_F.this, "" + jsonObject.optString("msg"));
+
             }
 
         } catch (JSONException e) {
@@ -425,7 +427,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                         if(Variables.sharedPreferences.getBoolean(Variables.islogin,false)) {
                             Like_Video(postion, item);
                         }else {
-                            Toast.makeText(context, "Please Login.", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(WatchVideos_F.this, "Please Login.");
                         }
                         break;
 
@@ -486,7 +488,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                                 startActivity(intent);
                             }
                         }else {
-                            Toast.makeText(context, "Please Login.", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(WatchVideos_F.this, "Please Login.");
                         }
 
                         break;
@@ -564,7 +566,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
                 }
                 else {
-                    Toast.makeText(context, "Please Login into app", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(WatchVideos_F.this, "Please Login into app");
                 }
                 break;
         }
@@ -670,7 +672,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                         Like_Video(currentPage, item);
 
                     }else {
-                        Toast.makeText(context, "Please Login into ", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(WatchVideos_F.this, "Please Login into app");
                     }
                     return super.onDoubleTap(e);
 
@@ -856,12 +858,27 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
     }
 
+    public void openCommentForce(String videoId) {
+        Fragment_Data_Send fragment_data_send = this;
+
+        Comment_F comment_f = new Comment_F(0, fragment_data_send);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top, R.anim.in_from_top, R.anim.out_from_bottom);
+        Bundle args = new Bundle();
+        args.putString("video_type", "recorded");
+        args.putString("video_id", videoId);
+        args.putString("user_id", Variables.user_id);
+        comment_f.setArguments(args);
+        transaction.addToBackStack(null);
+        transaction.replace(R.id.WatchVideo_F, comment_f).commit();
+
+    }
 
 
     // this will open the profile of user which have uploaded the currenlty running video
-    private void OpenProfile(Home_Get_Set item,boolean from_right_to_left) {
+    private void OpenProfile(Home_Get_Set item, boolean from_right_to_left) {
 
-        if(Variables.sharedPreferences.getString(Variables.u_id,"0").equals(item.fb_id)){
+        if (Variables.sharedPreferences.getString(Variables.u_id, "0").equals(item.fb_id)) {
 
             TabLayout.Tab profile= MainMenuFragment.tabLayout.getTabAt(4);
             profile.select();
@@ -929,7 +946,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
             }
         });
 
-        SendPushNotification(user_id,comment);
+        //SendPushNotification(user_id,comment);
     }
 
 
@@ -1042,10 +1059,10 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                                     JSONObject jsonObject = new JSONObject(resp);
                                     boolean success = jsonObject.optBoolean("success");
                                     if (success) {
-                                        Toast.makeText(context, "Reported!", Toast.LENGTH_SHORT).show();
+                                        Functions.showToast(WatchVideos_F.this, "Reported!");
                                     } else {
                                         String message = jsonObject.optString("msg");
-                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                        Functions.showToast(WatchVideos_F.this, message);
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -1109,7 +1126,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
             @Override
             public void onError(Error error) {
                 Delete_file_no_watermark(item);
-                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                Functions.showToast(WatchVideos_F.this, "Download Error");
                 Functions.cancel_determinent_loader();
             }
 
@@ -1173,7 +1190,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
 
                                     Delete_file_no_watermark(item);
                                     Functions.cancel_determinent_loader();
-                                    Toast.makeText(context, "Try Again", Toast.LENGTH_SHORT).show();
+                                    Functions.showToast(WatchVideos_F.this, "Try Again");
 
                                 }catch (Exception e){
 
@@ -1335,7 +1352,7 @@ public class WatchVideos_F extends AppCompatActivity implements Player.EventList
                 Set_Adapter();
 
             } else {
-                Toast.makeText(context, "" + jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(WatchVideos_F.this, "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {

@@ -224,10 +224,10 @@ public class LiveAdapter extends RecyclerView.Adapter<LiveAdapter.LiveViewHolder
                                     JSONObject jsonObject = new JSONObject(resp);
                                     boolean success = jsonObject.optBoolean("success");
                                     if (success) {
-                                        Toast.makeText(context, "Reported!", Toast.LENGTH_SHORT).show();
+                                        Functions.showToast((Activity) context, "Reported!");
                                     } else {
                                         String message = jsonObject.optString("msg");
-                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                        Functions.showToast((Activity) context, message);
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();

@@ -79,7 +79,7 @@ public class SignInActivity extends AppCompatActivity {
                                 signInViaEmail(emailusername, password);
                             } else {
                                 Functions.cancel_loader();
-                                Toast.makeText(SignInActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                Functions.showToast(SignInActivity.this, task.getException().getLocalizedMessage());
                             }
                         }
                     });
@@ -155,17 +155,18 @@ public class SignInActivity extends AppCompatActivity {
                 editor.putInt(Variables.id_page, userdata.optInt("id_as_page"));
                 editor.putString(Variables.u_pic, userdata.optString("profile_pic"));
                 editor.putString(Variables.api_token, userdata.optString("tokon"));
+                editor.putString(Variables.signUpType, userdata.optString("signup_type"));
                 editor.putBoolean(Variables.islogin, true);
                 editor.commit();
 
                 Variables.sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
                 Variables.user_id = Variables.sharedPreferences.getString(Variables.u_id, "");
-
-                Toast.makeText(SignInActivity.this, "Sign In Successful", Toast.LENGTH_SHORT).show();
+                Functions.showToast(SignInActivity.this, "Sign In Successful");
                 finish();
 
             } else {
-                Toast.makeText(this, "" + jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(SignInActivity.this, "" + jsonObject.optString("msg"));
+
             }
 
         } catch (JSONException e) {
@@ -202,18 +203,17 @@ public class SignInActivity extends AppCompatActivity {
 
                             Variables.sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
                             Variables.user_id = Variables.sharedPreferences.getString(Variables.u_id, "");
-
-                            Toast.makeText(SignInActivity.this, "Sign In Successful", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(SignInActivity.this, "Sign In Successful");
                             finish();
                         } else {
-                            Toast.makeText(SignInActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            Functions.showToast(SignInActivity.this, task.getException().getLocalizedMessage());
                         }
                     }
                 });
 
 
             } else {
-                Toast.makeText(this, "" + jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(SignInActivity.this, "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {

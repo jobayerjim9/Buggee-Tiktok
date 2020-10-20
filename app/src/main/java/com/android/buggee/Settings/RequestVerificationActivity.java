@@ -332,13 +332,13 @@ public class RequestVerificationActivity extends AppCompatActivity implements Vi
         String fullname = fullname_edit.getText().toString();
 
         if (TextUtils.isEmpty(uname) || uname.length() < 2) {
-            Toast.makeText(RequestVerificationActivity.this, "Please enter correct username", Toast.LENGTH_SHORT).show();
+            Functions.showToast(RequestVerificationActivity.this, "Please enter correct username");
             return false;
         } else if (TextUtils.isEmpty(fullname)) {
-            Toast.makeText(RequestVerificationActivity.this, "Please enter full name", Toast.LENGTH_SHORT).show();
+            Functions.showToast(RequestVerificationActivity.this, "Please enter full name");
             return false;
         } else if (base_64 == null) {
-            Toast.makeText(RequestVerificationActivity.this, "Please select the image", Toast.LENGTH_SHORT).show();
+            Functions.showToast(RequestVerificationActivity.this, "Please select the image");
         }
 
         return true;
@@ -369,15 +369,15 @@ public class RequestVerificationActivity extends AppCompatActivity implements Vi
                     JSONObject jsonObject = new JSONObject(resp);
                     String code = jsonObject.optString("code");
                     if (code.equals("200")) {
-                        Toast.makeText(RequestVerificationActivity.this, "Request Sent Successfully!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(RequestVerificationActivity.this, "Request Sent Successfully!");
                         finish();
                     } else {
-                        Toast.makeText(RequestVerificationActivity.this, "Request Failed!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(RequestVerificationActivity.this, "Request Failed!");
                         finish();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(RequestVerificationActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    Functions.showToast(RequestVerificationActivity.this, e.getLocalizedMessage());
                 }
 
             }

@@ -260,10 +260,9 @@ public class Preview_Video_A extends AppCompatActivity  implements Player.EventL
                                 try {
 
                                     Functions.cancel_determinent_loader();
-
-                                    Toast.makeText(Preview_Video_A.this, "Try Again", Toast.LENGTH_SHORT).show();
+                                    Functions.showToast(Preview_Video_A.this, "Try Again");
                                 }catch (Exception e){
-
+                                    Functions.showToast(Preview_Video_A.this, e.getLocalizedMessage());
                                 }
                             }
                         });

@@ -271,7 +271,7 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
 
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {
@@ -453,7 +453,7 @@ public class Discover_SoundList_F extends RootFragment implements Player.EventLi
             @Override
             public void onError(Error error) {
                 Functions.cancel_loader();
-                Toast.makeText(context, error.getServerErrorMessage(), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), error.getServerErrorMessage());
             }
         });
 

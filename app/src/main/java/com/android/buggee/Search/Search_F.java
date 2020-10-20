@@ -23,6 +23,7 @@ import com.android.buggee.SimpleClasses.Adapter_Click_Listener;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Fragment_Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.android.buggee.WatchVideos.WatchVideos_F;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -120,16 +121,20 @@ public class Search_F extends RootFragment {
                 for (int i=0;i<msg.length();i++){
                     JSONObject data=msg.optJSONObject(i);
 
-                    Users_Model user=new Users_Model();
-                    user.fb_id=data.optString("fb_id");
-                    user.username=data.optString("username");
-                    user.first_name=data.optString("first_name");
-                    user.last_name=data.optString("last_name");
-                    user.gender=data.optString("gender");
-                    user.profile_pic=data.optString("profile_pic");
-                    user.signup_type=data.optString("signup_type");
-                    user.videos=data.optString("videos");
-
+                    Users_Model user = new Users_Model();
+                    user.fb_id = data.optString("fb_id");
+                    user.username = data.optString("username");
+                    user.first_name = data.optString("first_name");
+                    user.last_name = data.optString("last_name");
+                    user.gender = data.optString("gender");
+                    user.profile_pic = data.optString("profile_pic");
+                    user.signup_type = data.optString("signup_type");
+                    user.videos = data.optString("videos");
+                    user.account_type = data.optString("account_type");
+                    user.message_privacy = data.optString("message_privacy");
+                    user.comment_privacy = data.optString("comment_privacy");
+                    user.verified = data.optString("verified");
+                    user.live_privacy = data.optString("live_privacy");
                     data_list.add(user);
 
 
@@ -145,7 +150,7 @@ public class Search_F extends RootFragment {
                     public void onItemClick(View view, int pos, Object object) {
 
                         Users_Model item=(Users_Model) object;
-                        Open_Profile(item.fb_id,item.first_name,item.last_name,item.profile_pic);
+                        Open_Profile(item.fb_id, item.first_name, item.last_name, item.profile_pic, item.account_type, item.message_privacy, item.live_privacy, item.comment_privacy, item.verified);
 
 
                     }
@@ -220,7 +225,7 @@ public class Search_F extends RootFragment {
                             OpenWatchVideo(item.video_id);
                         }
                         else {
-                            Open_Profile(item.fb_id,item.first_name,item.last_name,item.profile_pic);
+                            Open_Profile(item.fb_id, item.first_name, item.last_name, item.profile_pic, item.account_type, item.message_privacy, item.live_privacy, item.comment_privacy, item.verified);
                         }
 
                     }
@@ -229,7 +234,7 @@ public class Search_F extends RootFragment {
 
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {
@@ -245,13 +250,12 @@ public class Search_F extends RootFragment {
         startActivity(intent);
     }
 
-    public void Open_Profile(String fb_id,String first_name,String last_name,String profile_pic){
-        if(Variables.sharedPreferences.getString(Variables.u_id,"0").equals(fb_id)){
+    public void Open_Profile(String fb_id, String first_name, String last_name, String profile_pic, String account_type, String message_privacy, String live_privacy, String comment_privacy, String verified) {
+        if (Variables.sharedPreferences.getString(Variables.u_id, "0").equals(fb_id)) {
 
-            TabLayout.Tab profile= MainMenuFragment.tabLayout.getTabAt(4);
-            profile.select();
+            MainMenuFragment.pager.setCurrentItem(3);
 
-        }else {
+        } else {
 
             Profile_F profile_f = new Profile_F(new Fragment_Callback() {
                 @Override
@@ -263,8 +267,13 @@ public class Search_F extends RootFragment {
             transaction.setCustomAnimations(R.anim.in_from_right, R.anim.out_to_left, R.anim.in_from_left, R.anim.out_to_right);
             Bundle args = new Bundle();
             args.putString("user_id", fb_id);
-            args.putString("user_name", first_name + " " +last_name);
+            args.putString("user_name", first_name + " " + last_name);
             args.putString("user_pic", profile_pic);
+            args.putString("account_type", account_type);
+            args.putString("message_privacy", message_privacy);
+            args.putString("live_privacy", live_privacy);
+            args.putString("comment_privacy", comment_privacy);
+            args.putString("verified", verified);
             profile_f.setArguments(args);
             transaction.addToBackStack(null);
             transaction.replace(R.id.Search_Main_F, profile_f).commit();

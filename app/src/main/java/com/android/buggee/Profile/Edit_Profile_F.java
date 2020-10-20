@@ -467,8 +467,7 @@ catch (Exception e) {
                                 .resize(200,200).centerCrop().into(profile_image);
 
 
-
-                        Toast.makeText(context, "Image Update Successfully", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Image Update Successfully");
 
                     }
                 } catch (JSONException e) {
@@ -518,7 +517,8 @@ catch (Exception e) {
                     String code=response.optString("code");
                     //Toast.makeText(context, code + " COde", Toast.LENGTH_SHORT).show();
                     if(code.equals("200")) {
-                        Toast.makeText(context, "Profile Updated!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Profile Updated!");
+
                         SharedPreferences.Editor editor = Variables.sharedPreferences.edit();
                         Variables.sharedPreferences.edit().putString(Variables.bio, user_bio_edit.getText().toString()).apply();
                         editor.putString(Variables.f_name, firstname_edit.getText().toString());

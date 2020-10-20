@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.android.buggee.R;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 
 import io.agora.rtc.Constants;
@@ -39,8 +40,6 @@ public class LiveWatchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_live_broadcaster);
 
         id = getIntent().getStringExtra("id");
-        Toast.makeText(this, id, Toast.LENGTH_SHORT).show();
-        Log.d("idForWatch", id);
         initializeEngine();
     }
 
@@ -134,7 +133,6 @@ public class LiveWatchActivity extends AppCompatActivity {
 
     private void setupRemoteVideo(int uid) {
         Log.d("videoSetup", "start");
-        Toast.makeText(this, uid + "", Toast.LENGTH_SHORT).show();
         // Create a SurfaceView object.
         FrameLayout mRemoteContainer = findViewById(R.id.liveFrame);
         SurfaceView mRemoteView;

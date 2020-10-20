@@ -24,8 +24,10 @@ import com.android.buggee.R;
 import com.android.buggee.Search.Search_Main_F;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.android.buggee.WatchVideos.WatchVideos_F;
+import com.android.buggee.customAudioViews.AudioTrimmerActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -218,7 +220,7 @@ public class Discover_F extends RootFragment implements View.OnClickListener {
                 adapter.notifyDataSetChanged();
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {

@@ -199,7 +199,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                         storyModeChooser.show(getChildFragmentManager(), "story_chooser");
 
                     } else {
-                        Toast.makeText(context, "You have to login First", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "You have to login First");
                     }
                 }
             });
@@ -534,7 +534,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                                 send_btn.setVisibility(View.VISIBLE);
 
                                 if (!task.isSuccessful()) {
-                                    Toast.makeText(context, "Failed To Post Comment!", Toast.LENGTH_SHORT).show();
+                                    Functions.showToast(getActivity(), "Failed To Post Comment!");
                                 } else {
                                     message_edit.setText("");
                                     recyclerView.scrollToPosition(liveCommentData.size() - 1);
@@ -543,7 +543,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                         });
                     }
                 } else {
-                    Toast.makeText(context, "You Have To Login!", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), "You Have To Login!");
                 }
             }
         });
@@ -646,7 +646,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                         if(Variables.sharedPreferences.getBoolean(Variables.islogin,false)) {
                         Like_Video(postion, item);
                         }else {
-                            Toast.makeText(context, "Please Login.", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(getActivity(), "Please Login.");
                         }
                         break;
 
@@ -712,7 +712,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                                 startActivity(intent);
                             }
                         } else {
-                            Toast.makeText(context, "Please Login.", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(getActivity(), "Please Login.");
                         }
 
                         break;
@@ -768,7 +768,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 // Set_Adapter();
 
             } else {
-                Toast.makeText(context, "" + jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {
@@ -856,7 +856,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 // Set_Adapter();
 
             } else {
-                Toast.makeText(context, "" + jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {
@@ -959,7 +959,8 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 Set_Adapter();
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
+
             }
 
         } catch (JSONException e) {
@@ -1053,7 +1054,8 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
+
             }
 
         } catch (JSONException e) {
@@ -1175,7 +1177,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                         Show_heart_on_DoubleTap(item, mainlayout, e);
                         Like_Video(currentPage, item);
                     }else {
-                        Toast.makeText(context, "Please Login into app", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "" + "Please Login into app");
                     }
                     return super.onDoubleTap(e);
 
@@ -1387,7 +1389,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 transaction.addToBackStack(null);
                 transaction.replace(R.id.MainMenuFragment, comment_f).commit();
             } else {
-                Toast.makeText(context, "You cannot view comment!", Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "You cannot view comment!");
             }
         }
 
@@ -1549,10 +1551,11 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                                     JSONObject jsonObject = new JSONObject(resp);
                                     boolean success = jsonObject.optBoolean("success");
                                     if (success) {
-                                        Toast.makeText(context, "Reported!", Toast.LENGTH_SHORT).show();
+                                        Functions.showToast(getActivity(), "Reported!");
                                     } else {
                                         String message = jsonObject.optString("msg");
-                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                        Functions.showToast(getActivity(), message);
+
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -1618,7 +1621,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                 @Override
                 public void onError(Error error) {
                     Delete_file_no_watermark(item);
-                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), "Error");
                     Functions.cancel_determinent_loader();
                 }
 
@@ -1633,7 +1636,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     public void Applywatermark(final Home_Get_Set item) {
 
         Bitmap myLogo = getBitmapFromVectorDrawable(context, R.drawable.ic_buggee_watermark);
-        Bitmap bitmap_resize = Bitmap.createScaledBitmap(myLogo, 344, 167, false);
+        Bitmap bitmap_resize = Bitmap.createScaledBitmap(myLogo, 344, 130, false);
         GlWatermarkFilterCustom filter = new GlWatermarkFilterCustom(bitmap_resize, GlWatermarkFilter.Position.RIGHT_BOTTOM);
         new GPUMp4Composer(Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + "no_watermark" + ".mp4",
                 Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + ".mp4")
@@ -1680,10 +1683,10 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
                                     Delete_file_no_watermark(item);
                                     Functions.cancel_determinent_loader();
-                                    Toast.makeText(context, "Try Again", Toast.LENGTH_SHORT).show();
+                                    Functions.showToast(getActivity(), "Try Again");
 
                                 }catch (Exception e){
-
+                                    Functions.showToast(getActivity(), e.getLocalizedMessage());
                                 }
                             }
                         });
@@ -1695,7 +1698,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
 
     public void Delete_file_no_watermark(Home_Get_Set item){
-        Toast.makeText(context, "Video Saved!", Toast.LENGTH_SHORT).show();
+        Functions.showToast(getActivity(), "Video Saved!");
         File file = new File(Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + "no_watermark" + ".mp4");
         if(file.exists()){
             file.delete();
@@ -1974,8 +1977,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-
-                    Toast.makeText(context, "Broadcaster Gone Offline!", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), "Broadcaster Gone Offline!");
                     //  mRtcEngine.leaveChannel();
                     Log.i("agora", "User offline, uid: " + (uid & 0xFFFFFFFFL));
                     getAllLiveVideo();
@@ -2038,7 +2040,8 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
     private void setupRemoteVideo(int uid, final int currentPage) {
         Log.d("videoSetup", "start");
-        Toast.makeText(context, uid + "", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, uid + "", Toast.LENGTH_SHORT).show();
+
         // Create a SurfaceView object.
         View layout = liveLayoutManager.findViewByPosition(currentPage);
         FrameLayout mRemoteContainer = layout.findViewById(R.id.videoholder);

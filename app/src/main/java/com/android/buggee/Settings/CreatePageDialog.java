@@ -80,6 +80,11 @@ public class CreatePageDialog extends DialogFragment {
                 dismiss();
             }
         });
+        final int fans = Integer.parseInt(Variables.sharedPreferences.getString(Variables.fan_count, "0"));
+        if (fans < 100) {
+            Functions.showToast(getActivity(), "You need to have minimum 100 followers to create a page");
+            dismiss();
+        }
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,10 +106,15 @@ public class CreatePageDialog extends DialogFragment {
                     pageNameInput.setErrorEnabled(true);
                     pageNameInput.setError("Please Enter Page Name!");
                 } else if (encodedImage == null) {
-                    Toast.makeText(context, "Please Select A Profile Picture", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), "Please Select A Profile Picture");
                 } else {
-                    pageNameInput.setErrorEnabled(false);
-                    createPage(name, encodedImage);
+                    if (fans < 100) {
+                        Functions.showToast(getActivity(), "You need to have minimum 100 followers to create a page");
+                        dismiss();
+                    } else {
+                        pageNameInput.setErrorEnabled(false);
+                        createPage(name, encodedImage);
+                    }
                 }
             }
         });
@@ -134,15 +144,15 @@ public class CreatePageDialog extends DialogFragment {
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");
                     if (success) {
-                        Toast.makeText(context, "You Can Now Post Video From Your Page By Following Regular Video Uploading", Toast.LENGTH_LONG).show();
+                        Functions.showToast(getActivity(), "You Can Now Post Video From Your Page By Following Regular Video Uploading");
                         Variables.sharedPreferences.edit().putInt(Variables.page_have, 1).apply();
                         dismiss();
                     } else {
-                        Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Failed!");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), e.getLocalizedMessage());
                 }
             }
         });

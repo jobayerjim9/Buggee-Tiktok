@@ -110,9 +110,9 @@ public class PrivacySettingsActivity extends AppCompatActivity implements Privac
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");
                     if (success) {
-                        Toast.makeText(PrivacySettingsActivity.this, "Updated!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(PrivacySettingsActivity.this, "Updated!");
                     } else {
-                        Toast.makeText(PrivacySettingsActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(PrivacySettingsActivity.this, "Failed!");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

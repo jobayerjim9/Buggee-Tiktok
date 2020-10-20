@@ -203,13 +203,13 @@ public class LiveBroadcasterActivity extends AppCompatActivity {
                                     }
 
                                 } else {
-                                    Toast.makeText(LiveBroadcasterActivity.this, "Check Your Network!", Toast.LENGTH_SHORT).show();
+                                    Functions.showToast(LiveBroadcasterActivity.this, "Check Your Network!");
                                 }
                             }
                         });
 
                     } else {
-                        Toast.makeText(LiveBroadcasterActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(LiveBroadcasterActivity.this, "Failed!");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -324,7 +324,7 @@ public class LiveBroadcasterActivity extends AppCompatActivity {
 
     private void setupRemoteVideo(int uid) {
         Log.d("videoSetup", "start");
-        Toast.makeText(this, uid + "", Toast.LENGTH_SHORT).show();
+
         // Create a SurfaceView object.
         FrameLayout mRemoteContainer = findViewById(R.id.liveFrame);
         SurfaceView mRemoteView;

@@ -131,11 +131,11 @@ public class PrivacyChooserDialog extends DialogFragment {
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");
                     if (success) {
-                        Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Updated!");
                         listener.onDialogMessageClick(privacy);
                         dismiss();
                     } else {
-                        Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Failed!");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -173,11 +173,11 @@ public class PrivacyChooserDialog extends DialogFragment {
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");
                     if (success) {
-                        Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Updated!");
                         listener.onDialogCommentClick(privacy);
                         dismiss();
                     } else {
-                        Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Failed!");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -209,12 +209,13 @@ public class PrivacyChooserDialog extends DialogFragment {
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");
                     if (success) {
-                        Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Updated!");
                         listener.onDialogLiveClick(privacy);
                         dismiss();
 
                     } else {
-                        Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Failed!");
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -65,6 +65,7 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
         setContentView(R.layout.activity_sign_up_details);
         email = getIntent().getStringExtra("email");
         type = getIntent().getStringExtra("type");
+        gender = null;
         sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
         firstNameInput = findViewById(R.id.firstNameInput);
         lastNameInput = findViewById(R.id.lastNameInput);
@@ -83,26 +84,36 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
                 R.array.gender_array, R.layout.gender_spinner_item);
         adapter.setDropDownViewResource(R.layout.gender_spinner_item);
         genderPicker.setAdapter(adapter);
-        genderPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i == 0) {
-                    Toast.makeText(SignUpDetailsActivity.this, "Select A Gender!", Toast.LENGTH_SHORT).show();
-                    gender=null;
+        try {
+            genderPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    try {
+                        if (i == 0) {
+                            Functions.showToast(SignUpDetailsActivity.this, "Select A Gender!");
+                            gender = null;
+                        } else if (i == 1) {
+                            gender = "m";
+                        } else if (i == 2) {
+                            gender = "f";
+                        } else {
+                            Functions.showToast(SignUpDetailsActivity.this, "Select A Gender!");
+                            gender = null;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-                else if(i==1) {
-                    gender="m";
-                }
-                else if(i==2) {
-                    gender="f";
-                }
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                    gender = null;
+                    Functions.showToast(SignUpDetailsActivity.this, "Select A Gender!");
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         datePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -204,51 +215,58 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
                 nextEmailSignUp.setImageDrawable(getDrawable(R.drawable.submit_blue));
             }
             else {
-                Toast.makeText(this, "Choose Yor Date Of Birth!", Toast.LENGTH_SHORT).show();
+                Functions.showToast(SignUpDetailsActivity.this, "Choose Yor Date Of Birth!");
             }
 
         }
         else if (activeView==5) {
-            if (gender!=null) {
-                if (type.equals("email")) {
-                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                        if (task.isSuccessful()) {
-                                            Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).sendEmailVerification();
-                                            signUp();
+            try {
+                if (gender != null && !gender.isEmpty()) {
+                    if (type.equals("email")) {
+                        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if (task.isSuccessful()) {
+                                                Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).sendEmailVerification();
+                                                signUp();
+                                            }
+
                                         }
+                                    });
 
-                                    }
-                                });
-
+                                }
                             }
-                        }
-                    });
-                } else {
-                    signUp();
-                }
+                        });
+                    } else {
+                        signUp();
+                    }
 
+                } else {
+                    Functions.showToast(SignUpDetailsActivity.this, "Choose Yor Gender!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Functions.showToast(SignUpDetailsActivity.this, "Choose Yor Gender!");
             }
-            else {
-                Toast.makeText(this, "Choose Yor Gender!", Toast.LENGTH_SHORT).show();
-            }
+
         }
 
     }
 
     private void signUp() {
         PackageInfo packageInfo = null;
+        String appversion = "1.0";
         try {
-            packageInfo =getPackageManager().getPackageInfo(getPackageName(), 0);
+            packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            appversion = packageInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        String appversion=packageInfo.versionName;
+
 
         JSONObject parameters = new JSONObject();
         try {
@@ -261,8 +279,8 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
             parameters.put("last_name", lname);
             parameters.put("profile_pic"," ");
             parameters.put("gender",gender);
-            parameters.put("version",appversion);
-            parameters.put("signup_type","email");
+            parameters.put("version", appversion);
+            parameters.put("signup_type", type);
             parameters.put("device", Variables.device);
 
 
@@ -294,23 +312,23 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
                 editor.putString(Variables.u_name,userdata.optString("first_name")+" "+userdata.optString("last_name"));
                 editor.putString(Variables.gender,userdata.optString("gender"));
                 editor.putString(Variables.u_pic,userdata.optString("profile_pic"));
-                editor.putString(Variables.api_token,userdata.optString("tokon"));
-                editor.putBoolean(Variables.islogin,true);
-                editor.commit();
-
-                Variables.sharedPreferences=getSharedPreferences(Variables.pref_name,MODE_PRIVATE);
-                Variables.user_id=Variables.sharedPreferences.getString(Variables.u_id,"");
-
-                Toast.makeText(this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
+                editor.putString(Variables.api_token, userdata.optString("tokon"));
+                editor.putString(Variables.signUpType, userdata.optString("signup_type"));
+                editor.putBoolean(Variables.islogin, true);
+                editor.apply();
+                Variables.sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
+                Variables.user_id = Variables.sharedPreferences.getString(Variables.u_id, "");
+                Functions.showToast(SignUpDetailsActivity.this, "Sign Up Successful");
                 finish();
 
 
 
             }else {
-                Toast.makeText(this, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(SignUpDetailsActivity.this, "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {
+            Functions.showToast(SignUpDetailsActivity.this, e.getLocalizedMessage());
             e.printStackTrace();
         }
 
@@ -359,7 +377,7 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
         Date date=new Date();
         Log.d("Years",date.getYear()+" "+i);
         if (((date.getYear()+1900)-i)<13) {
-            Toast.makeText(this, "Your age is below 13", Toast.LENGTH_SHORT).show();
+            Functions.showToast(SignUpDetailsActivity.this, "Your age is below 13");
         }
         else {
             dob = (i) + "-" + (i1 + 1) + "-" + i2;
@@ -407,7 +425,7 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
         } catch (JSONException e) {
             e.printStackTrace();
             Functions.cancel_loader();
-            Toast.makeText(SignUpDetailsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+            Functions.showToast(SignUpDetailsActivity.this, "Server Error");
         }
 
 
@@ -432,7 +450,7 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(SignUpDetailsActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    Functions.showToast(SignUpDetailsActivity.this, e.getLocalizedMessage());
                 }
 
 

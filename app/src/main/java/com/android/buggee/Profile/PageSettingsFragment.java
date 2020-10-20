@@ -118,13 +118,13 @@ public class PageSettingsFragment extends Fragment {
                     if (success) {
                         Variables.sharedPreferences.edit().putInt(Variables.page_published, status).apply();
                         if (status == 1) {
-                            Toast.makeText(context, "Page Published!", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(getActivity(), "Page Published!");
                         } else {
-                            Toast.makeText(context, "Page Unpublished!", Toast.LENGTH_SHORT).show();
+                            Functions.showToast(getActivity(), "Page Unpublished!");
                         }
 
                     } else {
-                        Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Failed!");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

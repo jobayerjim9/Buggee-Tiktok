@@ -20,6 +20,7 @@ import com.android.buggee.Profile.MyVideos_Adapter;
 import com.android.buggee.R;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
+import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
 import com.android.buggee.WatchVideos.WatchVideos_F;
 
@@ -191,7 +192,7 @@ public class Liked_Video_F extends Fragment {
                 adapter.notifyDataSetChanged();
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {

@@ -246,7 +246,7 @@ public class Following_F extends Fragment {
                     no_data_layout.setVisibility(View.GONE);
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {
@@ -320,7 +320,7 @@ public class Following_F extends Fragment {
                     no_data_layout.setVisibility(View.GONE);
 
             }else {
-                Toast.makeText(context, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(getActivity(), "" + jsonObject.optString("msg"));
             }
 
         } catch (JSONException e) {

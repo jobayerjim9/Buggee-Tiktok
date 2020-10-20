@@ -45,7 +45,7 @@ public class ReportProblemDialog extends DialogFragment {
             public void onClick(View view) {
                 String prob = problemText.getText().toString();
                 if (prob.isEmpty()) {
-                    Toast.makeText(context, "Write Your Problem Please!", Toast.LENGTH_SHORT).show();
+                    Functions.showToast(getActivity(), "Write Your Problem Please!");
                 } else {
                     reportProblem(prob);
                 }
@@ -75,9 +75,9 @@ public class ReportProblemDialog extends DialogFragment {
                     JSONObject jsonObject = new JSONObject(resp);
                     boolean success = jsonObject.optBoolean("success");
                     if (success) {
-                        Toast.makeText(context, "Reported!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Reported!");
                     } else {
-                        Toast.makeText(context, "Failed!", Toast.LENGTH_SHORT).show();
+                        Functions.showToast(getActivity(), "Failed!");
                     }
                     dismiss();
                 } catch (JSONException e) {

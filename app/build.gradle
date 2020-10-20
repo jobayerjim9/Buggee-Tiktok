@@ -91,6 +91,7 @@ dependencies {
     implementation 'com.mcxiaoke.volley:library-aar:1.0.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.airbnb.android:lottie:2.7.0'
+    implementation 'com.github.johnpersano:supertoasts:2.0'
 
     //Do not Update this library their is a camera issue with new version
     implementation 'com.wonderkiln:camerakit:0.13.4'
@@ -99,13 +100,13 @@ dependencies {
     //You will change the versions at your own risk.
     //Do not Change below 7 libraries versions
     //if you want to update these libraries first you have to convert the project to androidX
-    implementation 'com.google.firebase:firebase-analytics:16.0.0'
-    implementation 'com.google.android.gms:play-services-auth:16.0.0'
-    implementation 'com.google.firebase:firebase-database:16.0.1'
-    implementation 'com.google.firebase:firebase-messaging:17.3.0'
-    implementation 'com.google.firebase:firebase-core:16.0.3'
-    implementation 'com.google.firebase:firebase-storage:16.0.1'
-    implementation 'com.google.firebase:firebase-auth:16.0.3'
+    implementation 'com.google.firebase:firebase-analytics:17.6.0'
+    implementation 'com.google.android.gms:play-services-auth:18.1.0'
+    implementation 'com.google.firebase:firebase-database:19.5.0'
+    implementation 'com.google.firebase:firebase-messaging:20.3.0'
+    implementation 'com.google.firebase:firebase-core:17.5.1'
+    implementation 'com.google.firebase:firebase-storage:19.2.0'
+    implementation 'com.google.firebase:firebase-auth:19.4.0'
     implementation 'com.google.android.gms:play-services-ads:15.0.1'
 
 

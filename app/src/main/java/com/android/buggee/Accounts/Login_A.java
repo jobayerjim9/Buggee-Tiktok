@@ -236,13 +236,14 @@ public class Login_A extends Activity {
             @Override
             public void onCancel() {
                 // App code
-                Toast.makeText(Login_A.this, "Login Cancel", Toast.LENGTH_SHORT).show();
+                Functions.showToast(Login_A.this, "Login Cancel");
             }
 
             @Override
             public void onError(FacebookException error) {
-                Log.d("resp",""+error.toString());
-                Toast.makeText(Login_A.this, "Login Error"+error.toString(), Toast.LENGTH_SHORT).show();
+                Log.d("resp", "" + error.toString());
+                Functions.showToast(Login_A.this, "Login Error" + error.toString());
+
             }
 
         });
@@ -294,9 +295,7 @@ public class Login_A extends Activity {
                             request.setParameters(parameters);
                             request.executeAsync();
                         } else {
-
-                            Toast.makeText(Login_A.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Functions.showToast(Login_A.this, "Authentication failed.");
                         }
 
                     }
@@ -464,6 +463,7 @@ public class Login_A extends Activity {
                 editor.putInt(Variables.id_page, userdata.optInt("id_as_page"));
                 editor.putString(Variables.u_pic, userdata.optString("profile_pic"));
                 editor.putString(Variables.api_token, userdata.optString("tokon"));
+                editor.putString(Variables.signUpType, userdata.optString("signup_type"));
                 editor.putBoolean(Variables.islogin, true);
                 editor.commit();
 
@@ -477,7 +477,8 @@ public class Login_A extends Activity {
 
 
             }else {
-                Toast.makeText(this, ""+jsonObject.optString("msg"), Toast.LENGTH_SHORT).show();
+                Functions.showToast(Login_A.this, "" + jsonObject.optString("msg"));
+
             }
 
         } catch (JSONException e) {
