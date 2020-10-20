@@ -181,12 +181,11 @@ public class VideoAction_F extends BottomSheetDialogFragment implements View.OnC
 
     @Override
     public void onClick(View view) {
+        Bundle bundle = new Bundle();
         switch (view.getId()){
             case R.id.save_video_layout:
 
                 if(Functions.Checkstoragepermision(getActivity())) {
-
-                    Bundle bundle = new Bundle();
                     bundle.putString("action", "save");
                     dismiss();
                     fragment_callback.Responce(bundle);
@@ -196,14 +195,15 @@ public class VideoAction_F extends BottomSheetDialogFragment implements View.OnC
 
             case R.id.copy_layout:
                 ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Copied Text", "https://api.buggee.app/API/view.php?id=" + video_id);
+                ClipData clip = ClipData.newPlainText("Copied Text", Variables.base_url + "view.php?id=" + video_id);
                 clipboard.setPrimaryClip(clip);
                 Functions.showToast(getActivity(), "Link Copy in clipboard");
-
+                bundle.putString("action", "copy");
+                dismiss();
+                fragment_callback.Responce(bundle);
                 break;
 
             case R.id.delete_layout:
-                Bundle bundle = new Bundle();
                 bundle.putString("action", "delete");
                 dismiss();
                 fragment_callback.Responce(bundle);

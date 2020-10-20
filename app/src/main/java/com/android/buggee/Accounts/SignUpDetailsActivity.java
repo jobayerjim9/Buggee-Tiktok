@@ -65,7 +65,7 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
         setContentView(R.layout.activity_sign_up_details);
         email = getIntent().getStringExtra("email");
         type = getIntent().getStringExtra("type");
-        gender = null;
+        gender = "";
         sharedPreferences = getSharedPreferences(Variables.pref_name, MODE_PRIVATE);
         firstNameInput = findViewById(R.id.firstNameInput);
         lastNameInput = findViewById(R.id.lastNameInput);
@@ -91,28 +91,28 @@ public class SignUpDetailsActivity extends AppCompatActivity implements DatePick
                     try {
                         if (i == 0) {
                             Functions.showToast(SignUpDetailsActivity.this, "Select A Gender!");
-                            gender = null;
+                            gender = "";
                         } else if (i == 1) {
                             gender = "m";
                         } else if (i == 2) {
                             gender = "f";
-                        } else {
-                            Functions.showToast(SignUpDetailsActivity.this, "Select A Gender!");
-                            gender = null;
                         }
                     } catch (Exception e) {
+                        gender = "";
                         e.printStackTrace();
+                        Functions.showToast(SignUpDetailsActivity.this, e.getLocalizedMessage());
                     }
                 }
 
                 @Override
                 public void onNothingSelected(AdapterView<?> adapterView) {
-                    gender = null;
+                    gender = "";
                     Functions.showToast(SignUpDetailsActivity.this, "Select A Gender!");
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
+            Functions.showToast(SignUpDetailsActivity.this, e.getLocalizedMessage());
         }
         datePicker.setOnClickListener(new View.OnClickListener() {
             @Override

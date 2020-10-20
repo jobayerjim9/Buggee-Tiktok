@@ -73,7 +73,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.daasuu.gpuv.composer.GPUMp4Composer;
 import com.daasuu.gpuv.egl.filter.GlWatermarkFilter;
@@ -655,12 +654,6 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                         break;
 
                     case R.id.shared_layout:
-                        if (!is_add_show && mInterstitialAd.isLoaded()) {
-                            mInterstitialAd.show();
-                            is_add_show = true;
-                        } else {
-
-                            is_add_show = false;
                             if (!Variables.is_secure_info) {
                                 final VideoAction_F fragment = new VideoAction_F(item.video_id, new Fragment_Callback() {
                                     @Override
@@ -697,10 +690,8 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
                                 bundle.putString("video_id", item.video_id);
                                 bundle.putString("user_id", item.fb_id);
                                 fragment.setArguments(bundle);
-
                                 fragment.show(getChildFragmentManager(), "");
                             }
-                        }
                         break;
 
 
@@ -1636,7 +1627,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     public void Applywatermark(final Home_Get_Set item) {
 
         Bitmap myLogo = getBitmapFromVectorDrawable(context, R.drawable.ic_buggee_watermark);
-        Bitmap bitmap_resize = Bitmap.createScaledBitmap(myLogo, 344, 130, false);
+        Bitmap bitmap_resize = Bitmap.createScaledBitmap(myLogo, 337, 78, false);
         GlWatermarkFilterCustom filter = new GlWatermarkFilterCustom(bitmap_resize, GlWatermarkFilter.Position.RIGHT_BOTTOM);
         new GPUMp4Composer(Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + "no_watermark" + ".mp4",
                 Environment.getExternalStorageDirectory() + "/Buggee/" + item.video_id + ".mp4")
