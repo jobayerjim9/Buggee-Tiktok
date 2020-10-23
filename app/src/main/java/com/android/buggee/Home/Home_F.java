@@ -187,7 +187,6 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
             view = inflater.inflate(R.layout.fragment_home, container, false);
             context = getContext();
-
             initializeEngine();
             addStoryButton = view.findViewById(R.id.addStoryButton);
             addStoryButton.setOnClickListener(new View.OnClickListener() {

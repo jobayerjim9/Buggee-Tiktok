@@ -2,11 +2,9 @@ package com.android.buggee.SimpleClasses;
 
 import android.app.Application;
 
-import com.crashlytics.android.Crashlytics;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.firebase.FirebaseApp;
 
-import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by AQEEL on 3/18/2019.
@@ -19,7 +17,7 @@ public class TicTic extends Application {
         super.onCreate();
         Fresco.initialize(this);
         FirebaseApp.initializeApp(this);
-        Fabric.with(this, new Crashlytics());
+
     }
 
 }
