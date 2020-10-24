@@ -49,7 +49,29 @@ public class SignInActivity extends AppCompatActivity {
 //                .setMessageContentGravity(Gravity.END)
 //                .build();
         TextView loginViaMobile = findViewById(R.id.loginViaMobile);
+        TextView resetPassword = findViewById(R.id.resetPassword);
+
         emailUsernameInput = findViewById(R.id.emailUsernameInput);
+        resetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String resetEmail = emailUsernameInput.getEditText().getText().toString();
+                if (resetEmail.isEmpty()) {
+                    Functions.showToast(SignInActivity.this, "Enter Email To Reset Password");
+                } else {
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(resetEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Functions.showToast(SignInActivity.this, "Check Your Mail To Reset Password");
+                            } else {
+                                Functions.showToast(SignInActivity.this, task.getException().getLocalizedMessage());
+                            }
+                        }
+                    });
+                }
+            }
+        });
         passwordInput = findViewById(R.id.passwordInput);
         loginViaMobile.setOnClickListener(new View.OnClickListener() {
             @Override

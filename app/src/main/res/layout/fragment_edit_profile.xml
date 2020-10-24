@@ -206,8 +206,7 @@
                         android:padding="10dp"
                         android:text="Gender"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textSize="16dp"
-                        android:textStyle="italic" />
+                        android:textSize="16dp" />
 
 
                     <RadioGroup
@@ -256,8 +255,7 @@
                         android:padding="10dp"
                         android:text="Bio"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textSize="16dp"
-                        android:textStyle="italic" />
+                        android:textSize="16dp" />
 
                     <EditText
                         android:id="@+id/user_bio_edit"

@@ -55,7 +55,7 @@
         android:fontFamily="@font/avenir_regular"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
-        android:text="Sign Up"
+        android:text="Register"
         android:textAllCaps="false"
         android:textColor="#00B9FF"
         android:textSize="16sp"

@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:fontFamily="@font/avenir_bold"
-            android:text="Report Your Problem"
+            android:text="Report an issue"
             android:textColor="@color/text"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"

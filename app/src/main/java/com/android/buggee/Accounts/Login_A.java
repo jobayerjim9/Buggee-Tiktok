@@ -30,10 +30,12 @@ import android.widget.Toast;
 
 import com.android.buggee.Main_Menu.MainMenuActivity;
 import com.android.buggee.R;
+import com.android.buggee.Settings.SettingsActivity;
 import com.android.buggee.SimpleClasses.ApiRequest;
 import com.android.buggee.SimpleClasses.Callback;
 import com.android.buggee.SimpleClasses.Functions;
 import com.android.buggee.SimpleClasses.Variables;
+import com.android.buggee.SimpleClasses.WebViewActivity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -157,25 +159,26 @@ public class Login_A extends Activity {
          top_view=findViewById(R.id.top_view);
 
 
-
-        login_title_txt=findViewById(R.id.login_title_txt);
-        login_title_txt.setText("You need a "+getString(R.string.app_name)+"\naccount to Continue");
-
+        login_title_txt = findViewById(R.id.login_title_txt);
+        login_title_txt.setText("You need buggee\naccount to continue");
 
 
-        SpannableString ss = new SpannableString("By signing up, you confirm that you agree to our Terms of Use and have read and understood our Privacy Policy.");
+        SpannableString ss = new SpannableString("By registering, you are agreeing with buggee’s “Terms of Use” and “Privacy policy”. We encourage you to read the terms of use carefully before sign up");
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
-                Open_Privacy_policy();
+//                "https://www.buggee.app/terms-of-service/"
+                Open_Privacy_policy("https://www.buggee.app/privacy-policy/");
             }
+
             @Override
             public void updateDrawState(TextPaint ds) {
                 super.updateDrawState(ds);
                 ds.setUnderlineText(false);
             }
         };
-        ss.setSpan(clickableSpan, 95, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //ss.setSpan(clickableSpan, 47, 62, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(clickableSpan, 66, 82, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
 
         TextView textView = (TextView) findViewById(R.id.login_terms_condition_txt);
         textView.setText(ss);
@@ -189,9 +192,10 @@ public class Login_A extends Activity {
     }
 
 
-    public void Open_Privacy_policy(){
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Variables.privacy_policy));
-        startActivity(browserIntent);
+    public void Open_Privacy_policy(String url) {
+        Intent intent = new Intent(this, WebViewActivity.class);
+        intent.putExtra("url", url);
+        startActivity(intent);
     }
 
 

@@ -27,6 +27,8 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings_privacy);
         TextView privacySettings = findViewById(R.id.privacySettings);
         TextView privacyPolicy = findViewById(R.id.privacyPolicy);
+        TextView safetyCenter = findViewById(R.id.safetyCenter);
+        TextView helpCenter = findViewById(R.id.helpCenter);
         TextView termsOfUse = findViewById(R.id.termsOfUse);
         TextView reportAProblem = findViewById(R.id.reportAProblem);
         Switch pushNotification = findViewById(R.id.pushNotification);
@@ -66,6 +68,22 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SettingsActivity.this, WebViewActivity.class);
                 intent.putExtra("url", "https://www.buggee.app/privacy-policy/");
+                startActivity(intent);
+            }
+        });
+        helpCenter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingsActivity.this, WebViewActivity.class);
+                intent.putExtra("url", "https://support.buggee.app/hc");
+                startActivity(intent);
+            }
+        });
+        safetyCenter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingsActivity.this, WebViewActivity.class);
+                intent.putExtra("url", "https://support.buggee.app/hc");
                 startActivity(intent);
             }
         });

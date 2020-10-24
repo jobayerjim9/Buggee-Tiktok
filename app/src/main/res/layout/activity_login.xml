@@ -114,7 +114,7 @@
             android:fontFamily="@font/avenir_regular"
             android:gravity="center"
             android:paddingTop="15dp"
-            android:text="By signing up, you confirm that you agree to our Terms of Use and have read and understood our Privacy Policy."
+            android:text="By registering, you are agreeing with buggee’s “Terms of Use” and “Privacy policy”. We encourage you to read the terms of use carefully before sign up"
             android:textColor="@color/colorwhite_50"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -150,7 +150,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:fontFamily="@font/avenir_regular"
-                    android:text="Sign Up"
+                    android:text="Register"
                     android:textColor="#00B9FF"
                     android:textSize="18sp" />
             </androidx.cardview.widget.CardView>
@@ -171,7 +171,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:fontFamily="@font/avenir_regular"
-                    android:text="Sign In"
+                    android:text="Login"
                     android:textColor="#00B9FF"
                     android:textSize="18sp" />
             </androidx.cardview.widget.CardView>

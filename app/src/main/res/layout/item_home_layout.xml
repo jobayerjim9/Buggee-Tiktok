@@ -124,7 +124,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:elevation="8dp"
-                        android:src="@drawable/ic_small_plus"
+                        app:srcCompat="@drawable/ic_small_plus"
                         android:tint="@color/text"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

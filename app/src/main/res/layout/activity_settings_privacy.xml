@@ -70,7 +70,7 @@
                 android:focusable="true"
                 android:fontFamily="@font/avenir_regular"
                 android:gravity="center_vertical"
-                android:text="Get Verified"
+                android:text="Get verified"
                 android:textColor="#00B9FF"
                 android:textSize="18sp" />
 
@@ -87,7 +87,7 @@
                 android:focusable="true"
                 android:fontFamily="@font/avenir_regular"
                 android:gravity="center_vertical"
-                android:text="Create A Page"
+                android:text="Create a page"
                 android:textColor="#00B9FF"
                 android:textSize="18sp" />
 
@@ -141,7 +141,7 @@
                     android:focusable="true"
                     android:fontFamily="@font/avenir_regular"
                     android:gravity="center_vertical"
-                    android:text="Push Notification"
+                    android:text="Push notification"
                     android:textColor="#00B9FF"
                     android:textSize="18sp" />
 
@@ -180,12 +180,12 @@
                 android:focusable="true"
                 android:fontFamily="@font/avenir_regular"
                 android:gravity="center_vertical"
-                android:text="Report a problem"
+                android:text="Report an issue"
                 android:textColor="#00B9FF"
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/textView18"
+                android:id="@+id/safetyCenter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -196,12 +196,12 @@
                 android:focusable="true"
                 android:fontFamily="@font/avenir_regular"
                 android:gravity="center_vertical"
-                android:text="Safety centre"
+                android:text="Safety center"
                 android:textColor="#00B9FF"
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/textView17"
+                android:id="@+id/helpCenter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
