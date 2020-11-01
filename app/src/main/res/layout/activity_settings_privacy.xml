@@ -5,23 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context="com.android.buggee.Settings.SettingsActivity">
+    tools:context="com.android.buggee.com.systematics.buggee.Settings.SettingsActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profilePic"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:src="@drawable/profile_image_placeholder"
+        app:layout_constraintBottom_toBottomOf="@+id/textView7"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/textView7" />
 
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/avenir_regular"
         android:text="General Settings"
         android:textColor="@color/white"
@@ -35,9 +35,9 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView7"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView7"
         app:srcCompat="@drawable/ic_back" />
 
     <androidx.core.widget.NestedScrollView

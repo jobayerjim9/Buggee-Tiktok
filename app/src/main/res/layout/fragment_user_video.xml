@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context="com.android.buggee.Profile.UserVideos.UserVideo_F">
+    tools:context="com.android.buggee.com.systematics.buggee.Profile.UserVideos.UserVideo_F">
 
     <RelativeLayout
         android:layout_width="match_parent"

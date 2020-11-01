@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
-    tools:context="com.android.buggee.Home.Home_F">
+    tools:context="com.android.buggee.com.systematics.buggee.Home.Home_F">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

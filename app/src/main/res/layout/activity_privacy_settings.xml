@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context="com.android.buggee.Settings.PrivacySettingsActivity">
+    tools:context="com.android.buggee.com.systematics.buggee.Settings.PrivacySettingsActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout6"

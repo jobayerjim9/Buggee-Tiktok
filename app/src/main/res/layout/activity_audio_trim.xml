@@ -111,7 +111,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="1">
 
-                        <com.android.buggee.customAudioViews.WaveformView
+                        <com.systematics.buggee.customAudioViews.WaveformView
                             android:id="@+id/audioWaveform"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -120,7 +120,7 @@
                             android:layout_marginBottom="25dp"
                             android:background="@color/colorPrimaryDark" />
 
-                        <com.android.buggee.customAudioViews.MarkerView
+                        <com.systematics.buggee.customAudioViews.MarkerView
                             android:id="@+id/markerStart"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -136,7 +136,7 @@
                             android:textColor="@color/colorTextGray"
                             android:textSize="12sp" />
 
-                        <com.android.buggee.customAudioViews.MarkerView
+                        <com.systematics.buggee.customAudioViews.MarkerView
                             android:id="@+id/markerEnd"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

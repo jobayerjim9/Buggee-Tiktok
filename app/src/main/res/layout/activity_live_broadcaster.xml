@@ -5,4 +5,4 @@
     android:id="@+id/liveFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.android.buggee.Video_Recording.LiveBroadcasterActivity" />
+    tools:context="com.android.buggee.com.systematics.buggee.Video_Recording.LiveBroadcasterActivity" />

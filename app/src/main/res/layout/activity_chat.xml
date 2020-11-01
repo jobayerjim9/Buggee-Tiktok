@@ -9,7 +9,7 @@
     android:clickable="true"
     android:fitsSystemWindows="true"
     android:paddingTop="24dp"
-    tools:context="com.android.buggee.Chat.Chat_Activity">
+    tools:context="com.android.buggee.com.systematics.buggee.Chat.Chat_Activity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.android.buggee.Profile.PageSettingsFragment">
+    tools:context="com.android.buggee.com.systematics.buggee.Profile.PageSettingsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

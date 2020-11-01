@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context="com.android.buggee.SoundLists.SoundList_Main_A">
+    tools:context="com.android.buggee.com.systematics.buggee.SoundLists.SoundList_Main_A">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -81,12 +81,12 @@
                 app:tabTextAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 app:tabTextColor="@color/gray_dark" />
 
-            <com.android.buggee.Main_Menu.Custom_ViewPager
+            <com.systematics.buggee.Main_Menu.Custom_ViewPager
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/groups_tab"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"></com.android.buggee.Main_Menu.Custom_ViewPager>
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"></com.systematics.buggee.Main_Menu.Custom_ViewPager>
 
 
         </RelativeLayout>

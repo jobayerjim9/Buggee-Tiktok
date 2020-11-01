@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.android.buggee.Video_Recording.Preview_Video_A">
+    tools:context="com.android.buggee.com.systematics.buggee.Video_Recording.Preview_Video_A">
 
 
     <ImageView
@@ -23,7 +23,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.android.buggee.Video_Recording.MovieWrapperView
+    <com.systematics.buggee.Video_Recording.MovieWrapperView
         android:id="@+id/layout_movie_wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -32,7 +32,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-    </com.android.buggee.Video_Recording.MovieWrapperView>
+    </com.systematics.buggee.Video_Recording.MovieWrapperView>
 
 
     <ImageButton

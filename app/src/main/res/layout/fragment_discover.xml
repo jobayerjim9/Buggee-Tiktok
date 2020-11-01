@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context="com.android.buggee.Discover.Discover_F">
+    tools:context="com.android.buggee.com.systematics.buggee.Discover.Discover_F">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="32dp"
         android:layout_marginBottom="80dp">
 
 

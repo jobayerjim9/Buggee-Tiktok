@@ -9,7 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context="com.android.buggee.Accounts.SignUpActivity">
+    tools:context="com.android.buggee.com.systematics.buggee.Accounts.SignUpActivity">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/signUpTab"
@@ -48,7 +48,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_back" />
 
-    <com.android.buggee.Main_Menu.Custom_ViewPager
+    <com.systematics.buggee.Main_Menu.Custom_ViewPager
         android:id="@+id/signUpViewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"

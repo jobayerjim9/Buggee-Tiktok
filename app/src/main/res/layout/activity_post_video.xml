@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
     android:keepScreenOn="true"
-    tools:context="com.android.buggee.Video_Recording.Post_Video_A">
+    tools:context="com.android.buggee.com.systematics.buggee.Video_Recording.Post_Video_A">
 
 
     <RelativeLayout

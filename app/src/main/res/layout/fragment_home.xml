@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context="com.android.buggee.Home.Home_F">
+    tools:context="com.android.buggee.com.systematics.buggee.Home.Home_F">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/video_loader"
@@ -37,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:elevation="1dp"
         android:fontFamily="@font/avenir_bold"
         android:text="Stories"
@@ -83,7 +83,7 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:context="com.android.buggee.Comments.LiveCommentFragment">
+        tools:context="com.android.buggee.com.systematics.buggee.Comments.LiveCommentFragment">
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -5,13 +5,12 @@
     android:id="@+id/Inbox_F"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context="com.android.buggee.Inbox.Inbox_F">
+    android:background="?attr/colorPrimaryDark"
+    tools:context="com.android.buggee.com.systematics.buggee.Inbox.Inbox_F">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="24dp">
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -24,14 +23,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:background="@color/white"
+                android:background="@color/colorPrimaryDark"
                 app:contentInsetLeft="0dp"
                 app:contentInsetStart="0dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/d_bottom_gray_line">
+                    android:layout_height="match_parent">
 
 
                     <ImageButton
@@ -44,17 +42,17 @@
                         android:background="@color/transparent"
                         android:scaleType="fitStart"
                         android:src="@drawable/ic_back"
-                        android:tint="@color/black" />
+                        android:tint="@color/white" />
 
                     <TextView
                         android:id="@+id/username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
+                        android:fontFamily="@font/avenir_bold"
                         android:text="Inbox"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:textSize="16dp"
                         android:textStyle="bold" />
 
@@ -117,16 +115,6 @@
 
         </RelativeLayout>
 
-
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/bannerad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            ads:adSize="BANNER"
-            ads:adUnitId="@string/banner_ad" />
 
     </RelativeLayout>
 </FrameLayout>

@@ -7,7 +7,7 @@
     android:background="@color/colorPrimaryDark"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".Video_Recording.ImageEditingActivity"
+    tools:context="com.systematics.buggee.Video_Recording.ImageEditingActivity"
     tools:showIn="@layout/activity_image_editing">
 
     <ImageView
@@ -20,7 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.android.buggee.SimpleClasses.NonSwipeableViewPager
+    <com.systematics.buggee.SimpleClasses.NonSwipeableViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="120dp"

@@ -6,8 +6,7 @@
     android:background="@color/colorPrimaryDark"
     android:clickable="true"
     android:fitsSystemWindows="true"
-    android:paddingTop="24dp"
-    tools:context="com.android.buggee.Profile.Edit_Profile_F">
+    tools:context="com.android.buggee.com.systematics.buggee.Profile.Edit_Profile_F">
 
 
     <RelativeLayout

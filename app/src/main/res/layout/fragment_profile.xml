@@ -5,14 +5,13 @@
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/Profile_F"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.android.buggee.Profile.Profile_F">
+    tools:context="com.android.buggee.com.systematics.buggee.Profile.Profile_F">
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimaryDark"
-        android:paddingTop="24dp">
+        android:background="@color/colorPrimaryDark">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
