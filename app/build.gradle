@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
 android {
 
     compileSdkVersion 30
-    buildToolsVersion "30.0.0"
+    buildToolsVersion "30.0.2"
     defaultConfig {
         applicationId "com.systematics.buggee"
         minSdkVersion 21
@@ -18,14 +18,16 @@ android {
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    splits {
-        abi {
-            enable true
-            reset()
-            include 'x86', 'armeabi', 'armeabi-v7a', 'mips'
-            universalApk true
-        }
-    }
+
+//    splits {
+//        abi {
+//            enable true
+//            reset()
+//            include 'x86', 'armeabi', 'armeabi-v7a', 'mips'
+//            universalApk true
+//        }
+//    }
+
     buildTypes {
         release {
 
@@ -37,7 +39,6 @@ android {
 
             // Enables resource shrinking, which is performed by the
             // Android Gradle plugin.
-            shrinkResources true
             proguardFiles getDefaultProguardFile(
                     'proguard-android-optimize.txt'),
                     'proguard-rules.pro'
@@ -51,10 +52,8 @@ android {
         }
         debug {
             minifyEnabled true
-
             // Enables resource shrinking, which is performed by the
             // Android Gradle plugin.
-            shrinkResources true
             proguardFiles getDefaultProguardFile(
                     'proguard-android-optimize.txt'),
                     'proguard-rules.pro'

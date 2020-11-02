@@ -1,21 +1,23 @@
 package com.systematics.buggee.Chat;
 
+import androidx.annotation.Keep;
+
 /**
  * Created by AQEEL on 3/20/2018.
  */
-
+@Keep
 public class Chat_GetSet {
-  String receiver_id,sender_id,chat_id,sender_name,text,pic_url,status,time,timestamp,type;
+    public String receiver_id, sender_id, chat_id, sender_name, text, pic_url, status, time, timestamp, type;
 
     public Chat_GetSet() {
 
     }
 
-  public String getReceiver_id() {
-    return receiver_id;
-  }
+    public String getReceiver_id() {
+        return receiver_id;
+    }
 
-  public void setReceiver_id(String receiver_id) {
+    public void setReceiver_id(String receiver_id) {
     this.receiver_id = receiver_id;
   }
 

@@ -99,7 +99,7 @@ public class LiveBroadcasterActivity extends AppCompatActivity {
             }
         });
         like_layout = findViewById(R.id.like_layout);
-        final LottieAnimationView liveAnimation = findViewById(R.id.liveAnimation);
+       // final LottieAnimationView liveAnimation = findViewById(R.id.liveAnimation);
         final LottieAnimationView liveCountDown = findViewById(R.id.liveCountDown);
         final CardView liveCountDownWrap = findViewById(R.id.liveCountDownWrap);
         new CountDownTimer(5000, 1000) {
@@ -180,7 +180,7 @@ public class LiveBroadcasterActivity extends AppCompatActivity {
             }
         });
         getLiveLikeCount();
-        new CountDownTimer(Integer.MAX_VALUE, 10000) {
+        new CountDownTimer(Integer.MAX_VALUE, 60000) {
 
 
             @Override

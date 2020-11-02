@@ -800,6 +800,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
 
         imageStory = new ArrayList<>();
 
+
         try {
             JSONObject jsonObject = new JSONObject(responce);
             String code = jsonObject.optString("code");
@@ -856,7 +857,7 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     }
 
     public void Parse_data_story(String responce) {
-
+        stories = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(responce);
             String code = jsonObject.optString("code");
@@ -2094,20 +2095,23 @@ public class Home_F extends RootFragment implements Player.EventListener, Fragme
     private void setupRemoteVideo(int uid, final int currentPage) {
         Log.d("videoSetup", "start");
         //Toast.makeText(context, uid + "", Toast.LENGTH_SHORT).show();
+        try {
 
-        // Create a SurfaceView object.
-        View layout = liveLayoutManager.findViewByPosition(currentPage);
-        FrameLayout mRemoteContainer = layout.findViewById(R.id.videoholder);
-        SurfaceView mRemoteView;
+            // Create a SurfaceView object.
+            View layout = liveLayoutManager.findViewByPosition(currentPage);
+            FrameLayout mRemoteContainer = layout.findViewById(R.id.videoholder);
+            SurfaceView mRemoteView;
 
-        mRemoteView = RtcEngine.CreateRendererView(activity.getBaseContext());
-        mRemoteView.setZOrderMediaOverlay(true);
-        mRemoteContainer.addView(mRemoteView);
-        previousFrame = mRemoteContainer;
+            mRemoteView = RtcEngine.CreateRendererView(activity.getBaseContext());
+            mRemoteView.setZOrderMediaOverlay(true);
+            mRemoteContainer.addView(mRemoteView);
+            previousFrame = mRemoteContainer;
 
-        // Set the remote video view.
-        mRtcEngine.setupRemoteVideo(new VideoCanvas(mRemoteView, VideoCanvas.RENDER_MODE_FILL, uid));
-
+            // Set the remote video view.
+            mRtcEngine.setupRemoteVideo(new VideoCanvas(mRemoteView, VideoCanvas.RENDER_MODE_FILL, uid));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     String liveId;

@@ -276,7 +276,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        Functions.Show_loader(context, true, true);
         Call_Api_For_get_Allvideos();
 
 
@@ -443,7 +443,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
 
     boolean is_run_first_time=false;
     private void Call_Api_For_get_Allvideos() {
-        Functions.Show_loader(context, false, false);
+
         if(bundle==null){
             user_id=Variables.sharedPreferences.getString(Variables.u_id,"0");
         }
@@ -464,7 +464,8 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
         ApiRequest.Call_Api(context, Variables.showMyAllVideos, parameters, new Callback() {
             @Override
             public void Responce(String resp) {
-                is_run_first_time=true;
+                Functions.cancel_loader();
+                is_run_first_time = true;
                 Parse_data(resp);
             }
         });
@@ -525,6 +526,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
             }
 
         } catch (JSONException e) {
+            Functions.cancel_loader();
             e.printStackTrace();
         }
 
@@ -577,7 +579,7 @@ public class Profile_F extends RootFragment implements View.OnClickListener {
                             follow_unfollow_btn.setText("Follow");
                             follow_status="0";
                         }
-
+                        Functions.Show_loader(context, true, true);
                         Call_Api_For_get_Allvideos();
                     }
 

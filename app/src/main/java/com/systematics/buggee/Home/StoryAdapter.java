@@ -43,7 +43,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.StoryViewHol
 
     @Override
     public void onBindViewHolder(@NonNull StoryViewHolder holder, final int position) {
-        Log.d("imageUrl", imageStoryData.get(0).url);
+
         if (position < stories.size() && stories.size() != 0) {
             Picasso.with(context).load(stories.get(position).thum).placeholder(R.drawable.profile_image_placeholder).into(holder.storyThum);
             holder.storyThum.setOnClickListener(new View.OnClickListener() {
