@@ -101,16 +101,16 @@ public class RecordModeChoser extends DialogFragment {
                                     if (status == 0) {
                                         Functions.showToast(getActivity(), "You are not permitted to start live!");
                                     } else {
-//                                        int fans = Integer.parseInt(Variables.sharedPreferences.getString(Variables.fan_count, "0"));
-//                                        if (fans < 100) {
-//                                            Functions.showToast(getActivity(), "You are not eligible to start live");
-//                                            dismiss();
-//                                        } else {
-//                                            LiveDetailsDialog liveDetailsDialog = new LiveDetailsDialog();
-//                                            liveDetailsDialog.show(getChildFragmentManager(), "liveDetails");
-//                                        }
-                                        LiveDetailsDialog liveDetailsDialog = new LiveDetailsDialog();
-                                        liveDetailsDialog.show(getChildFragmentManager(), "liveDetails");
+                                        int fans = Integer.parseInt(Variables.sharedPreferences.getString(Variables.fan_count, "0"));
+                                        if (fans < 100) {
+                                            Functions.showToast(getActivity(), "You are not eligible to start live");
+                                            dismiss();
+                                        } else {
+                                            LiveDetailsDialog liveDetailsDialog = new LiveDetailsDialog();
+                                            liveDetailsDialog.show(getChildFragmentManager(), "liveDetails");
+                                        }
+//                                        LiveDetailsDialog liveDetailsDialog = new LiveDetailsDialog();
+//                                        liveDetailsDialog.show(getChildFragmentManager(), "liveDetails");
 
                                     }
 
