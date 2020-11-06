@@ -48,7 +48,6 @@ public class RecordModeChoser extends DialogFragment {
             @Override
             public void onClick(View view) {
                 if (Variables.sharedPreferences.getBoolean(Variables.islogin, false)) {
-
                     Intent intent = new Intent(getActivity(), Video_Recoder_A.class);
                     intent.putExtra("type", "record");
                     startActivity(intent);
@@ -125,8 +124,6 @@ public class RecordModeChoser extends DialogFragment {
 
                         }
                     });
-
-
                 } else {
                     Functions.showToast(getActivity(), "You have to login First");
                 }
