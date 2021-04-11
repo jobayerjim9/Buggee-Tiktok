@@ -140,8 +140,8 @@ public class Inbox_F extends RootFragment {
 
         pbar.setVisibility(View.VISIBLE);
 
-        inbox_query=root_ref.child("Inbox").child(Variables.user_id).orderByChild("date");
-        eventListener2=new ValueEventListener() {
+        inbox_query = root_ref.child("Inbox").child(Variables.user_id.replace("@", "").replace(".", "").replace("_", "")).orderByChild("date");
+        eventListener2 = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 inbox_arraylist.clear();

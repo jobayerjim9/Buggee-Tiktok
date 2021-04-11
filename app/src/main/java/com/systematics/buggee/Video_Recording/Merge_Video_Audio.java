@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import com.coremedia.iso.IsoFile;
 import com.coremedia.iso.boxes.Container;
+import com.googlecode.mp4parser.FileDataSourceImpl;
+import com.googlecode.mp4parser.authoring.Mp4TrackImpl;
+import com.googlecode.mp4parser.authoring.tracks.AACTrackImpl;
 import com.systematics.buggee.SimpleClasses.Functions;
 import com.systematics.buggee.SimpleClasses.Variables;
 import com.googlecode.mp4parser.authoring.Movie;
@@ -22,6 +25,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by AQEEL on 2/15/2019.
@@ -143,28 +148,38 @@ public class Merge_Video_Audio extends AsyncTask<String, String, String> {
         public void run() {
 
             try {
-
                 Movie m = MovieCreator.build(video);
                 Movie videos = MovieCreator.build(new File(video).getAbsolutePath());
                 Track videoTrack = videos.getTracks().get(0);
                 Track audioTrack = MovieCreator.build(new File(audio).getAbsolutePath()).getTracks().get(0);
+
                 m.addTrack(audioTrack);
 
-//                List nuTracks = new ArrayList<>();
+////                List nuTracks = new ArrayList<>();
+////
+////                for (Track t : m.getTracks()) {
+////                    if (!"soun".equals(t.getHandler())) {
+////                        nuTracks.add(t);
+////                    }
+////                }
+////                Log.d("AudioPathMergeAudio", audio);
+////
+////                 Track nuAudio = new AACTrackImpl(new FileDataSourceImpl(audio));
+////
+////                 Track crop_track= CropAudio(video,nuAudio);
+////                 nuTracks.add(crop_track);
+////
+////                  m.setTracks(nuTracks);
+//                Movie videoTr = MovieCreator.build(new File(video).getAbsolutePath());
+//                Track videoTrack = videoTr.getTracks().get(0);
 //
-//                for (Track t : m.getTracks()) {
-//                    if (!"soun".equals(t.getHandler())) {
-//                        nuTracks.add(t);
-//                    }
-//                }
-//                Log.d("AudioPathMergeAudio", audio);
 //
-//                 Track nuAudio = new AACTrackImpl(new FileDataSourceImpl(audio));
+//                Movie audioTr = MovieCreator.build(new File(audio).getAbsolutePath()); // here
+//                Track audioTrack = audioTr.getTracks().get(0);
 //
-//                 Track crop_track= CropAudio(video,nuAudio);
-//                 nuTracks.add(crop_track);
-
-                //  m.setTracks(nuTracks);
+//                Movie movie = new Movie();
+//                movie.addTrack(videoTrack);
+//                movie.addTrack(audioTrack);
 
                 Container mp4file = new DefaultMp4Builder().build(m);
 
@@ -173,8 +188,8 @@ public class Merge_Video_Audio extends AsyncTask<String, String, String> {
                 fc.close();
                 try {
                     progressDialog.dismiss();
-                }catch (Exception e){
-                    Log.d("resp",e.toString());
+                } catch (Exception e) {
+                    Log.d("resp", e.toString());
 
                 }finally {
                     if (output.equals(Variables.output_filter_file_final)) {
@@ -189,7 +204,7 @@ public class Merge_Video_Audio extends AsyncTask<String, String, String> {
                 e.printStackTrace();
                 progressDialog.dismiss();
                 // Toast.makeText(context, "Cannot Process!", Toast.LENGTH_SHORT).show();
-                Log.d("resp", e.toString());
+                Log.d("IOExceptionMerge", e.toString());
 
             } catch (Exception e) {
                 progressDialog.dismiss();

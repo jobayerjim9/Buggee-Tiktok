@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Buggee.iml" filepath="$PROJECT_DIR$/.idea/modules/Buggee.iml" group="Buggee" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Buggee/app" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/deepar/deepar.iml" filepath="$PROJECT_DIR$/.idea/modules/deepar/deepar.iml" group="Buggee/deepar" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Buggee.iml" filepath="$PROJECT_DIR$/.idea/modules/Buggee.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Buggee.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Buggee.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/deepar/Buggee.deepar.iml" filepath="$PROJECT_DIR$/.idea/modules/deepar/Buggee.deepar.iml" />
     </modules>
   </component>
 </project>

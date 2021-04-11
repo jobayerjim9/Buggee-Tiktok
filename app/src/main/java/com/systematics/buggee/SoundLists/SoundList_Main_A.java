@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import com.systematics.buggee.Main_Menu.Custom_ViewPager;
 import com.systematics.buggee.R;
 import com.systematics.buggee.SoundLists.FavouriteSounds.Favourite_Sound_F;
+import com.systematics.buggee.SoundLists.MyAudio.MyAudioFragment;
 
 public class SoundList_Main_A extends AppCompatActivity implements View.OnClickListener{
 
@@ -81,6 +82,9 @@ public class SoundList_Main_A extends AppCompatActivity implements View.OnClickL
                 case 1:
                     result = new Favourite_Sound_F();
                     break;
+                case 2:
+                    result = new MyAudioFragment();
+                    break;
                 default:
                     result = null;
                     break;
@@ -91,7 +95,7 @@ public class SoundList_Main_A extends AppCompatActivity implements View.OnClickL
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -101,7 +105,8 @@ public class SoundList_Main_A extends AppCompatActivity implements View.OnClickL
                     return "Hot Song";
                 case 1:
                     return "My Favorites";
-
+                case 2:
+                    return "My Audio";
                 default:
                     return null;
 

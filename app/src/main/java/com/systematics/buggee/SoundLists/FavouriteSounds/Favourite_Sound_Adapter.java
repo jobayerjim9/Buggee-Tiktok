@@ -23,12 +23,13 @@ import java.util.ArrayList;
  */
 
 
-class Favourite_Sound_Adapter extends RecyclerView.Adapter<Favourite_Sound_Adapter.CustomViewHolder > {
+public class Favourite_Sound_Adapter extends RecyclerView.Adapter<Favourite_Sound_Adapter.CustomViewHolder> {
     public Context context;
 
     ArrayList<Sounds_GetSet> datalist;
+
     public interface OnItemClickListener {
-        void onItemClick(View view,int postion, Sounds_GetSet item);
+        void onItemClick(View view, int postion, Sounds_GetSet item);
     }
 
     public Favourite_Sound_Adapter.OnItemClickListener listener;
@@ -67,11 +68,14 @@ class Favourite_Sound_Adapter extends RecyclerView.Adapter<Favourite_Sound_Adapt
             holder.sound_name.setText(item.sound_name);
             holder.description_txt.setText(item.description);
 
-            if(item.thum!=null && !item.thum.equals("")) {
+            if (item.thum != null && !item.thum.equals("")) {
                 Uri uri = Uri.parse(item.thum);
                 holder.sound_image.setImageURI(uri);
             }
             holder.fav_btn.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_bookmark_24));
+            if (item.type.equals("my")) {
+                holder.fav_btn.setVisibility(View.INVISIBLE);
+            }
             holder.bind(i, datalist.get(i), listener);
 
 

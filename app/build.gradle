@@ -10,7 +10,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName "0.1b"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -19,14 +19,14 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-//    splits {
-//        abi {
-//            enable true
-//            reset()
-//            include 'x86', 'armeabi', 'armeabi-v7a', 'mips'
-//            universalApk true
-//        }
-//    }
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'armeabi', 'armeabi-v7a', 'mips'
+            universalApk true
+        }
+    }
 
     buildTypes {
         release {
@@ -51,7 +51,7 @@ android {
             zipAlignEnabled true
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
             // Enables resource shrinking, which is performed by the
             // Android Gradle plugin.
             proguardFiles getDefaultProguardFile(
@@ -148,7 +148,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
     implementation 'info.androidhive:imagefilters:1.0.7'
     implementation 'com.karumi:dexter:4.1.0'
-
+    implementation 'com.appyvet:materialrangebar:1.4.6'
 
 }
 apply plugin: 'com.google.gms.google-services'

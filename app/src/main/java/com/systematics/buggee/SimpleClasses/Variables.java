@@ -12,7 +12,7 @@ import java.util.Locale;
 
 public class Variables {
 
-
+    public static String selectedSoundId = "null";
     public static String device = "android";
 
     public static int screen_width;
@@ -112,6 +112,7 @@ public class Variables {
     public static final String allSounds = domain + "allSounds";
     public static final String fav_sound = domain + "fav_sound";
     public static final String my_FavSound = domain + "my_FavSound";
+    public static final String getMySounds = domain + "getMySounds";
     public static final String my_liked_video = domain + "my_liked_video";
     public static final String follow_users = domain + "follow_users";
     public static final String discover = domain + "discover";
@@ -163,6 +164,7 @@ public class Variables {
     public static final String likeLive = domain + "likeLive";
     public static final String unlikeLive = domain + "unlikeLive";
     public static final String getMyLiveDetail = domain + "getMyLiveDetail";
+    public static final String uploadMyAudio = domain + "uploadMyAudio";
 
 
 }
